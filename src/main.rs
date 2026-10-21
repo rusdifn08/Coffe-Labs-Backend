@@ -102,7 +102,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // 5. Router definition
     let app = Router::new()
-        // Public endpoints
+        // Public health endpoints (support both /health and /api/health)
+        .route("/health", get(handlers::health))
         .route("/api/health", get(handlers::health))
         .route("/api/auth/register", post(handlers::register))
         .route("/api/auth/login", post(handlers::login))
