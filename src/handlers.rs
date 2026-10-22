@@ -12,7 +12,7 @@ use uuid::Uuid;
 use crate::{
     auth::{generate_jwt, hash_password, verify_password, AdminUser, AuthUser, OptionalAuthUser},
     models::{
-        ApiResponse, AppVersionConfig, AuthResponse, CopyRecipeResponse, CreateCommentRequest,
+        ApiResponse, AppVersionConfig, AuthResponse, ChangePasswordRequest, CopyRecipeResponse, CreateCommentRequest,
         CreateFeedbackRequest, CreateSocialPostRequest, Feedback, FeedbackQuery, FeedbackStats,
         LikePostRequest, LikePostResponse, LoginRequest, RegisterRequest, SocialComment,
         SocialFeedQuery, SocialPost, SocialPostResponse, UpdateAction,
@@ -324,6 +324,119 @@ pub async fn get_me(
         )
             .into_response(),
     }
+}
+
+pub async fn change_password(
+    State(pool): State<PgPool>,
+    AuthUser(claims): AuthUser,
+    Json(payload): Json<ChangePasswordRequest>,
+) -> Response {
+    let user_id = match Uuid::parse_str(&claims.sub) {
+        Ok(id) => id,
+        Err(_) => {
+            return (
+                StatusCode::BAD_REQUEST,
+                Json(json!({
+                    "success": false,
+                    "message": "ID user tidak valid."
+                })),
+            )
+                .into_response();
+        }
+    };
+
+    let user_opt: Option<User> = match sqlx::query_as::<_, User>("SELECT * FROM users WHERE id = $1")
+        .bind(user_id)
+        .fetch_optional(&pool)
+        .await
+    {
+        Ok(u) => u,
+        Err(e) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({
+                    "success": false,
+                    "message": format!("Database error: {}", e)
+                })),
+            )
+                .into_response();
+        }
+    };
+
+    let user = match user_opt {
+        Some(u) => u,
+        None => {
+            return (
+                StatusCode::NOT_FOUND,
+                Json(json!({
+                    "success": false,
+                    "message": "User tidak ditemukan."
+                })),
+            )
+                .into_response();
+        }
+    };
+
+    if !verify_password(&payload.current_password, &user.password_hash) {
+        return (
+            StatusCode::BAD_REQUEST,
+            Json(json!({
+                "success": false,
+                "message": "Password saat ini tidak sesuai."
+            })),
+        )
+            .into_response();
+    }
+
+    if payload.new_password.len() < 6 {
+        return (
+            StatusCode::BAD_REQUEST,
+            Json(json!({
+                "success": false,
+                "message": "Password baru minimal 6 karakter."
+            })),
+        )
+            .into_response();
+    }
+
+    let new_hash = match hash_password(&payload.new_password) {
+        Ok(h) => h,
+        Err(e) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({
+                    "success": false,
+                    "message": format!("Gagal memproses password: {}", e)
+                })),
+            )
+                .into_response();
+        }
+    };
+
+    if let Err(e) = sqlx::query("UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2")
+        .bind(&new_hash)
+        .bind(user_id)
+        .execute(&pool)
+        .await
+    {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({
+                "success": false,
+                "message": format!("Gagal mengupdate password di database: {}", e)
+            })),
+        )
+            .into_response();
+    }
+
+    (
+        StatusCode::OK,
+        Json(json!({
+            "success": true,
+            "message": "Password berhasil diubah!"
+        })),
+    )
+        .into_response()
 }
 
 pub async fn admin_get_users(

@@ -124,6 +124,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/api/v1/social/posts/:id/copy-recipe", post(handlers::copy_social_post_recipe))
         // Authenticated user endpoints
         .route("/api/auth/me", get(handlers::get_me))
+        .route("/api/auth/change-password", post(handlers::change_password))
         // Admin endpoints (User Approval)
         .route("/api/admin/users", get(handlers::admin_get_users))
         .route("/api/admin/users/:id/accept", post(handlers::admin_accept_user))
