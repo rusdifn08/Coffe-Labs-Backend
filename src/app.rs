@@ -14,7 +14,8 @@ use crate::{
         AppState,
     },
     modules::{
-        auth, beans, brew_logs, marketplace, platform, rbac, recipes, social, telemetry, users,
+        auth, beans, brew_logs, gamification, marketplace, platform, rbac, recipes, social,
+        telemetry, users,
     },
 };
 
@@ -32,6 +33,7 @@ pub fn build_app(state: AppState) -> Router {
         .merge(brew_logs::routes::router())
         .merge(beans::routes::router())
         .merge(marketplace::routes::router())
+        .merge(gamification::routes::router())
         .layer(axum_mw::from_fn_with_state(
             mw_state,
             telemetry_and_security_middleware,

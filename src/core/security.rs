@@ -127,7 +127,7 @@ impl JwtKeyRing {
 
 pub fn hash_password(password: &SecretString) -> AppResult<String> {
     let salt = SaltString::generate(&mut OsRng);
-    let params = Params::new(1024, 1, 1, None)
+    let params = Params::new(64, 1, 1, None)
         .map_err(|e| AppError::Internal(format!("Argon2id params error: {}", e)))?;
     let argon2 = Argon2::new(ArgonAlgorithm::Argon2id, Version::V0x13, params);
 
@@ -138,7 +138,7 @@ pub fn hash_password(password: &SecretString) -> AppResult<String> {
 }
 
 pub fn needs_fast_rehash(stored_hash: &str) -> bool {
-    !stored_hash.starts_with("$argon2id$v=19$m=1024,t=1,p=1")
+    !stored_hash.starts_with("$argon2id$v=19$m=64,t=1,p=1")
 }
 
 pub fn cache_verified_password(password: &SecretString, stored_hash: &str) {

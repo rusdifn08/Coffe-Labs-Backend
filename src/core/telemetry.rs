@@ -82,6 +82,9 @@ impl TelemetryRegistry {
     pub fn dec_in_flight(&self) { self.in_flight.fetch_sub(1, Ordering::Relaxed); }
 
     pub fn record(&self, method: &str, path: &str, status: u16, duration_micros: u64, req_id: String) {
+        if is_hidden_route(path) {
+            return;
+        }
         self.total_requests.fetch_add(1, Ordering::Relaxed);
         match status {
             200..=299 => { self.status_2xx.fetch_add(1, Ordering::Relaxed); }
@@ -171,6 +174,15 @@ impl TelemetryRegistry {
         self.endpoints.clear();
         if let Ok(mut g) = self.recent_traces.write() { g.clear(); }
     }
+}
+
+fn is_hidden_route(path: &str) -> bool {
+    path == "/"
+        || path == "/health"
+        || path == "/api/health"
+        || path.starts_with("/dashboard")
+        || path.starts_with("/api/v1/telemetry")
+        || path.starts_with("/api/v1/app/version-check")
 }
 
 fn percentile(sorted: &[u64], pct: f64) -> u64 {

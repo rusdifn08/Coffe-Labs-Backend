@@ -19,6 +19,7 @@ pub fn get_service_catalog() -> Vec<ServiceModuleInfo> {
         ("beans", "Curated Beans, AI Dial-In & Radar", "/api/beans", "Roastery Bean Catalog, AI Barista Pour Schedule, Bean Radar", "ValidatedJson DTO"),
         ("marketplace", "Roastery Marketplace & Vouchers", "/api/v1/marketplace", "Specialty Coffee Cart, Vouchers (COFFEEFIRST/BARISTA20), Thermal Orders", "Zero-Trust Checkout"),
         ("platform", "Hybrid 3-Tier Version Gatekeeper", "/api/v1/app/version-check", "Shorebird OTA Patch, Store Update & User Feedback System", "RwLock In-Memory Cache"),
+        ("gamification", "Barista Mastery Gamification & Anti-Cheat", "/api/v1/gamification", "XP Curve, Daily Streak Shield, 20 Rive Badges (RoaringBitmap), Moka Leaderboard", "Anti-Cheat + ULID Ledger"),
         ("telemetry", "Real-Time APM & Latency Dashboard", "/dashboard", "Per-API P50/P95/P99 Response Time, RPS, Trace Stream", "Lock-Free DashMap"),
     ];
 

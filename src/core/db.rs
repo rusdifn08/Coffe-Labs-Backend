@@ -36,8 +36,10 @@ pub async fn init_db(database_url: &SecretString) -> AppResult<PgPool> {
 
     info!("✅ Koneksi NeonDB berhasil! Menjalankan migrasi skema & indeks...");
     migrations::run_migrations(&pool).await?;
+    crate::modules::gamification::services::badges_seed::init_gamification_schema_and_badges(&pool).await?;
     seeds::run_seeds(&pool).await?;
     crate::modules::auth::repository::preload_users_cache(&pool).await;
+    crate::modules::gamification::services::streak_service::spawn_gamification_cron_jobs(pool.clone()).await;
 
     Ok(pool)
 }

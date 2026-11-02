@@ -36,6 +36,10 @@ impl AccountTier {
             Self::Business => "plan_coffe_labs_business",
         }
     }
+
+    pub fn is_at_least(&self, min: Self) -> bool {
+        *self >= min
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, ToSchema)]

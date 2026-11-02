@@ -63,3 +63,11 @@ src/
         │   └── post_repo.rs
         ├── dto.rs
         └── models.rs
+```
+
+---
+
+## 7. Gamification & Anti-Exploit Standards
+1. **Idempotent XP Claims:** Every endpoint that grants XP or unlocks achievements MUST require an `X-Idempotency-Key` header or signed session token (`brew_session_id`) validated against `xp_ledger_transactions`.
+2. **Server-Authoritative Math:** The Flutter client NEVER calculates or submits XP values. The client only submits verifiable domain events (e.g., `BrewSessionCompleted { session_id, actual_duration_ms }`), and the Rust `GamificationService` computes XP and tier multipliers (`Trial`: 1.0x, `Pro`: 1.5x, `Business`: 2.0x) inside a single SQLx database transaction (`tx.begin()`).
+3. **Non-Blocking Audio Mixing (Flutter):** Gamification SFX (`just_audio`) must always use audio ducking (`mixWithOthers`) so celebratory sounds never interrupt active `flutter_tts` brewing instructions.

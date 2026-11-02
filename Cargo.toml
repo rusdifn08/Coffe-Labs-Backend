@@ -21,11 +21,15 @@ tower-http = { version = "0.6", features = [
     "catch-panic",
 ] }
 
-# Memory Allocator & Zero-Copy Optimization
+# Memory Allocator, Concurrent Cache & Zero-Copy Optimization
 mimalloc = { version = "0.1", default-features = false }
 bytes = "1.9"
 compact_str = { version = "0.8", features = ["serde"] }
 dashmap = "6.1"
+moka = { version = "0.12", features = ["future"] }
+roaring = "0.10"
+ulid = { version = "1.1", features = ["serde"] }
+tokio-cron-scheduler = "0.13"
 
 # Serverless Database (NeonDB Optimized)
 sqlx = { version = "0.8", features = [
