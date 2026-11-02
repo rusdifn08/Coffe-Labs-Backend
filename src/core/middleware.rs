@@ -32,7 +32,7 @@ pub struct SecurityRateLimiter {
 
 impl SecurityRateLimiter {
     pub fn new(max_per_sec: u64, burst: u32) -> Self {
-        let max_per_window = ((max_per_sec as u32).saturating_mul(10)).max(burst);
+        let max_per_window = ((max_per_sec as u32).saturating_mul(20)).max(burst).max(2000);
         Self {
             buckets: Arc::new(DashMap::new()),
             max_per_window,
@@ -87,9 +87,11 @@ pub fn attach_governor_layer<S>(
 where
     S: Clone + Send + Sync + 'static,
 {
+    let replenish_ms = (1000 / per_second.max(1)).clamp(1, 10);
+    let effective_burst = burst_size.max(5000);
     if let Some(conf) = GovernorConfigBuilder::default()
-        .per_second(per_second.max(1))
-        .burst_size(burst_size.max(10))
+        .per_millisecond(replenish_ms)
+        .burst_size(effective_burst)
         .key_extractor(GlobalKeyExtractor)
         .finish()
     {
@@ -119,10 +121,20 @@ pub async fn telemetry_and_security_middleware(
         .get("x-forwarded-for")
         .or_else(|| req.headers().get("x-real-ip"))
         .and_then(|v| v.to_str().ok())
+        .and_then(|s| s.split(',').next())
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty())
         .unwrap_or("global_client")
         .to_string();
 
-    if !path.starts_with("/dashboard") && !path.starts_with("/api/v1/telemetry") {
+    let is_exempt = path == "/"
+        || path == "/health"
+        || path == "/api/health"
+        || path.starts_with("/dashboard")
+        || path.starts_with("/api/v1/telemetry")
+        || path.starts_with("/api/v1/app/version-check");
+
+    if !is_exempt {
         limiter.check_key(&client_key)?;
     }
 

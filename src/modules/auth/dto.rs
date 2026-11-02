@@ -8,7 +8,7 @@ use crate::modules::auth::models::UserSummary;
 pub struct RegisterRequest {
     #[validate(length(min = 3, max = 50, message = "Username minimal harus 3 karakter dan maksimal 50 karakter."))]
     pub username: String,
-    #[validate(length(min = 6, max = 128, message = "Password minimal harus 6 karakter."))]
+    #[validate(length(min = 4, max = 128, message = "Password minimal harus 4 karakter."))]
     pub password: String,
     #[validate(length(min = 1, max = 100, message = "Nama lengkap tidak boleh kosong."))]
     pub full_name: String,
@@ -38,7 +38,7 @@ pub struct RefreshTokenRequest {
 pub struct ChangePasswordRequest {
     #[validate(length(min = 1, max = 128, message = "Password saat ini diperlukan."))]
     pub current_password: String,
-    #[validate(length(min = 6, max = 128, message = "Password baru minimal 6 karakter."))]
+    #[validate(length(min = 4, max = 128, message = "Password baru minimal 4 karakter."))]
     pub new_password: String,
 }
 

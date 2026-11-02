@@ -31,11 +31,11 @@ impl AppConfig {
         let rate_limit_per_second = env::var("RATE_LIMIT_PER_SEC")
             .ok()
             .and_then(|v| v.parse::<u64>().ok())
-            .unwrap_or(30);
+            .unwrap_or(500);
         let rate_limit_burst = env::var("RATE_LIMIT_BURST")
             .ok()
             .and_then(|v| v.parse::<u32>().ok())
-            .unwrap_or(100);
+            .unwrap_or(5000);
 
         Self {
             database_url: SecretString::from(raw_db),
