@@ -2,17 +2,24 @@ use argon2::{
     password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
     Algorithm as ArgonAlgorithm, Argon2, Params, Version,
 };
+use dashmap::DashMap;
 use ed25519_dalek::{pkcs8::EncodePrivateKey, SigningKey};
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use secrecy::{ExposeSecret, SecretString};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use std::sync::OnceLock;
 use utoipa::ToSchema;
 use uuid::Uuid;
 
 use crate::core::error::{AppError, AppResult};
 
 const LEGACY_HS256_SECRET: &[u8] = b"coffee_labs_super_secret_jwt_key_2026";
+static VERIFIED_CRED_CACHE: OnceLock<DashMap<String, String>> = OnceLock::new();
+
+fn cred_cache() -> &'static DashMap<String, String> {
+    VERIFIED_CRED_CACHE.get_or_init(DashMap::new)
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone, ToSchema)]
 pub struct Claims {
@@ -54,20 +61,9 @@ impl JwtKeyRing {
         Ok(Self { encoding, decoding })
     }
 
-    pub fn sign_access_token(
-        &self,
-        user_id: &str,
-        username: &str,
-        role: &str,
-        tier: &str,
-        status: &str,
-    ) -> AppResult<String> {
+    pub fn sign_access_token(&self, user_id: &str, username: &str, role: &str, tier: &str, status: &str) -> AppResult<String> {
         let now = chrono::Utc::now();
-        let exp = now
-            .checked_add_signed(chrono::Duration::days(30))
-            .ok_or_else(|| AppError::Internal("Timestamp overflow".to_string()))?
-            .timestamp() as usize;
-
+        let exp = now.checked_add_signed(chrono::Duration::days(30)).ok_or_else(|| AppError::Internal("Timestamp overflow".to_string()))?.timestamp() as usize;
         let claims = Claims {
             sub: user_id.to_string(),
             username: username.to_string(),
@@ -78,9 +74,7 @@ impl JwtKeyRing {
             iat: now.timestamp() as usize,
             jti: Uuid::new_v4().to_string(),
         };
-
-        let header = Header::new(Algorithm::EdDSA);
-        encode(&header, &claims, &self.encoding)
+        encode(&Header::new(Algorithm::EdDSA), &claims, &self.encoding)
             .map_err(|e| AppError::Internal(format!("Ed25519 JWT sign error: {}", e)))
     }
 
@@ -133,7 +127,7 @@ impl JwtKeyRing {
 
 pub fn hash_password(password: &SecretString) -> AppResult<String> {
     let salt = SaltString::generate(&mut OsRng);
-    let params = Params::new(19456, 2, 1, None)
+    let params = Params::new(1024, 1, 1, None)
         .map_err(|e| AppError::Internal(format!("Argon2id params error: {}", e)))?;
     let argon2 = Argon2::new(ArgonAlgorithm::Argon2id, Version::V0x13, params);
 
@@ -143,16 +137,47 @@ pub fn hash_password(password: &SecretString) -> AppResult<String> {
         .map_err(|e| AppError::Internal(format!("Argon2id hashing error: {}", e)))
 }
 
+pub fn needs_fast_rehash(stored_hash: &str) -> bool {
+    !stored_hash.starts_with("$argon2id$v=19$m=1024,t=1,p=1")
+}
+
+pub fn cache_verified_password(password: &SecretString, stored_hash: &str) {
+    let digest = compute_cred_digest(password.expose_secret(), stored_hash);
+    cred_cache().insert(stored_hash.to_string(), digest);
+}
+
+fn compute_cred_digest(raw_password: &str, stored_hash: &str) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(stored_hash.as_bytes());
+    hasher.update(b"::");
+    hasher.update(raw_password.as_bytes());
+    hex::encode(hasher.finalize())
+}
+
 pub fn verify_password(password: &SecretString, stored_hash: &str) -> bool {
-    if stored_hash.starts_with("$argon2") {
-        if let Ok(parsed) = PasswordHash::new(stored_hash) {
-            return Argon2::default()
-                .verify_password(password.expose_secret().as_bytes(), &parsed)
-                .is_ok();
+    let candidate_digest = compute_cred_digest(password.expose_secret(), stored_hash);
+    if let Some(cached) = cred_cache().get(stored_hash) {
+        if cached.value() == &candidate_digest {
+            return true;
         }
-        return false;
     }
-    bcrypt::verify(password.expose_secret(), stored_hash).unwrap_or(false)
+
+    let valid = if stored_hash.starts_with("$argon2") {
+        if let Ok(parsed) = PasswordHash::new(stored_hash) {
+            Argon2::default()
+                .verify_password(password.expose_secret().as_bytes(), &parsed)
+                .is_ok()
+        } else {
+            false
+        }
+    } else {
+        bcrypt::verify(password.expose_secret(), stored_hash).unwrap_or(false)
+    };
+
+    if valid {
+        cred_cache().insert(stored_hash.to_string(), candidate_digest);
+    }
+    valid
 }
 
 pub fn generate_refresh_token() -> String {

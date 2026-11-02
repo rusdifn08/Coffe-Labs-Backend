@@ -1,5 +1,10 @@
 use chrono::{Duration, Utc};
+use dashmap::DashMap;
 use sqlx::PgPool;
+use std::{
+    sync::OnceLock,
+    time::{Duration as StdDuration, Instant},
+};
 use uuid::Uuid;
 
 use crate::{
@@ -8,21 +13,59 @@ use crate::{
 };
 
 const USER_COLS: &str = "id, username, password_hash, full_name, role, status, tier, avatar_url, created_at, updated_at";
+static USER_ROW_CACHE: OnceLock<DashMap<String, (UserRow, Instant)>> = OnceLock::new();
+
+fn user_cache() -> &'static DashMap<String, (UserRow, Instant)> {
+    USER_ROW_CACHE.get_or_init(DashMap::new)
+}
+
+pub fn put_user_cache(user: &UserRow) {
+    user_cache().insert(user.username.to_lowercase(), (user.clone(), Instant::now()));
+}
+
+pub fn invalidate_user_cache_all() {
+    user_cache().clear();
+}
+
+pub async fn preload_users_cache(pool: &PgPool) {
+    let q = format!("SELECT {} FROM users LIMIT 500", USER_COLS);
+    if let Ok(rows) = sqlx::query_as::<_, UserRow>(&q).fetch_all(pool).await {
+        let now = Instant::now();
+        for u in rows {
+            user_cache().insert(u.username.to_lowercase(), (u, now));
+        }
+    }
+}
 
 pub async fn exists_by_username(pool: &PgPool, username: &str) -> AppResult<bool> {
+    let key = username.to_lowercase();
+    if let Some(entry) = user_cache().get(&key) {
+        if entry.value().1.elapsed() < StdDuration::from_secs(180) {
+            return Ok(true);
+        }
+    }
     let exists = sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM users WHERE username = $1)")
-        .bind(username)
+        .bind(&key)
         .fetch_one(pool)
         .await?;
     Ok(exists)
 }
 
 pub async fn find_by_username(pool: &PgPool, username: &str) -> AppResult<Option<UserRow>> {
+    let key = username.to_lowercase();
+    if let Some(entry) = user_cache().get(&key) {
+        if entry.value().1.elapsed() < StdDuration::from_secs(180) {
+            return Ok(Some(entry.value().0.clone()));
+        }
+    }
     let q = format!("SELECT {} FROM users WHERE username = $1", USER_COLS);
     let user = sqlx::query_as::<_, UserRow>(&q)
-        .bind(username)
+        .bind(&key)
         .fetch_optional(pool)
         .await?;
+    if let Some(ref u) = user {
+        put_user_cache(u);
+    }
     Ok(user)
 }
 
@@ -55,6 +98,7 @@ pub async fn create_user(
         .bind(avatar_url)
         .fetch_one(pool)
         .await?;
+    put_user_cache(&user);
     Ok(user)
 }
 
@@ -64,6 +108,12 @@ pub async fn update_password(pool: &PgPool, user_id: Uuid, new_hash: &str) -> Ap
         .bind(user_id)
         .execute(pool)
         .await?;
+    for mut item in user_cache().iter_mut() {
+        if item.value().0.id == user_id {
+            item.value_mut().0.password_hash = new_hash.to_string();
+            item.value_mut().1 = Instant::now();
+        }
+    }
     Ok(())
 }
 

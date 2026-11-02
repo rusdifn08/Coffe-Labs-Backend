@@ -23,15 +23,19 @@ pub async fn get_user_stats(pool: &PgPool) -> AppResult<AdminUserStats> {
 }
 
 pub async fn accept_user(pool: &PgPool, user_id: Uuid) -> AppResult<UserSummary> {
-    repository::update_user_status(pool, user_id, "approved", false)
+    let res = repository::update_user_status(pool, user_id, "approved", false)
         .await?
-        .ok_or_else(|| UsersError::UserNotFoundOrProtected.into())
+        .ok_or_else(|| UsersError::UserNotFoundOrProtected.into());
+    crate::modules::auth::repository::invalidate_user_cache_all();
+    res
 }
 
 pub async fn decline_user(pool: &PgPool, user_id: Uuid) -> AppResult<UserSummary> {
-    repository::update_user_status(pool, user_id, "declined", true)
+    let res = repository::update_user_status(pool, user_id, "declined", true)
         .await?
-        .ok_or_else(|| UsersError::UserNotFoundOrProtected.into())
+        .ok_or_else(|| UsersError::UserNotFoundOrProtected.into());
+    crate::modules::auth::repository::invalidate_user_cache_all();
+    res
 }
 
 pub async fn delete_user(pool: &PgPool, user_id: Uuid) -> AppResult<()> {
@@ -39,6 +43,7 @@ pub async fn delete_user(pool: &PgPool, user_id: Uuid) -> AppResult<()> {
     if affected == 0 {
         return Err(UsersError::UserNotFoundOrProtected.into());
     }
+    crate::modules::auth::repository::invalidate_user_cache_all();
     Ok(())
 }
 

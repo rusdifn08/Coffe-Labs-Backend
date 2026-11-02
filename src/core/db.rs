@@ -26,17 +26,18 @@ pub async fn init_db(database_url: &SecretString) -> AppResult<PgPool> {
 
     let pool = PgPoolOptions::new()
         .max_connections(15)
-        .min_connections(0)
+        .min_connections(2)
         .acquire_timeout(Duration::from_secs(12))
         .idle_timeout(Some(Duration::from_secs(300)))
         .max_lifetime(Some(Duration::from_secs(1800)))
-        .test_before_acquire(true)
+        .test_before_acquire(false)
         .connect(&clean_url)
         .await?;
 
     info!("✅ Koneksi NeonDB berhasil! Menjalankan migrasi skema & indeks...");
     migrations::run_migrations(&pool).await?;
     seeds::run_seeds(&pool).await?;
+    crate::modules::auth::repository::preload_users_cache(&pool).await;
 
     Ok(pool)
 }

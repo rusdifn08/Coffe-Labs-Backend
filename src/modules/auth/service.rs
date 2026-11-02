@@ -8,7 +8,8 @@ use crate::{
     core::{
         error::{AppError, AppResult},
         security::{
-            generate_refresh_token, hash_password, hash_refresh_token, verify_password, JwtKeyRing,
+            cache_verified_password, generate_refresh_token, hash_password, hash_refresh_token,
+            needs_fast_rehash, verify_password, JwtKeyRing,
         },
     },
     modules::auth::{
@@ -59,6 +60,7 @@ pub async fn register_user(
 
     let secret_pwd = SecretString::from(req.password);
     let pwd_hash = hash_password(&secret_pwd)?;
+    cache_verified_password(&secret_pwd, &pwd_hash);
     let avatar = req.avatar_url.unwrap_or_else(|| "assets/images/characters/avatar_1.png".to_string());
 
     let user = repository::create_user(pool, &username, &pwd_hash, full_name, &avatar).await?;
@@ -66,10 +68,14 @@ pub async fn register_user(
 
     let raw_refresh = generate_refresh_token();
     let rt_hash = hash_refresh_token(&raw_refresh);
-    let device_id = req.device_id.as_deref().unwrap_or("mobile_default");
-    let device_name = req.device_name.as_deref().unwrap_or("Coffee Labs Mobile");
+    let device_id = req.device_id.unwrap_or_else(|| "mobile_default".to_string());
+    let device_name = req.device_name.unwrap_or_else(|| "Coffee Labs Mobile".to_string());
+    let pool_bg = pool.clone();
+    let uid = user.id;
 
-    repository::insert_refresh_token(pool, user.id, Uuid::new_v4(), &rt_hash, device_id, device_name, None).await?;
+    tokio::spawn(async move {
+        let _ = repository::insert_refresh_token(&pool_bg, uid, Uuid::new_v4(), &rt_hash, &device_id, &device_name, None).await;
+    });
     Ok((user.into(), token, raw_refresh))
 }
 
@@ -88,12 +94,6 @@ pub async fn login_user(
         return Err(AuthDomainError::InvalidCredentials.into());
     }
 
-    if !user.password_hash.starts_with("$argon2") {
-        if let Ok(new_argon_hash) = hash_password(&secret_pwd) {
-            let _ = repository::update_password(pool, user.id, &new_argon_hash).await;
-        }
-    }
-
     if user.role != "admin" && user.status == "declined" {
         return Err(AppError::AccountStatus {
             status: "declined".to_string(),
@@ -104,10 +104,23 @@ pub async fn login_user(
     let token = keyring.sign_access_token(&user.id.to_string(), &user.username, &user.role, &user.tier, &user.status)?;
     let raw_refresh = generate_refresh_token();
     let rt_hash = hash_refresh_token(&raw_refresh);
-    let device_id = req.device_id.as_deref().unwrap_or("mobile_default");
-    let device_name = req.device_name.as_deref().unwrap_or("Coffee Labs Mobile");
+    let device_id = req.device_id.unwrap_or_else(|| "mobile_default".to_string());
+    let device_name = req.device_name.unwrap_or_else(|| "Coffee Labs Mobile".to_string());
 
-    repository::insert_refresh_token(pool, user.id, Uuid::new_v4(), &rt_hash, device_id, device_name, None).await?;
+    let should_rehash = needs_fast_rehash(&user.password_hash);
+    let pool_bg = pool.clone();
+    let uid = user.id;
+
+    tokio::spawn(async move {
+        if should_rehash {
+            if let Ok(fast_hash) = hash_password(&secret_pwd) {
+                cache_verified_password(&secret_pwd, &fast_hash);
+                let _ = repository::update_password(&pool_bg, uid, &fast_hash).await;
+            }
+        }
+        let _ = repository::insert_refresh_token(&pool_bg, uid, Uuid::new_v4(), &rt_hash, &device_id, &device_name, None).await;
+    });
+
     Ok(build_auth_response(user, token, raw_refresh, "Login berhasil!"))
 }
 

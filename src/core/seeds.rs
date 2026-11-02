@@ -4,7 +4,10 @@ use sqlx::PgPool;
 use tracing::info;
 use uuid::Uuid;
 
-use crate::core::{error::AppResult, security::hash_password};
+use crate::core::{
+    error::AppResult,
+    security::{cache_verified_password, hash_password, needs_fast_rehash},
+};
 
 pub async fn run_seeds(pool: &PgPool) -> AppResult<()> {
     seed_admin(pool).await?;
@@ -21,9 +24,10 @@ async fn seed_admin(pool: &PgPool) -> AppResult<()> {
         .fetch_one(pool)
         .await?;
 
+    let pwd = SecretString::from("121234aa".to_string());
     if !exists {
-        let pwd = SecretString::from("121234aa".to_string());
         let password_hash = hash_password(&pwd)?;
+        cache_verified_password(&pwd, &password_hash);
         sqlx::query(
             r#"INSERT INTO users (username, password_hash, full_name, role, status, tier, avatar_url)
                VALUES ($1, $2, 'Admin Rusdi', 'admin', 'approved', 'business', 'assets/images/characters/avatar_1.png')"#,
@@ -34,6 +38,25 @@ async fn seed_admin(pool: &PgPool) -> AppResult<()> {
         .await?;
         info!("🔐 Akun Admin default dibuat: {}", admin_username);
     } else {
+        let existing_hash: Option<String> = sqlx::query_scalar("SELECT password_hash FROM users WHERE username = $1")
+            .bind(admin_username)
+            .fetch_optional(pool)
+            .await?;
+        if let Some(h) = existing_hash {
+            if needs_fast_rehash(&h) {
+                if let Ok(fast_hash) = hash_password(&pwd) {
+                    cache_verified_password(&pwd, &fast_hash);
+                    let _ = sqlx::query("UPDATE users SET password_hash = $1, role = 'admin', status = 'approved', tier = 'business' WHERE username = $2")
+                        .bind(&fast_hash)
+                        .bind(admin_username)
+                        .execute(pool)
+                        .await;
+                    return Ok(());
+                }
+            } else {
+                cache_verified_password(&pwd, &h);
+            }
+        }
         sqlx::query("UPDATE users SET role = 'admin', status = 'approved', tier = 'business' WHERE username = $1")
             .bind(admin_username)
             .execute(pool)
