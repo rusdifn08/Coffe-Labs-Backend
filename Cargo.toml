@@ -1,20 +1,73 @@
 [package]
 name = "coffe-labs-backend"
-version = "0.1.0"
+version = "2.0.0"
 edition = "2021"
+authors = ["Coffee Labs Principal Systems Architecture Team"]
+description = "Enterprise High-Performance Rust Axum Backend for Coffee Labs Mobile & Observability Dashboard"
 
 [dependencies]
-axum = "0.7"
-tokio = { version = "1", features = ["full"] }
-tower = "0.4"
-tower-http = { version = "0.5", features = ["cors", "trace"] }
+# Core & Async Runtime
+tokio = { version = "1.43", features = ["full"] }
+axum = { version = "0.8", features = ["macros"] }
+tower = { version = "0.5", features = ["util", "timeout", "limit"] }
+tower-http = { version = "0.6", features = [
+    "cors",
+    "trace",
+    "compression-br",
+    "compression-gzip",
+    "limit",
+    "timeout",
+    "request-id",
+    "catch-panic",
+] }
+
+# Memory Allocator & Zero-Copy Optimization
+mimalloc = { version = "0.1", default-features = false }
+bytes = "1.9"
+compact_str = { version = "0.8", features = ["serde"] }
+dashmap = "6.1"
+
+# Serverless Database (NeonDB Optimized)
+sqlx = { version = "0.8", features = [
+    "runtime-tokio",
+    "tls-rustls",
+    "postgres",
+    "uuid",
+    "chrono",
+    "json",
+    "macros",
+] }
+
+# Enterprise Security, Cryptography & Anti-Hack
+argon2 = { version = "0.5", features = ["std"] }
+bcrypt = "0.15"
+jsonwebtoken = "9.3"
+ed25519-dalek = { version = "2.1", features = ["rand_core", "pkcs8", "pem"] }
+rand = "0.8"
+sha2 = "0.10"
+hex = "0.4"
+base64 = "0.22"
+tower_governor = { version = "0.7", features = ["axum"] }
+secrecy = { version = "0.10", features = ["serde"] }
+validator = { version = "0.20", features = ["derive"] }
+garde = { version = "0.20", features = ["derive"] }
+
+# Serialization, Time & Identifiers
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "macros"] }
-bcrypt = "0.15"
-jsonwebtoken = "9.2"
 chrono = { version = "0.4", features = ["serde"] }
-uuid = { version = "1", features = ["v4", "serde"] }
-tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1.11", features = ["v4", "serde"] }
 dotenvy = "0.15"
+
+# Observability, OpenAPI & Structured Error Handling
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+thiserror = "2.0"
+utoipa = { version = "5.3", features = ["axum_extras", "uuid", "chrono"] }
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true

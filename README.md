@@ -1,115 +1,66 @@
-# Coffe Labs Backend
+# Coffee Labs — Enterprise Rust Axum Backend v2.0.0
 
-Backend API performa tinggi untuk ekosistem **Coffee Labs**, dibangun menggunakan **Rust**, **Axum**, **SQLx**, dan **PostgreSQL (Neon Serverless)**.
-
----
-
-## 🚀 Fitur Utama
-
-1. **Authentication & Multi-Role Approval System**
-   - Registrasi & Login pengguna dengan hashing aman (**Argon2**) dan **JWT**.
-   - Sistem persetujuan akun admin oleh super admin (`pending` -> `approved` / `rejected`).
-   - Proteksi middleware JWT pada endpoint admin dan fitur privat.
-
-2. **The Hybrid 3-Tier Gatekeeper & Dynamic App Updates**
-   - Semantic Versioning Engine: Cek versi aplikasi mobile secara dinamis (`/api/v1/version-check`).
-   - Tiga tingkatan pembaruan:
-     - **Tier 1 (OTA Instant)**: Shorebird code push untuk bug fix darurat.
-     - **Tier 2 (Direct In-App APK)**: Download APK langsung di dalam aplikasi untuk pembaruan minor.
-     - **Tier 3 (External Store)**: Arahkan ke Google Play Store / App Store untuk pembaruan mayor arsitektur.
-   - Admin CRUD dashboard untuk konfigurasi versi dan toggle mode pemeliharaan (*maintenance mode*).
-
-3. **User Feedback & Bug Reporting System**
-   - Pengiriman feedback, rating, dan laporan kendala dari pengguna aplikasi mobile.
-   - Manajemen status feedback oleh admin (`open`, `in_progress`, `resolved`, `dismissed`).
-
-4. **Social Coffee Community & Recipe Sharing Platform**
-   - Linimasa komunitas dengan snapshot resep seduh lengkap (rasio, suhu, berat kopi & air, tasting notes).
-   - Fitur **Copy Recipe** untuk menduplikasi resep komunitas langsung ke resep kustom pengguna.
-   - Interaksi sosial: Toggle Like/Unlike dengan counter atomik, dan sistem komentar komunitas.
+High-performance, ultra-secure, low-memory **Rust (Axum 0.8)** backend serving the **Coffee Labs Flutter Mobile Application** and an integrated **Real-Time APM & API Response Time Observability Dashboard**, backed by **Serverless NeonDB PostgreSQL**.
 
 ---
 
-## 🛠️ Tech Stack
+## 🏛️ Core Architecture & Engineering Pillars
 
-* **Bahasa**: [Rust](https://www.rust-lang.org/) (Edition 2021)
-* **Web Framework**: [Axum](https://github.com/tokio-rs/axum) (Tokio asynchronous runtime)
-* **Database & ORM**: [SQLx](https://github.com/launchbadge/sqlx) dengan PostgreSQL Neon
-* **Keamanan**: Argon2 password hashing, JSON Web Tokens (JWT)
-* **Serialisasi**: Serde & Serde JSON
-* **Logging & Tracing**: `tracing` & `tracing-subscriber`
+1. **Mechanical Sympathy & Low Memory Footprint**
+   - **`mimalloc`** (`#[global_allocator]`) for minimal heap fragmentation and extreme multi-core concurrency.
+   - **Brotli (`br`) & Gzip** response compression, `bytes`, and lock-free `DashMap` telemetry metrics.
+   - **NeonDB Serverless Optimized Pool**: `min_connections = 0` (scale-to-zero support), `max_connections = 15`, `acquire_timeout = 12s` (cold-start resilience), `idle_timeout = 300s`, `max_lifetime = 1800s`, and `test_before_acquire(true)`.
+
+2. **Defense-in-Depth Security (Zero-Trust)**
+   - **Argon2id** (`v0x13`) password hashing with transparent migration from legacy hashes.
+   - **Asymmetric Ed25519 (`EdDSA`)** JWT signing & verification + **Refresh Token Family & Reuse Detection** (SHA-256 hashed refresh tokens in NeonDB; token reuse immediately revokes the entire device family).
+   - **Zero-Trust Payload Validation**: Custom `ValidatedJson<T>` Axum extractor enforcing `validator` rules before reaching any handler.
+   - **Rate Limiting**: `tower_governor` + sliding-window IP guard (`429 Too Many Requests`).
+   - **Memory-Safe Secrets**: `secrecy::SecretString` wrapping database URLs, passwords, and cryptographic seeds.
+
+3. **Extreme Modularity (< 200 LOC Law)**
+   - Every domain module is strictly isolated into `routes.rs`, `handlers.rs`, `service.rs`, `repository.rs`, `dto.rs`, `models.rs`, and `error.rs`.
+   - Zero `.unwrap()` or `.expect()` in production pathways; all errors map cleanly into a centralized `AppError` (`thiserror`) without leaking SQL internals.
 
 ---
 
-## 📋 Struktur Direktori
+## 📊 Real-Time Backend Observability Dashboard (`/dashboard`)
+
+Open `http://localhost:3000/dashboard` (or `/`) in any browser to view:
+- **Live Throughput & Latency Percentiles**: Per-endpoint `Min`, `Avg`, `P50`, `P95`, `P99`, and `Max` response times in milliseconds.
+- **NeonDB Serverless Pool Health**: Live DB ping latency (ms), active/idle connection counters, and domain table row counts.
+- **HTTP Status & Security Guard Distribution**: Real-time `2xx`, `3xx`, `4xx`, and `5xx` counters + live scrolling request trace stream.
+- **1-Click API Benchmark**: Built-in benchmark runner that exercises 8 core mobile endpoints concurrently.
+- **OpenAPI 3.1 Specification**: Available at `/api/v1/openapi.json` (powered by `utoipa`).
+
+---
+
+## 📂 Modular Directory Structure
 
 ```text
-coffe-labs-backend/
-├── src/
-│   ├── main.rs            # Entry point Axum & CORS setup
-│   ├── config.rs          # Environment & konfigurasi runtime
-│   ├── db.rs              # Koneksi PostgreSQL & auto migration
-│   ├── models.rs          # Rust structs & database entity mapping
-│   ├── handlers.rs        # Route controller & business logic
-│   └── middleware.rs      # JWT Auth & Gatekeeper interceptor
-├── Cargo.toml             # Dependencies & metadata paket
-├── Cargo.lock
-├── .env.example           # Contoh konfigurasi environment
-└── README.md
+src/
+├── main.rs                      # Entrypoint ONLY: mimalloc, tracing, config, server (< 80 LOC)
+├── app.rs                       # Router composition & global Tower middleware stack
+├── core/                        # Shared infrastructure & cross-cutting concerns
+│   ├── config.rs                # Env parsing using `secrecy::SecretString`
+│   ├── db.rs                    # NeonDB PgPool setup & serverless tuning
+│   ├── migrations.rs            # Idempotent schema & composite index initialization
+│   ├── seeds.rs                 # Default Admin, Gatekeeper, Social & Curated Bean seeds
+│   ├── error.rs                 # Global `AppError` & sanitized HTTP JSON responses
+│   ├── extractors.rs            # `ValidatedJson<T>`, `AuthUser`, `AdminUser`, `RequireTier<T>`
+│   ├── middleware.rs            # `tower_governor`, Security Headers, Request ID & APM timer
+│   ├── pagination.rs            # Base64 Cursor-based pagination for mobile infinite scroll
+│   ├── security.rs              # Argon2id, Ed25519 JWT keyring, SHA-256 Refresh Token hashing
+│   └── telemetry.rs             # Lock-free DashMap endpoint latency & percentile registry
+└── modules/                     # 10 Isolated Domain Services (< 200 LOC per file)
+    ├── auth/                    # Login, Register, Ed25519 JWT, Refresh Token Family Rotation
+    ├── rbac/                    # Account Tiers (Trial, Pro, Business), Quotas & Feature Guards
+    ├── social/                  # Community Feed, Cursor Pagination, Likes, Nested Comments, Follows
+    ├── users/                   # Admin User Approval, Stats & Barista Profile/Equipment Sync
+    ├── recipes/                 # Cloud Recipe Sync, WBC/WBrC Custom Recipes & Favorites
+    ├── brew_logs/               # Brew History, Sensory Journal, Cupping & Brew Analytics
+    ├── beans/                   # Curated Roastery Beans, Bean Radar & AI Barista Dial-In Lab
+    ├── marketplace/             # Roastery Marketplace, Voucher Engine & Thermal Orders
+    ├── platform/                # Hybrid 3-Tier Version Gatekeeper (Shorebird OTA) & Feedbacks
+    └── telemetry/               # Real-Time APM Dashboard UI & OpenAPI 3.1 Specification
 ```
-
----
-
-## ⚡ Menjalankan Backend Secara Lokal
-
-### Prasyarat
-* [Rust & Cargo](https://rustup.rs/) (versi 1.75 atau lebih baru)
-* Akun PostgreSQL (misal [Neon.tech](https://neon.tech))
-
-### Langkah Menjalankan:
-1. **Clone repository**:
-   ```bash
-   git clone https://github.com/rusdifn08/Coffe-Labs-Backend.git
-   cd Coffe-Labs-Backend
-   ```
-
-2. **Siapkan file `.env`**:
-   Salin `.env.example` ke `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-   Sesuaikan `DATABASE_URL` dengan database PostgreSQL Anda.
-
-3. **Jalankan server**:
-   ```bash
-   cargo run --release
-   ```
-   Server akan otomatis melakukan migrasi skema tabel dan berjalan pada `http://0.0.0.0:3000`.
-
----
-
-## 📚 Ringkasan Endpoint API
-
-| Method | Endpoint | Keterangan |
-| :--- | :--- | :--- |
-| `GET` | `/health` | Healthcheck server status |
-| `POST` | `/api/v1/auth/register` | Pendaftaran akun pengguna baru |
-| `POST` | `/api/v1/auth/login` | Login & generate JWT token |
-| `GET` | `/api/v1/auth/users` | List akun pending (Khusus Admin) |
-| `POST` | `/api/v1/auth/users/:id/accept` | Menyetujui pendaftaran admin |
-| `POST` | `/api/v1/auth/users/:id/decline`| Menolak pendaftaran admin |
-| `GET` | `/api/v1/version-check` | Cek status versi aplikasi mobile |
-| `POST` | `/api/v1/version-configs` | Simpan/ubah konfigurasi versi (Admin) |
-| `POST` | `/api/v1/feedback` | Kirim feedback dari mobile |
-| `GET` | `/api/v1/feedback` | Ambil semua feedback (Admin) |
-| `GET` | `/api/v1/social/posts` | Linimasa feed Social Coffee |
-| `POST` | `/api/v1/social/posts` | Buat postingan & lampirkan resep |
-| `POST` | `/api/v1/social/posts/:id/like` | Toggle like postingan |
-| `GET` | `/api/v1/social/posts/:id/comments` | Ambil komentar postingan |
-| `POST` | `/api/v1/social/posts/:id/comments` | Kirim komentar pada postingan |
-| `POST` | `/api/v1/social/posts/:id/copy-recipe` | Salin resep ke koleksi pribadi |
-
----
-
-## 📄 Lisensi
-Hak Cipta © 2026 Coffee Labs. Semua hak dilindungi undang-undang.
