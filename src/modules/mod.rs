@@ -1,6 +1,7 @@
 pub mod auth;
 pub mod beans;
 pub mod brew_logs;
+pub mod business_pos;
 pub mod gamification;
 pub mod marketplace;
 pub mod platform;

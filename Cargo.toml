@@ -8,7 +8,7 @@ description = "Enterprise High-Performance Rust Axum Backend for Coffee Labs Mob
 [dependencies]
 # Core & Async Runtime
 tokio = { version = "1.43", features = ["full"] }
-axum = { version = "0.8", features = ["macros"] }
+axum = { version = "0.8", features = ["macros", "multipart"] }
 tower = { version = "0.5", features = ["util", "timeout", "limit"] }
 tower-http = { version = "0.6", features = [
     "cors",
@@ -30,6 +30,7 @@ moka = { version = "0.12", features = ["future"] }
 roaring = "0.10"
 ulid = { version = "1.1", features = ["serde"] }
 tokio-cron-scheduler = "0.13"
+image = { version = "0.25", default-features = false, features = ["png", "webp"] }
 
 # Serverless Database (NeonDB Optimized)
 sqlx = { version = "0.8", features = [

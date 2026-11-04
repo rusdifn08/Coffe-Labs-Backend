@@ -1,0 +1,23 @@
+name: Render Backend 24/7 Keep-Alive
+
+on:
+  schedule:
+    # Berjalan otomatis setiap 14 menit (Render free tier sleep setelah 15 menit inaktivitas)
+    - cron: '*/14 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-render:
+    name: Ping Coffee Labs Render Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Warmup Heartbeat Request
+        run: |
+          echo "🚀 Mengirim heartbeat ping ke Coffee Labs Render Backend..."
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 45 "https://coffe-labs-backend.onrender.com/api/health" || echo "FAILED")
+          echo "✅ Respon Backend: HTTP $HTTP_STATUS"
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "☕ Backend Aktif & Siap Melayani Request."
+          else
+            echo "⚠️ Backend sedang cold-start atau bangun dari sleep, ping tercatat di Render."
+          fi
