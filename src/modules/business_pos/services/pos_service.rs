@@ -74,6 +74,26 @@ impl BusinessPosService {
             &dto.asset_url,
             &dto.asset_format,
             dto.display_order.unwrap_or(0),
+            dto.show_in_aod.unwrap_or(true),
+            dto.show_in_pos.unwrap_or(true),
+        )
+        .await
+    }
+
+    pub async fn update_menu_item(
+        pool: &PgPool,
+        owner_id: Uuid,
+        item_id: Uuid,
+        dto: crate::modules::business_pos::dto::UpdateMenuItemDto,
+    ) -> AppResult<Option<BusinessMenuItem>> {
+        let config = BusinessPosRepository::get_or_create_config(pool, owner_id).await?;
+        BusinessPosRepository::update_menu_item(
+            pool,
+            config.id,
+            item_id,
+            dto.show_in_aod,
+            dto.show_in_pos,
+            dto.is_available,
         )
         .await
     }

@@ -10,7 +10,7 @@ use crate::core::{
     AppState,
 };
 use crate::modules::business_pos::{
-    dto::{CreateMenuItemDto, CreatePosOrderDto, UpdateBusinessConfigDto, VerifyPinDto, VerifyPinResponse},
+    dto::{CreateMenuItemDto, CreatePosOrderDto, UpdateBusinessConfigDto, UpdateMenuItemDto, VerifyPinDto, VerifyPinResponse},
     models::{BusinessMenuItem, BusinessStoreConfig, PosOrder},
     services::{AssetTransparencyValidator, BusinessPosService},
 };
@@ -55,6 +55,17 @@ pub async fn create_menu_item(
     let user_id = parse_user_id(&claims.sub)?;
     let item = BusinessPosService::add_menu_item(&state.pool, user_id, dto).await?;
     Ok(ApiResponse::ok("Menu baru berhasil ditambahkan.", item))
+}
+
+pub async fn update_menu_item(
+    State(state): State<AppState>,
+    RequireTier(claims, _): RequireTier<TierBusiness>,
+    Path(item_id): Path<Uuid>,
+    ValidatedJson(dto): ValidatedJson<UpdateMenuItemDto>,
+) -> AppResult<Json<ApiResponse<Option<BusinessMenuItem>>>> {
+    let user_id = parse_user_id(&claims.sub)?;
+    let item = BusinessPosService::update_menu_item(&state.pool, user_id, item_id, dto).await?;
+    Ok(ApiResponse::ok("Menu berhasil diperbarui.", item))
 }
 
 pub async fn delete_menu_item(

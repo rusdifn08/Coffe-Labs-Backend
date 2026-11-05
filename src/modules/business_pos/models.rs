@@ -36,6 +36,8 @@ pub struct BusinessMenuItem {
     pub has_verified_transparency: bool,
     pub display_order: i32,
     pub is_available: bool,
+    pub show_in_aod: bool,
+    pub show_in_pos: bool,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }

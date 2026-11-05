@@ -101,16 +101,44 @@ impl BusinessPosRepository {
         asset_url: &str,
         format: &str,
         order: i32,
+        show_in_aod: bool,
+        show_in_pos: bool,
     ) -> AppResult<BusinessMenuItem> {
         let item = sqlx::query_as::<_, BusinessMenuItem>(
             r#"INSERT INTO business_menu_items 
-                (store_id, name, description, category, price_cents, currency, asset_url, asset_format, display_order)
-               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                (store_id, name, description, category, price_cents, currency, asset_url, asset_format, display_order, show_in_aod, show_in_pos)
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
                RETURNING *"#
         )
         .bind(store_id).bind(name).bind(desc).bind(cat).bind(price)
         .bind(curr).bind(asset_url).bind(format).bind(order)
+        .bind(show_in_aod).bind(show_in_pos)
         .fetch_one(pool)
+        .await?;
+
+        Ok(item)
+    }
+
+    pub async fn update_menu_item(
+        pool: &PgPool,
+        store_id: Uuid,
+        item_id: Uuid,
+        show_in_aod: Option<bool>,
+        show_in_pos: Option<bool>,
+        is_available: Option<bool>,
+    ) -> AppResult<Option<BusinessMenuItem>> {
+        let item = sqlx::query_as::<_, BusinessMenuItem>(
+            r#"UPDATE business_menu_items
+               SET show_in_aod = COALESCE($3, show_in_aod),
+                   show_in_pos = COALESCE($4, show_in_pos),
+                   is_available = COALESCE($5, is_available),
+                   updated_at = NOW()
+               WHERE id = $1 AND store_id = $2
+               RETURNING *"#
+        )
+        .bind(item_id).bind(store_id)
+        .bind(show_in_aod).bind(show_in_pos).bind(is_available)
+        .fetch_optional(pool)
         .await?;
 
         Ok(item)

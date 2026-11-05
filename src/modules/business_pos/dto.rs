@@ -35,6 +35,8 @@ pub struct CreateMenuItemDto {
     pub asset_url: String,
     pub asset_format: String,
     pub display_order: Option<i32>,
+    pub show_in_aod: Option<bool>,
+    pub show_in_pos: Option<bool>,
 }
 
 #[derive(Debug, Deserialize, Validate)]
@@ -48,6 +50,8 @@ pub struct UpdateMenuItemDto {
     pub asset_format: Option<String>,
     pub display_order: Option<i32>,
     pub is_available: Option<bool>,
+    pub show_in_aod: Option<bool>,
+    pub show_in_pos: Option<bool>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]

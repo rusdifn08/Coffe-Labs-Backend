@@ -246,6 +246,8 @@ pub async fn run_migrations(pool: &PgPool) -> AppResult<()> {
         "CREATE INDEX IF NOT EXISTS idx_menu_store ON business_menu_items(store_id, display_order ASC)",
         "CREATE INDEX IF NOT EXISTS idx_pos_orders_store ON pos_orders(store_id, created_at DESC)",
         "CREATE INDEX IF NOT EXISTS idx_pos_order_items_order ON pos_order_items(order_id)",
+        "ALTER TABLE business_menu_items ADD COLUMN IF NOT EXISTS show_in_aod BOOLEAN NOT NULL DEFAULT true",
+        "ALTER TABLE business_menu_items ADD COLUMN IF NOT EXISTS show_in_pos BOOLEAN NOT NULL DEFAULT true",
     ];
 
     for sql in statements {
