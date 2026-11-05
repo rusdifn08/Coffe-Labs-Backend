@@ -65,6 +65,7 @@ uuid = { version = "1.11", features = ["v4", "serde"] }
 dotenvy = "0.15"
 aho-corasick = "1.1"
 regex = "1.11"
+strsim = "0.11"
 
 # Observability, OpenAPI & Structured Error Handling
 tracing = "0.1"

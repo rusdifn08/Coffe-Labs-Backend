@@ -36,6 +36,7 @@ pub struct RoasteryCatalogRow {
     pub created_at: DateTime<Utc>,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExtractedLexiconData {
     pub roastery: Option<String>,
