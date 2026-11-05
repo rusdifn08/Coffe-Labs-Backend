@@ -3,7 +3,7 @@ use axum::{
     Router,
 };
 use crate::core::AppState;
-use crate::modules::business_pos::handlers;
+use crate::modules::business_pos::{handlers, kiosk_handlers};
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -13,4 +13,7 @@ pub fn router() -> Router<AppState> {
         .route("/api/v1/business/menu/upload-validate", post(handlers::upload_validate_asset))
         .route("/api/v1/business/pos/orders", post(handlers::create_pos_order))
         .route("/api/v1/business/verify-pin", post(handlers::verify_pin))
+        .route("/api/v1/business/kiosk/heartbeat", post(kiosk_handlers::kiosk_heartbeat))
+        .route("/api/v1/business/kiosk/emergency-unlock", post(kiosk_handlers::emergency_unlock))
+        .route("/api/v1/business/kiosk/recovery-pin", get(kiosk_handlers::get_recovery_pin))
 }
