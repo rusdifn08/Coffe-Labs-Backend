@@ -1,4 +1,5 @@
 pub mod auth;
+pub mod bean_scanner;
 pub mod beans;
 pub mod brew_logs;
 pub mod business_pos;

@@ -334,6 +334,7 @@ dependencies = [
 name = "coffe-labs-backend"
 version = "2.0.0"
 dependencies = [
+ "aho-corasick",
  "argon2",
  "axum",
  "base64",
@@ -351,6 +352,7 @@ dependencies = [
  "mimalloc",
  "moka",
  "rand 0.8.8",
+ "regex",
  "roaring",
  "secrecy",
  "serde",
