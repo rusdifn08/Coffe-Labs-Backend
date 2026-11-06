@@ -5,6 +5,7 @@ use std::{
     sync::OnceLock,
     time::{Duration as StdDuration, Instant},
 };
+use tracing::warn;
 use uuid::Uuid;
 
 use crate::{
@@ -59,14 +60,32 @@ pub async fn find_by_username(pool: &PgPool, username: &str) -> AppResult<Option
         }
     }
     let q = format!("SELECT {} FROM users WHERE username = $1", USER_COLS);
-    let user = sqlx::query_as::<_, UserRow>(&q)
-        .bind(&key)
-        .fetch_optional(pool)
-        .await?;
-    if let Some(ref u) = user {
-        put_user_cache(u);
+
+    // Auto-retry hingga 2 kali saat koneksi serverless NeonDB mengalami cold-start/idle drop
+    let mut last_error = None;
+    for attempt in 1..=2 {
+        match sqlx::query_as::<_, UserRow>(&q)
+            .bind(&key)
+            .fetch_optional(pool)
+            .await
+        {
+            Ok(user) => {
+                if let Some(ref u) = user {
+                    put_user_cache(u);
+                }
+                return Ok(user);
+            }
+            Err(e) => {
+                warn!("⚠️ Percobaan query find_by_username ke-{} gagal: {:?}. Mencoba reconnect...", attempt, e);
+                last_error = Some(e);
+                if attempt < 2 {
+                    tokio::time::sleep(StdDuration::from_millis(200)).await;
+                }
+            }
+        }
     }
-    Ok(user)
+
+    Err(last_error.unwrap().into())
 }
 
 pub async fn find_by_id(pool: &PgPool, user_id: Uuid) -> AppResult<Option<UserRow>> {

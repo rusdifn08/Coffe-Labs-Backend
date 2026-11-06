@@ -27,10 +27,10 @@ pub async fn init_db(database_url: &SecretString) -> AppResult<PgPool> {
     let pool = PgPoolOptions::new()
         .max_connections(15)
         .min_connections(2)
-        .acquire_timeout(Duration::from_secs(12))
-        .idle_timeout(Some(Duration::from_secs(300)))
-        .max_lifetime(Some(Duration::from_secs(1800)))
-        .test_before_acquire(false)
+        .acquire_timeout(Duration::from_secs(15))
+        .idle_timeout(Some(Duration::from_secs(45)))
+        .max_lifetime(Some(Duration::from_secs(600)))
+        .test_before_acquire(true)
         .connect(&clean_url)
         .await?;
 
