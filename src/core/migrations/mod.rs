@@ -1,6 +1,7 @@
 pub mod business_schema;
 pub mod catalog_schema;
 pub mod core_schema;
+pub mod transfer_learning_schema;
 
 use sqlx::PgPool;
 use crate::core::error::AppResult;
@@ -15,6 +16,10 @@ pub async fn run_migrations(pool: &PgPool) -> AppResult<()> {
     }
 
     for sql in catalog_schema::statements() {
+        let _ = sqlx::query(sql).execute(pool).await;
+    }
+
+    for sql in transfer_learning_schema::statements() {
         let _ = sqlx::query(sql).execute(pool).await;
     }
 
