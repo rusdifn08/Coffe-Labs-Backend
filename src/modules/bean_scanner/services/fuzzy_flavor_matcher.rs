@@ -13,6 +13,10 @@ pub struct ProcessSensoryProfile {
 pub struct FuzzyFlavorMatcher;
 
 const FLAVOR_LEXICON: &[(&str, &[&str])] = &[
+    ("Watermelon", &["watermelon", "water melon", "laterrnelo", "watermelo", "semangka", "melon"]),
+    ("Banana", &["banana", "banani", "pisang"]),
+    ("Sweet Caramel", &["sweet caramel", "caramel", "karamel", "toffee"]),
+    ("Mandarin Orange", &["mandarin orange", "mandarin", "landarir )range", "landarir", "orange", "tangerine", "jeruk mandarin"]),
     ("Blueberry", &["blueberry", "bluberry", "bluebery", "beri", "berries"]),
     ("Strawberry", &["strawberry", "starberry", "strawbery", "stroberi"]),
     ("Jasmine", &["jasmine", "jasmin", "jasmne", "melati"]),
@@ -60,24 +64,38 @@ impl FuzzyFlavorMatcher {
             }
         }
 
-        // 2. Direct keyword search
+        // 2. Direct keyword search — urutan kritis: opsi paling spesifik lebih dulu,
+        //    dan "wet hulled / semi washed" HARUS dievaluasi sebelum "washed".
+        let has_anaerobic = clean.contains("anaerob")
+            || clean.contains("carbonic")
+            || clean.contains("lactic");
+        let has_natural = clean.contains("natural")
+            || clean.contains("natura")
+            || clean.contains("dry process");
+
+        if has_anaerobic && has_natural {
+            return Some(Self::profile_anaerobic_natural());
+        }
+        if clean.contains("thermal shock") {
+            return Some(Self::profile_anaerobic());
+        }
         if clean.contains("wine") || clean.contains("winery") || clean.contains("extended fermentation") {
             return Some(Self::profile_wine());
         }
-        if clean.contains("anaerobic") || clean.contains("carbonic") || clean.contains("lactic") || clean.contains("thermal shock") {
-            return Some(Self::profile_anaerobic());
-        }
-        if clean.contains("honey") {
-            return Some(Self::profile_honey());
-        }
-        if clean.contains("natural") || clean.contains("dry process") {
-            return Some(Self::profile_natural());
-        }
-        if clean.contains("washed") || clean.contains("wet process") {
-            return Some(Self::profile_washed());
-        }
         if clean.contains("giling basah") || clean.contains("wet hulled") || clean.contains("semi washed") {
             return Some(Self::profile_wet_hulled());
+        }
+        if has_natural || clean.contains("sun dried") {
+            return Some(Self::profile_natural());
+        }
+        if clean.contains("honey") || clean.contains("madu") {
+            return Some(Self::profile_honey());
+        }
+        if has_anaerobic {
+            return Some(Self::profile_anaerobic());
+        }
+        if clean.contains("washed") || clean.contains("wet process") || clean.contains("fully washed") {
+            return Some(Self::profile_washed());
         }
 
         None
@@ -160,6 +178,16 @@ impl FuzzyFlavorMatcher {
             top_recipe_name: "Dual-Temperature Thermal Drop V60 (93°C -> 70°C)",
             top_recipe_slug: "dual-temperature-thermal-drop-v60",
             signature_notes: &["Strawberry Candy", "Tropical Mango", "Winey Berry", "Cinnamon", "Floral"],
+        }
+    }
+
+    pub fn profile_anaerobic_natural() -> ProcessSensoryProfile {
+        ProcessSensoryProfile {
+            canonical_name: "Anaerobic Natural",
+            recommended_temp_c: 90,
+            top_recipe_name: "Dual-Temperature Thermal Drop V60 (92°C -> 75°C)",
+            top_recipe_slug: "dual-temperature-thermal-drop-v60",
+            signature_notes: &["Watermelon", "Strawberry", "Winey Berry", "Tropical Mango", "Caramel"],
         }
     }
 

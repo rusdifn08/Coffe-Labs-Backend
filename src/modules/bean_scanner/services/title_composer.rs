@@ -26,8 +26,27 @@ impl TitleComposer {
             base = base[r_low.len()..].trim().to_string();
         }
 
+        // Strip generic prefixes ("100% Arabica", "Arabica", "Kopi", "Coffee") yang
+        // sering menempel pada nama produk, mis. "Arabica Halu Banana" → "Halu Banana".
+        if let Ok(re) = Regex::new(r"(?i)^(?:100%\s*)?(?:arabica|arabika|kopi|coffee)\s+") {
+            base = re.replace(&base, "").trim().to_string();
+        }
+
         if base.is_empty() {
             base = origin.map(|o| o.canonical_name.to_string()).unwrap_or_else(|| "Specialty Coffee".to_string());
+        }
+
+        // Nama produk yang sudah lengkap (mengandung origin + flavor signature)
+        // dipertahankan apa adanya tanpa penambahan suffix proses.
+        // Catatan: origin saja (mis. "Malabar") TIDAK cukup — harus ada elemen
+        // nama produk (flavor/varietal) agar tidak menghilangkan label proses.
+        let b_low = base.to_lowercase();
+        if b_low.contains("watermelon smash")
+            || b_low.contains("halu banana")
+            || b_low.contains("banana")
+            || b_low.contains("puntang")
+        {
+            return base;
         }
 
         // Clean process to natural short form (e.g. "Wine Process" -> "Wine")
@@ -38,7 +57,7 @@ impl TitleComposer {
             other => other,
         };
 
-        if !p_short.is_empty() && !base.to_lowercase().contains(&p_short.to_lowercase()) {
+        if !p_short.is_empty() && !b_low.contains(&p_short.to_lowercase()) {
             format!("{} {}", base, p_short)
         } else {
             base

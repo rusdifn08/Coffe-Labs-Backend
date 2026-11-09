@@ -12,12 +12,42 @@ pub struct TerroirProfile {
 }
 
 pub const ORIGIN_PROFILES: &[TerroirProfile] = &[
+    // NOTE: Urutan kritis — profil dengan keyword paling spesifik dievaluasi lebih dulu
+    // agar "Gunung Halu" tidak tertelan oleh keyword longgar "halu"/"malabar".
+    TerroirProfile {
+        canonical_name: "Kamojang Garut",
+        region_province: "Kamojang, Garut, Jawa Barat",
+        default_altitude: "1400 - 1750 MDPL",
+        default_varietals: "Typica, Sigararutang, Mixed Variety",
+        keywords: &["kamojang", "garut", "amojang", "wanoja", "papandayan", "cikuray"],
+    },
+    TerroirProfile {
+        canonical_name: "Gunung Halu",
+        region_province: "Gunung Halu, Bandung Barat, Jawa Barat",
+        default_altitude: "1350 - 1650 MDPL",
+        default_varietals: "Sigararutang, Lini S795, Ateng Super",
+        keywords: &[
+            "gunung halu",
+            "gununghalu",
+            "gn halu",
+            "haloe",
+            "sindangkerta",
+            "halu",
+        ],
+    },
+    TerroirProfile {
+        canonical_name: "Gunung Puntang",
+        region_province: "Gunung Puntang, Bandung Selatan, Jawa Barat",
+        default_altitude: "1200 - 1600 MDPL",
+        default_varietals: "Java Typica, Sigararutang, Lini S795",
+        keywords: &["gunung puntang", "gn puntang", "puntang", "puntan"],
+    },
     TerroirProfile {
         canonical_name: "Malabar",
-        region_province: "Gunung Malabar / Halu, Jawa Barat",
+        region_province: "Gunung Malabar / Pangalengan, Jawa Barat",
         default_altitude: "1400 - 1800 MDPL",
         default_varietals: "Sigararutang, Lini S795, Kartika",
-        keywords: &["malabar", "pangalengan", "puntang", "ciwidey", "preanger", "gunung halu", "halu"],
+        keywords: &["malabar", "pangalengan", "ciwidey", "preanger"],
     },
     TerroirProfile {
         canonical_name: "Aceh Gayo",
@@ -108,7 +138,10 @@ pub const ORIGIN_PROFILES: &[TerroirProfile] = &[
 pub struct KnowledgeGraph;
 
 impl KnowledgeGraph {
-    /// Fuzzy lookup against Terroir Knowledge Graph using Jaro-Winkler
+    /// Fuzzy lookup against Terroir Knowledge Graph using Jaro-Winkler.
+    /// Strategi: keyword terpanjang yang cocok menang (longest-match-wins) supaya
+    /// "gunung halu" tidak kalah oleh keyword longgar "halu", dan "gunung puntang"
+    /// menang atas "puntang" bila keduanya ada di teks.
     pub fn find_origin(text: &str) -> Option<&'static TerroirProfile> {
         let clean = text.to_lowercase();
         let words: Vec<&str> = clean
@@ -116,24 +149,47 @@ impl KnowledgeGraph {
             .filter(|w| w.len() >= 3)
             .collect();
 
-        // 1. Direct substring matching first
+        // 1. Direct substring matching — longest keyword wins.
+        let mut best_substring: Option<(&'static TerroirProfile, usize)> = None;
         for profile in ORIGIN_PROFILES {
             for &kw in profile.keywords {
                 if clean.contains(kw) {
-                    return Some(profile);
-                }
-            }
-        }
-
-        // 2. Fuzzy match on word tokens (threshold >= 0.85)
-        for profile in ORIGIN_PROFILES {
-            for &kw in profile.keywords {
-                for &word in &words {
-                    if jaro_winkler(word, kw) >= 0.85 {
-                        return Some(profile);
+                    let len = kw.len();
+                    // Utamakan keyword terpanjang; jika sama panjang, profil yang lebih
+                    // spesifik (dievaluasi lebih dulu) tetap dipertahankan.
+                    if best_substring.map_or(true, |(_, best_len)| len > best_len) {
+                        best_substring = Some((profile, len));
                     }
                 }
             }
+        }
+        if let Some((profile, _)) = best_substring {
+            return Some(profile);
+        }
+
+        // 2. Fuzzy match on word tokens (threshold >= 0.85) — longest keyword wins.
+        let mut best_fuzzy: Option<(&'static TerroirProfile, usize, f64)> = None;
+        for profile in ORIGIN_PROFILES {
+            for &kw in profile.keywords {
+                for &word in &words {
+                    let score = jaro_winkler(word, kw);
+                    if score >= 0.85 {
+                        let len = kw.len();
+                        let is_better = match best_fuzzy {
+                            None => true,
+                            Some((_, best_len, best_score)) => {
+                                len > best_len || (len == best_len && score > best_score)
+                            }
+                        };
+                        if is_better {
+                            best_fuzzy = Some((profile, len, score));
+                        }
+                    }
+                }
+            }
+        }
+        if let Some((profile, _, _)) = best_fuzzy {
+            return Some(profile);
         }
 
         None

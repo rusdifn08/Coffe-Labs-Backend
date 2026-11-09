@@ -109,12 +109,28 @@ impl CognitiveResolver {
             }
 
             let lower = txt.to_lowercase();
-            let role = if (lower.contains("coffee") || lower.contains("bean") || lower.contains("roastery") || lower.contains("kopi")) && b.top_y <= 0.45 {
+            let has_process_signal = lower.contains("wine")
+                || lower.contains("natural")
+                || lower.contains("natura")
+                || lower.contains("washed")
+                || lower.contains("honey")
+                || lower.contains("anaerob")
+                || lower.contains("carbonic")
+                || lower.contains("giling basah");
+
+            let role = if (lower.contains("coffee")
+                || lower.contains("bean")
+                || lower.contains("roastery")
+                || lower.contains("roasters")
+                || lower.contains("supply")
+                || lower.contains("kopi"))
+                && b.top_y <= 0.45
+            {
                 if roastery.is_none() {
                     roastery = Some(TitleComposer::title_case(txt));
                 }
                 BlockRole::Roastery
-            } else if lower.contains("wine") || lower.contains("natural") || lower.contains("washed") || lower.contains("honey") || lower.contains("anaerobic") {
+            } else if has_process_signal {
                 BlockRole::Process
             } else if KnowledgeGraph::find_origin(txt).is_some() || b.normalized_height >= 0.10 {
                 if title_candidate.is_none() {

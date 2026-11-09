@@ -137,8 +137,142 @@ PROSES
     let result = CognitiveResolver::analyze(raw_text, &blocks);
 
     assert_eq!(result.process, "Natural");
-    assert!(result.origin.contains("Halu") || result.origin.contains("Malabar"));
+    assert!(
+        result.origin.contains("Gunung Halu"),
+        "Origin should be Gunung Halu (not Malabar), got {}",
+        result.origin
+    );
     assert!(result.tasting_notes.contains(&"Blueberry".to_string()));
+}
+
+/// Regression: Gunung Puntang tidak boleh lagi salah dipetakan ke Malabar.
+/// Sebelumnya keyword "puntang" ada di profil Malabar sehingga origin selalu
+/// keluar "Gunung Malabar / Halu" walau kemasan menulis "Puntang".
+#[test]
+fn test_gunung_puntang_not_mismapped_to_malabar() {
+    let raw_text = r#"
+PUNTANG WINE
+SPECIALTY ROASTERY
+GUNUNG PUNTANG
+WINE PROCESS
+Winey
+"#;
+
+    let blocks = vec![
+        OcrTextBlockDto {
+            text: "PUNTANG WINE".to_string(),
+            normalized_height: 0.14,
+            top_y: 0.40,
+            left_x: 0.2,
+            normalized_width: 0.6,
+            confidence: 0.97,
+        },
+        OcrTextBlockDto {
+            text: "GUNUNG PUNTANG".to_string(),
+            normalized_height: 0.05,
+            top_y: 0.55,
+            left_x: 0.2,
+            normalized_width: 0.5,
+            confidence: 0.94,
+        },
+        OcrTextBlockDto {
+            text: "WINE PROCESS".to_string(),
+            normalized_height: 0.04,
+            top_y: 0.65,
+            left_x: 0.2,
+            normalized_width: 0.4,
+            confidence: 0.93,
+        },
+    ];
+
+    let result = CognitiveResolver::analyze(raw_text, &blocks);
+
+    assert!(
+        result.origin.contains("Puntang"),
+        "Origin should be Gunung Puntang, got {}",
+        result.origin
+    );
+    assert!(
+        !result.origin.contains("Malabar"),
+        "Origin must NOT contain Malabar when packaging says Puntang, got {}",
+        result.origin
+    );
+    assert_eq!(result.process, "Wine Process");
+}
+
+/// Regression: Longest-match-wins — "GUNUNG HALU" harus menang atas keyword
+/// longgar "halu", dan "GUNUNG PUNTANG" harus menang atas "puntang".
+#[test]
+fn test_origin_longest_match_wins() {
+    use coffe_labs_backend::modules::bean_scanner::services::knowledge_graph::KnowledgeGraph;
+
+    let halu = KnowledgeGraph::find_origin("ARABICA NATURAL HALU BANANA GUNUNG HALU").unwrap();
+    assert_eq!(halu.canonical_name, "Gunung Halu");
+
+    let puntang = KnowledgeGraph::find_origin("PUNTANG WINE GUNUNG PUNTANG").unwrap();
+    assert_eq!(puntang.canonical_name, "Gunung Puntang");
+
+    let malabar = KnowledgeGraph::find_origin("MALABAR WINE PROCESS").unwrap();
+    assert_eq!(malabar.canonical_name, "Malabar");
+}
+
+/// Regression: kemasan "ARABICA NATURAL HALU BANANA" tidak boleh lagi
+/// terdeteksi sebagai "Full Washed" hanya karena tidak ada checkbox proses.
+#[test]
+fn test_halu_banana_detected_as_natural_not_washed() {
+    let raw_text = r#"
+ARABICA NATURAL
+HALU BANANA
+BY TIGA IKAT COFFEE SUPPLY
+Sweet Caramel, Banana, Low Body, Smooth
+100g - 200g - 500g - 1000g
+"#;
+
+    let blocks = vec![
+        OcrTextBlockDto {
+            text: "HALU BANANA".to_string(),
+            normalized_height: 0.16,
+            top_y: 0.45,
+            left_x: 0.2,
+            normalized_width: 0.6,
+            confidence: 0.97,
+        },
+        OcrTextBlockDto {
+            text: "BY TIGA IKAT COFFEE SUPPLY".to_string(),
+            normalized_height: 0.04,
+            top_y: 0.60,
+            left_x: 0.2,
+            normalized_width: 0.6,
+            confidence: 0.94,
+        },
+        OcrTextBlockDto {
+            text: "Sweet Caramel, Banana, Low Body, Smooth".to_string(),
+            normalized_height: 0.04,
+            top_y: 0.70,
+            left_x: 0.2,
+            normalized_width: 0.6,
+            confidence: 0.92,
+        },
+    ];
+
+    let result = CognitiveResolver::analyze(raw_text, &blocks);
+
+    assert_eq!(
+        result.process, "Natural",
+        "Packaging says ARABICA NATURAL — process must be Natural, not {}",
+        result.process
+    );
+    assert!(
+        result.origin.contains("Halu"),
+        "Origin should be Gunung Halu, got {}",
+        result.origin
+    );
+    assert!(
+        result.bean_name.contains("Banana") || result.bean_name.contains("Halu"),
+        "Bean name should preserve product identity 'Halu Banana', got {}",
+        result.bean_name
+    );
+    assert_eq!(result.recommended_water_temp_c, 90);
 }
 
 #[test]
