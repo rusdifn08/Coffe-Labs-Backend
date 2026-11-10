@@ -12,7 +12,7 @@ use crate::{
         error::{ApiResponse, AppError, AppResult},
         extractors::{AdminUser, AuthUser, ValidatedJson},
     },
-    modules::users::{dto::UpdateProfileRequest, service},
+    modules::users::{dto::{UpdateProfileRequest, UpdateUserTierRequest}, service},
 };
 
 pub async fn admin_get_users(
@@ -65,6 +65,19 @@ pub async fn admin_delete_user(
         "success": true,
         "message": "Pengguna berhasil dihapus."
     })))
+}
+
+pub async fn admin_update_user_tier(
+    State(pool): State<PgPool>,
+    _admin: AdminUser,
+    Path(user_id): Path<Uuid>,
+    ValidatedJson(req): ValidatedJson<UpdateUserTierRequest>,
+) -> AppResult<impl IntoResponse> {
+    let summary = service::update_user_tier(&pool, user_id, &req.tier).await?;
+    Ok(ApiResponse::ok(
+        format!("Tier akun '{}' berhasil diperbarui menjadi '{}'.", summary.username, summary.tier),
+        summary,
+    ))
 }
 
 pub async fn get_my_profile(

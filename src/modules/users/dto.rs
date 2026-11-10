@@ -10,3 +10,9 @@ pub struct UpdateProfileRequest {
     pub bio: Option<String>,
     pub equipment_json: Option<serde_json::Value>,
 }
+
+#[derive(Debug, Deserialize, Validate, ToSchema)]
+pub struct UpdateUserTierRequest {
+    #[validate(length(min = 3, max = 20, message = "Tier harus berupa 'trial', 'pro', atau 'business'."))]
+    pub tier: String,
+}

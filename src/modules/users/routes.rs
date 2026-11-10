@@ -1,5 +1,5 @@
 use axum::{
-    routing::{delete, get, post},
+    routing::{delete, get, patch, post},
     Router,
 };
 
@@ -11,6 +11,8 @@ pub fn router() -> Router<AppState> {
         .route("/api/admin/users/stats", get(handlers::admin_get_user_stats))
         .route("/api/admin/users/{id}/accept", post(handlers::admin_accept_user))
         .route("/api/admin/users/{id}/decline", post(handlers::admin_decline_user))
+        .route("/api/admin/users/{id}/tier", patch(handlers::admin_update_user_tier))
+        .route("/api/v1/admin/users/{id}/tier", patch(handlers::admin_update_user_tier))
         .route("/api/admin/users/{id}", delete(handlers::admin_delete_user))
         .route(
             "/api/v1/users/profile",

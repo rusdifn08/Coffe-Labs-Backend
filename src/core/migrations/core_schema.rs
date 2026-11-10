@@ -27,6 +27,7 @@ pub fn statements() -> &'static [&'static str] {
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_plan_id VARCHAR(60) DEFAULT 'plan_trial'",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_payment_method VARCHAR(50)",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_activated_at TIMESTAMPTZ",
+        "UPDATE users SET tier = 'trial', subscription_plan_id = 'plan_trial' WHERE role != 'admin' AND username != 'bisnis123' AND (tier IS NULL OR tier = '' OR tier = 'business')",
         r#"CREATE TABLE IF NOT EXISTS auth_refresh_tokens (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,

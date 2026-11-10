@@ -66,6 +66,34 @@ pub async fn update_user_status(
     Ok(row.map(Into::into))
 }
 
+pub async fn update_user_tier(
+    pool: &PgPool,
+    user_id: Uuid,
+    tier: &str,
+) -> AppResult<Option<UserSummary>> {
+    let clean_tier = match tier.to_lowercase().as_str() {
+        "business" => "business",
+        "pro" => "pro",
+        _ => "trial",
+    };
+    let plan_id = match clean_tier {
+        "business" => "plan_business",
+        "pro" => "plan_pro",
+        _ => "plan_trial",
+    };
+    let q = format!(
+        "UPDATE users SET tier = $1, subscription_plan_id = $2, updated_at = NOW() WHERE id = $3 RETURNING {}",
+        USER_COLS
+    );
+    let row = sqlx::query_as::<_, UserRow>(&q)
+        .bind(clean_tier)
+        .bind(plan_id)
+        .bind(user_id)
+        .fetch_optional(pool)
+        .await?;
+    Ok(row.map(Into::into))
+}
+
 pub async fn delete_non_admin_user(pool: &PgPool, user_id: Uuid) -> AppResult<u64> {
     let res = sqlx::query("DELETE FROM users WHERE id = $1 AND role != 'admin'")
         .bind(user_id)

@@ -38,6 +38,14 @@ pub async fn decline_user(pool: &PgPool, user_id: Uuid) -> AppResult<UserSummary
     res
 }
 
+pub async fn update_user_tier(pool: &PgPool, user_id: Uuid, tier: &str) -> AppResult<UserSummary> {
+    let res = repository::update_user_tier(pool, user_id, tier)
+        .await?
+        .ok_or_else(|| UsersError::UserNotFoundOrProtected.into());
+    crate::modules::auth::repository::invalidate_user_cache_all();
+    res
+}
+
 pub async fn delete_user(pool: &PgPool, user_id: Uuid) -> AppResult<()> {
     let affected = repository::delete_non_admin_user(pool, user_id).await?;
     if affected == 0 {
