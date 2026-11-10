@@ -25,25 +25,44 @@ impl BeanResolverService {
         let catalog_match = BeanScannerRepository::find_best_catalog_match(pool, &search_query).await?;
 
         if let Some(matched) = catalog_match {
-            if matched.similarity_score >= 0.72 {
+            if matched.similarity_score >= 0.88 {
                 let rec = matched.row;
                 cognitive_result.bean_id = Some(rec.id);
                 cognitive_result.is_catalog_verified = true;
                 cognitive_result.confidence_score = (matched.similarity_score * 100.0).clamp(85.0, 99.5);
-                cognitive_result.roastery_name = rec.roastery_name;
-                cognitive_result.bean_name = rec.bean_name;
-                cognitive_result.origin = rec.origin_region.or(rec.origin_country).unwrap_or(cognitive_result.origin);
-                cognitive_result.variety = rec.variety;
-                cognitive_result.process = rec.process;
-                cognitive_result.roast_level = rec.roast_level;
-                if let Some(alt) = rec.altitude_masl {
-                    cognitive_result.altitude_masl = Some(alt);
-                    cognitive_result.is_ai_inferred_altitude = false;
+
+                // Only overwrite bean name if cognitive result was generic
+                if cognitive_result.bean_name.to_lowercase().starts_with("specialty coffee") {
+                    cognitive_result.roastery_name = rec.roastery_name;
+                    cognitive_result.bean_name = rec.bean_name;
                 }
-                if !rec.tasting_notes.is_empty() {
+
+                if cognitive_result.origin == "Single Origin, Indonesia" {
+                    cognitive_result.origin = rec.origin_region.or(rec.origin_country).unwrap_or(cognitive_result.origin);
+                }
+
+                if cognitive_result.is_ai_inferred_variety && !rec.variety.is_empty() {
+                    cognitive_result.variety = rec.variety;
+                    cognitive_result.is_ai_inferred_variety = false;
+                }
+
+                if cognitive_result.process == "Full Washed" && !rec.process.is_empty() {
+                    cognitive_result.process = rec.process;
+                }
+
+                if cognitive_result.is_ai_inferred_altitude {
+                    if let Some(alt) = rec.altitude_masl {
+                        cognitive_result.altitude_masl = Some(alt);
+                        cognitive_result.is_ai_inferred_altitude = false;
+                    }
+                }
+
+                // Never overwrite explicit OCR tasting notes with catalog notes!
+                if cognitive_result.notes_source != "OCR_EXPLICIT" && !rec.tasting_notes.is_empty() {
                     cognitive_result.tasting_notes = rec.tasting_notes;
                     cognitive_result.notes_source = "CATALOG_VERIFIED".to_string();
                 }
+
                 if let Some(temp) = rec.recommended_water_temp_c {
                     cognitive_result.recommended_water_temp_c = temp;
                 }
