@@ -15,7 +15,7 @@ use crate::{
     },
     modules::{
         auth, bean_scanner, beans, brew_logs, business_pos, gamification, marketplace, platform, rbac, recipes, social,
-        telemetry, users,
+        telemetry, users, vision_dataset,
     },
 };
 
@@ -36,6 +36,7 @@ pub fn build_app(state: AppState) -> Router {
         .merge(gamification::routes::router())
         .merge(business_pos::routes::router())
         .merge(bean_scanner::routes::router())
+        .merge(vision_dataset::routes::router())
         .layer(axum_mw::from_fn_with_state(
             mw_state,
             telemetry_and_security_middleware,

@@ -11,3 +11,4 @@ pub mod recipes;
 pub mod social;
 pub mod telemetry;
 pub mod users;
+pub mod vision_dataset;

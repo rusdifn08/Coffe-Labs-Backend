@@ -151,5 +151,17 @@ pub fn statements() -> &'static [&'static str] {
             latency_ms NUMERIC(9, 2) NOT NULL,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )"#,
+        r#"CREATE TABLE IF NOT EXISTS vision_coffee_classes (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            class_slug VARCHAR(120) UNIQUE NOT NULL,
+            brand VARCHAR(80) NOT NULL,
+            coffee_name VARCHAR(100) NOT NULL,
+            process VARCHAR(60) NOT NULL,
+            tasting_notes JSONB DEFAULT '[]'::jsonb,
+            centroid_vector BYTEA,
+            verified BOOLEAN NOT NULL DEFAULT TRUE,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )"#,
     ]
 }
