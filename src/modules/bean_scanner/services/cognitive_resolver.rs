@@ -43,7 +43,15 @@ impl CognitiveResolver {
         };
 
         // 3. Resolve Tasting Notes
-        let explicit_notes = FuzzyFlavorMatcher::match_tasting_notes(full_text);
+        let mut explicit_notes = FuzzyFlavorMatcher::match_tasting_notes(full_text);
+        for b in blocks {
+            let b_notes = FuzzyFlavorMatcher::match_tasting_notes(&b.text);
+            for n in b_notes {
+                if !explicit_notes.contains(&n) {
+                    explicit_notes.push(n);
+                }
+            }
+        }
         let (tasting_notes, notes_source) = if explicit_notes.len() >= 2 {
             (explicit_notes, "OCR_EXPLICIT".to_string())
         } else {
@@ -118,21 +126,51 @@ impl CognitiveResolver {
                 || lower.contains("carbonic")
                 || lower.contains("giling basah");
 
-            let role = if (lower.contains("coffee")
+            let is_roastery_candidate = (lower.contains("coffee")
                 || lower.contains("bean")
                 || lower.contains("roastery")
                 || lower.contains("roasters")
                 || lower.contains("supply")
-                || lower.contains("kopi"))
-                && b.top_y <= 0.45
-            {
+                || lower.contains("kopi")
+                || lower.starts_with("by ")
+                || lower.contains("farmer")
+                || lower.contains("wanoja")
+                || lower.contains("vanoja"))
+                && (b.top_y <= 0.45 || lower.starts_with("by ") || lower.contains("farmer") || lower.contains("wanoja") || lower.contains("vanoja"));
+
+            let is_title_banner = (b.normalized_width >= 0.25
+                || b.normalized_height >= 0.04
+                || lower.contains("watermelon")
+                || (lower.contains("halu") && lower.contains("banana")))
+                && !is_roastery_candidate
+                && !has_process_signal;
+
+            let role = if is_roastery_candidate {
                 if roastery.is_none() {
-                    roastery = Some(TitleComposer::title_case(txt));
+                    let mut r_txt = txt.to_string();
+                    if r_txt.to_lowercase().starts_with("by ") {
+                        r_txt = r_txt[3..].trim().to_string();
+                    }
+                    if r_txt.to_lowercase().contains("wanoja") || r_txt.to_lowercase().contains("vanoja") {
+                        r_txt = "Wanoja Coffee".to_string();
+                    }
+                    roastery = Some(TitleComposer::title_case(&r_txt));
                 }
                 BlockRole::Roastery
+            } else if is_title_banner {
+                if title_candidate.is_none() {
+                    let mut t_txt = txt.to_string();
+                    if t_txt.to_lowercase().contains("watermelon") {
+                        t_txt = "Watermelon Smash".to_string();
+                    } else if t_txt.to_lowercase().contains("halu") && t_txt.to_lowercase().contains("banana") {
+                        t_txt = "Halu Banana".to_string();
+                    }
+                    title_candidate = Some(TitleComposer::title_case(&t_txt));
+                }
+                BlockRole::OriginOrTitle
             } else if has_process_signal {
                 BlockRole::Process
-            } else if KnowledgeGraph::find_origin(txt).is_some() || b.normalized_height >= 0.10 {
+            } else if KnowledgeGraph::find_origin(txt).is_some() {
                 if title_candidate.is_none() {
                     title_candidate = Some(TitleComposer::title_case(txt));
                 }

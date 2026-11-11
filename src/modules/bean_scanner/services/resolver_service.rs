@@ -33,8 +33,10 @@ impl BeanResolverService {
 
                 // Only overwrite bean name if cognitive result was generic
                 if cognitive_result.bean_name.to_lowercase().starts_with("specialty coffee") {
-                    cognitive_result.roastery_name = rec.roastery_name;
                     cognitive_result.bean_name = rec.bean_name;
+                }
+                if cognitive_result.roastery_name == "Specialty Roastery" && !rec.roastery_name.is_empty() {
+                    cognitive_result.roastery_name = rec.roastery_name;
                 }
 
                 if cognitive_result.origin == "Single Origin, Indonesia" {
