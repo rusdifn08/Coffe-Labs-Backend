@@ -137,8 +137,10 @@ impl CognitiveResolver {
                     title_candidate = Some(TitleComposer::title_case(txt));
                 }
                 BlockRole::OriginOrTitle
-            } else {
+            } else if !FuzzyFlavorMatcher::match_tasting_notes(txt).is_empty() {
                 BlockRole::TastingNote
+            } else {
+                BlockRole::IgnoredNoise
             };
 
             classified.push(ClassifiedOcrBlockDto {

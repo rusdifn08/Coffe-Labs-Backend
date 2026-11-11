@@ -13,12 +13,12 @@ pub struct ProcessSensoryProfile {
 pub struct FuzzyFlavorMatcher;
 
 const FLAVOR_LEXICON: &[(&str, &[&str])] = &[
-    ("Watermelon", &["watermelon", "water melon", "laterrnelo", "watermelo", "semangka", "melon"]),
-    ("Banana", &["banana", "banani", "pisang"]),
+    ("Watermelon", &["watermelon", "water melon", "laterrnelo", "watermelo", "watermalo", "watermalen", "semangka", "melon"]),
+    ("Banana", &["banana", "banan", "banani", "pisang"]),
     ("Sweet Caramel", &["sweet caramel", "caramel", "karamel", "toffee"]),
-    ("Mandarin Orange", &["mandarin orange", "mandarin", "landarir )range", "landarir", "orange", "tangerine", "jeruk mandarin"]),
+    ("Mandarin Orange", &["mandarin orange", "mandarin", "landarir )range", "landarjn )range", "landarjn range", "landarjn", "landarir", "orange", "tangerine", "jeruk mandarin"]),
     ("Blueberry", &["blueberry", "bluberry", "bluebery", "beri", "berries"]),
-    ("Strawberry", &["strawberry", "starberry", "strawbery", "stroberi"]),
+    ("Strawberry", &["strawberry", "starberry", "strawbery", "trawben", "trawbern", "stroberi", "strawberries"]),
     ("Jasmine", &["jasmine", "jasmin", "jasmne", "melati"]),
     ("Black Tea", &["tea", "blacktea", "earlgrey", "teh", "black tea", "floral tea"]),
     ("Winey", &["wine", "winey", "winery", "red wine", "fermented"]),
