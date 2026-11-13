@@ -130,6 +130,7 @@ pub async fn telemetry_and_security_middleware(
     let is_exempt = path == "/"
         || path == "/health"
         || path == "/api/health"
+        || path == "/api/v1/chat/ws"
         || path.starts_with("/dashboard")
         || path.starts_with("/api/v1/telemetry")
         || path.starts_with("/api/v1/app/version-check");
@@ -146,6 +147,10 @@ pub async fn telemetry_and_security_middleware(
     let elapsed_micros = start.elapsed().as_micros() as u64;
     let status = response.status().as_u16();
     telemetry.record(&method, &path, status, elapsed_micros, req_id.clone());
+
+    if response.status() == axum::http::StatusCode::SWITCHING_PROTOCOLS {
+        return Ok(response);
+    }
 
     let headers = response.headers_mut();
     if let Ok(val) = HeaderValue::from_str(&req_id) {

@@ -1,7 +1,8 @@
 use axum::{extract::State, response::IntoResponse, Json};
+use uuid::Uuid;
 use crate::core::{
     error::{ApiResponse, AppResult},
-    extractors::ValidatedJson,
+    extractors::{OptionalAuthUser, ValidatedJson},
     AppState,
 };
 use crate::modules::bean_scanner::{
@@ -12,10 +13,19 @@ use crate::modules::bean_scanner::{
 };
 
 pub async fn scan_and_resolve_bean(
+    OptionalAuthUser(auth): OptionalAuthUser,
     State(state): State<AppState>,
     ValidatedJson(payload): ValidatedJson<BeanScanRequestDto>,
 ) -> AppResult<impl IntoResponse> {
     let resolved = BeanResolverService::resolve(&state.pool, payload).await?;
+    if let Some(uid) = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok()) {
+        if let Ok(text) = serde_json::to_string(&resolved) {
+            let profiler = state.taste_profiler.clone();
+            tokio::spawn(async move {
+                profiler.record_signal_text_best_effort(uid, &text).await;
+            });
+        }
+    }
     Ok(ApiResponse::ok("Analisis cerdas kemasan biji kopi berhasil diselesaikan.", resolved))
 }
 

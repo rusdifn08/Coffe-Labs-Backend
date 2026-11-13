@@ -9,6 +9,8 @@ use crate::{
     core::{
         error::{ApiResponse, AppError, AppResult},
         extractors::{AuthUser, ValidatedJson},
+        rabbitmq::{RabbitMqEventEnvelope, DEFAULT_EXCHANGE},
+        AppState,
     },
     modules::{
         gamification::{
@@ -19,6 +21,7 @@ use crate::{
             repository,
             services::{anti_cheat_service, leaderboard_service},
         },
+        notifications::builders::build_streak_milestone_event,
         rbac::models::AccountTier,
     },
 };
@@ -58,13 +61,33 @@ pub async fn start_brew_session_handler(
 }
 
 pub async fn complete_brew_session_handler(
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     AuthUser(claims): AuthUser,
     ValidatedJson(req): ValidatedJson<CompleteBrewSessionRequest>,
 ) -> AppResult<impl IntoResponse> {
     let uid = parse_uid(&claims.sub)?;
     let tier = AccountTier::from_str_lossy(&claims.tier);
-    let data = anti_cheat_service::complete_brew_session(&pool, uid, tier, req).await?;
+    let data = anti_cheat_service::complete_brew_session(&state.pool, uid, tier, req).await?;
+    if data.xp_gained > 0 && (data.streak_updated || data.leveled_up) {
+        state.notifications.publish(build_streak_milestone_event(
+            uid,
+            data.current_streak,
+            data.xp_gained,
+        ));
+    }
+    state.rabbitmq.publish_json(
+        DEFAULT_EXCHANGE,
+        "events.brew.completed",
+        &RabbitMqEventEnvelope::new(
+            "BREW_SESSION_COMPLETED",
+            "gamification",
+            serde_json::json!({
+                "user_id": uid,
+                "xp_gained": data.xp_gained,
+                "current_streak": data.current_streak
+            }),
+        ),
+    );
     Ok(ApiResponse::ok(
         "Verifikasi seduhan sukses! XP dan progres lencana diperbarui.",
         data,

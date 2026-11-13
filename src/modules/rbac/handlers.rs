@@ -6,11 +6,16 @@ use crate::{
     core::{
         error::{ApiResponse, AppError, AppResult},
         extractors::{AuthUser, ValidatedJson},
+        rabbitmq::{RabbitMqEventEnvelope, DEFAULT_EXCHANGE},
+        AppState,
     },
-    modules::rbac::{
-        dto::UpgradeTierRequest,
-        guard::{RequireTier, TierBusiness, TierPro},
-        service,
+    modules::{
+        notifications::builders::build_tier_upgrade_event,
+        rbac::{
+            dto::UpgradeTierRequest,
+            guard::{RequireTier, TierBusiness, TierPro},
+            service,
+        },
     },
 };
 
@@ -30,13 +35,29 @@ pub async fn get_my_subscription(
 }
 
 pub async fn upgrade_tier(
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     AuthUser(claims): AuthUser,
     ValidatedJson(payload): ValidatedJson<UpgradeTierRequest>,
 ) -> AppResult<impl IntoResponse> {
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::BadRequest("ID user tidak valid.".to_string()))?;
-    let updated = service::upgrade_user_tier(&pool, user_id, payload).await?;
+    let updated = service::upgrade_user_tier(&state.pool, user_id, payload).await?;
+    let tier_label = format!("{:?}", updated.tier);
+    state
+        .notifications
+        .publish(build_tier_upgrade_event(user_id, &tier_label));
+    state.rabbitmq.publish_json(
+        DEFAULT_EXCHANGE,
+        "events.billing.tier_upgraded",
+        &RabbitMqEventEnvelope::new(
+            "TRANSACTIONAL_TIER_UPDATED",
+            "rbac",
+            serde_json::json!({
+                "user_id": user_id,
+                "tier": tier_label
+            }),
+        ),
+    );
     Ok(ApiResponse::ok(
         format!("Selamat! Akun Anda berhasil di-upgrade ke tier {:?}.", updated.tier),
         updated,

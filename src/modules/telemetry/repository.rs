@@ -40,7 +40,7 @@ pub async fn probe_database(pool: &PgPool) -> (DatabasePoolMetrics, DomainEntity
                 ping_latency_ms: ping_ms,
                 pool_size: pool.size(),
                 idle_connections: pool.num_idle(),
-                max_connections: 15,
+                max_connections: 10,
                 engine: "NeonDB Serverless PostgreSQL 16 (Rustls)".to_string(),
             };
             (db, counts)
@@ -51,7 +51,7 @@ pub async fn probe_database(pool: &PgPool) -> (DatabasePoolMetrics, DomainEntity
                 ping_latency_ms: ping_ms,
                 pool_size: pool.size(),
                 idle_connections: pool.num_idle(),
-                max_connections: 15,
+                max_connections: 10,
                 engine: "NeonDB Serverless PostgreSQL 16 (Reconnecting)".to_string(),
             },
             DomainEntityCounts {

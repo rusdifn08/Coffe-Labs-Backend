@@ -5,11 +5,13 @@ use axum::{
 };
 use serde_json::json;
 use sqlx::PgPool;
+use uuid::Uuid;
 
 use crate::{
     core::{
         error::{ApiResponse, AppResult},
         extractors::OptionalAuthUser,
+        AppState,
     },
     modules::brew_logs::{dto::BrewLogQuery, service},
 };
@@ -25,10 +27,17 @@ pub async fn get_brew_history(
 
 pub async fn save_brew_history(
     OptionalAuthUser(auth): OptionalAuthUser,
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     Json(payload): Json<serde_json::Value>,
 ) -> AppResult<impl IntoResponse> {
-    let saved = service::record_brew_entry(&pool, auth, "history", payload).await?;
+    if let Some(uid) = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok()) {
+        let profiler = state.taste_profiler.clone();
+        let text = payload.to_string();
+        tokio::spawn(async move {
+            profiler.record_signal_text_best_effort(uid, &text).await;
+        });
+    }
+    let saved = service::record_brew_entry(&state.pool, auth, "history", payload).await?;
     Ok(ApiResponse::created("Riwayat seduh berhasil dicatat.", saved))
 }
 
@@ -43,10 +52,17 @@ pub async fn get_journal_entries(
 
 pub async fn save_journal_entry(
     OptionalAuthUser(auth): OptionalAuthUser,
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     Json(payload): Json<serde_json::Value>,
 ) -> AppResult<impl IntoResponse> {
-    let saved = service::record_brew_entry(&pool, auth, "journal", payload).await?;
+    if let Some(uid) = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok()) {
+        let profiler = state.taste_profiler.clone();
+        let text = payload.to_string();
+        tokio::spawn(async move {
+            profiler.record_signal_text_best_effort(uid, &text).await;
+        });
+    }
+    let saved = service::record_brew_entry(&state.pool, auth, "journal", payload).await?;
     Ok(ApiResponse::created("Jurnal evaluasi sensori berhasil disimpan.", saved))
 }
 

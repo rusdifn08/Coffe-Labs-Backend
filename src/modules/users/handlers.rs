@@ -11,8 +11,15 @@ use crate::{
     core::{
         error::{ApiResponse, AppError, AppResult},
         extractors::{AdminUser, AuthUser, ValidatedJson},
+        AppState,
     },
-    modules::users::{dto::{UpdateProfileRequest, UpdateUserTierRequest}, service},
+    modules::{
+        notifications::builders::build_tier_upgrade_event,
+        users::{
+            dto::{UpdateProfileRequest, UpdateUserTierRequest},
+            service,
+        },
+    },
 };
 
 pub async fn admin_get_users(
@@ -68,12 +75,15 @@ pub async fn admin_delete_user(
 }
 
 pub async fn admin_update_user_tier(
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     _admin: AdminUser,
     Path(user_id): Path<Uuid>,
     ValidatedJson(req): ValidatedJson<UpdateUserTierRequest>,
 ) -> AppResult<impl IntoResponse> {
-    let summary = service::update_user_tier(&pool, user_id, &req.tier).await?;
+    let summary = service::update_user_tier(&state.pool, user_id, &req.tier).await?;
+    state
+        .notifications
+        .publish(build_tier_upgrade_event(user_id, &summary.tier));
     Ok(ApiResponse::ok(
         format!("Tier akun '{}' berhasil diperbarui menjadi '{}'.", summary.username, summary.tier),
         summary,

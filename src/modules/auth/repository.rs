@@ -9,7 +9,7 @@ use tracing::warn;
 use uuid::Uuid;
 
 use crate::{
-    core::error::AppResult,
+    core::error::{AppError, AppResult},
     modules::auth::models::{RefreshTokenSession, UserRow},
 };
 
@@ -85,7 +85,10 @@ pub async fn find_by_username(pool: &PgPool, username: &str) -> AppResult<Option
         }
     }
 
-    Err(last_error.unwrap().into())
+    match last_error {
+        Some(err) => Err(err.into()),
+        None => Err(AppError::Internal("NeonDB user lookup failed".to_string())),
+    }
 }
 
 pub async fn find_by_id(pool: &PgPool, user_id: Uuid) -> AppResult<Option<UserRow>> {
@@ -163,10 +166,7 @@ pub async fn insert_refresh_token(
     Ok(())
 }
 
-pub async fn find_refresh_token(
-    pool: &PgPool,
-    token_hash: &str,
-) -> AppResult<Option<RefreshTokenSession>> {
+pub async fn find_refresh_token(pool: &PgPool, token_hash: &str) -> AppResult<Option<RefreshTokenSession>> {
     let row = sqlx::query_as::<_, RefreshTokenSession>(
         "SELECT * FROM auth_refresh_tokens WHERE token_hash = $1",
     )
@@ -178,29 +178,20 @@ pub async fn find_refresh_token(
 
 pub async fn revoke_token_by_id(pool: &PgPool, id: Uuid) -> AppResult<()> {
     sqlx::query("UPDATE auth_refresh_tokens SET is_revoked = TRUE WHERE id = $1")
-        .bind(id)
-        .execute(pool)
-        .await?;
+        .bind(id).execute(pool).await?;
     Ok(())
 }
 
 pub async fn revoke_entire_family(pool: &PgPool, family_id: Uuid) -> AppResult<()> {
     sqlx::query("UPDATE auth_refresh_tokens SET is_revoked = TRUE WHERE family_id = $1")
-        .bind(family_id)
-        .execute(pool)
-        .await?;
+        .bind(family_id).execute(pool).await?;
     Ok(())
 }
 
-pub async fn list_active_sessions(
-    pool: &PgPool,
-    user_id: Uuid,
-) -> AppResult<Vec<RefreshTokenSession>> {
+pub async fn list_active_sessions(pool: &PgPool, user_id: Uuid) -> AppResult<Vec<RefreshTokenSession>> {
     let rows = sqlx::query_as::<_, RefreshTokenSession>(
         "SELECT * FROM auth_refresh_tokens WHERE user_id = $1 AND is_revoked = FALSE AND expires_at > NOW() ORDER BY created_at DESC",
     )
-    .bind(user_id)
-    .fetch_all(pool)
-    .await?;
+    .bind(user_id).fetch_all(pool).await?;
     Ok(rows)
 }
