@@ -84,3 +84,10 @@ async fn rabbitmq_standby_client_handles_unset_url_without_panic() {
         .await;
     assert!(confirmed_res.is_err());
 }
+
+#[test]
+fn rustls_ring_crypto_provider_initializes_without_ambiguity() {
+    let _ = rustls::crypto::ring::default_provider().install_default();
+    let provider = rustls::crypto::CryptoProvider::get_default();
+    assert!(provider.is_some(), "process-level rustls CryptoProvider must be installed");
+}

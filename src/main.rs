@@ -47,6 +47,7 @@ static GLOBAL: MiMalloc = MiMalloc;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenvy::dotenv().ok();
+    let _ = rustls::crypto::ring::default_provider().install_default();
 
     tracing_subscriber::registry()
         .with(
