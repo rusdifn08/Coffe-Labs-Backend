@@ -1,3 +1,4 @@
+pub mod directory_connections_service;
 pub mod profile_cqrs_service;
 pub mod profile_directory_service;
 pub mod thread_command_service;

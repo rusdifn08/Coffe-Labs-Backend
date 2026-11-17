@@ -3,7 +3,6 @@ use axum::{
         ws::{Message, WebSocket, WebSocketUpgrade},
         Query, State,
     },
-    http::{header, HeaderMap},
     response::IntoResponse,
 };
 use futures_util::{SinkExt, StreamExt};
@@ -11,7 +10,7 @@ use tracing::debug;
 use uuid::Uuid;
 
 use crate::{
-    core::{error::AppError, security::Claims, AppState},
+    core::{auth_extractor::AuthenticatedUser, error::AppError, jwt::JwtClaims, AppState},
     modules::chat::{
         dto::WsConnectQuery,
         handlers::ws_dispatcher::{dispatch_client_frame, send_frame_error},
@@ -27,17 +26,13 @@ const MAX_WS_MSG_BYTES: usize = 32 * 1024;
 
 pub async fn ws_upgrade_handler(
     ws: WebSocketUpgrade,
+    auth: AuthenticatedUser,
     Query(query): Query<WsConnectQuery>,
-    headers: HeaderMap,
     State(state): State<AppState>,
 ) -> Result<impl IntoResponse, AppError> {
-    let raw_token = extract_bearer_or_query(&headers, query.token.as_deref()).ok_or_else(|| {
-        AppError::Unauthorized("Token JWT diperlukan untuk koneksi chat real-time.".to_string())
-    })?;
-    let claims = state.jwt_keys.verify_token(raw_token)?;
-    let user_id = Uuid::parse_str(&claims.sub)
-        .map_err(|_| AppError::Unauthorized("User ID pada token tidak valid.".to_string()))?;
     let use_msgpack = query.format.as_deref() == Some("msgpack");
+    let user_id = auth.user_id;
+    let claims = auth.claims;
 
     Ok(ws
         .max_frame_size(MAX_WS_FRAME_BYTES)
@@ -45,26 +40,11 @@ pub async fn ws_upgrade_handler(
         .on_upgrade(move |socket| handle_socket(socket, state, user_id, claims, use_msgpack)))
 }
 
-fn extract_bearer_or_query<'a>(
-    headers: &'a HeaderMap,
-    query_token: Option<&'a str>,
-) -> Option<&'a str> {
-    if let Some(auth_val) = headers.get(header::AUTHORIZATION).and_then(|v| v.to_str().ok()) {
-        if let Some(stripped) = auth_val.strip_prefix("Bearer ") {
-            let trimmed = stripped.trim();
-            if !trimmed.is_empty() {
-                return Some(trimmed);
-            }
-        }
-    }
-    query_token.map(str::trim).filter(|s| !s.is_empty())
-}
-
 async fn handle_socket(
     socket: WebSocket,
     state: AppState,
     user_id: Uuid,
-    claims: Claims,
+    claims: JwtClaims,
     use_msgpack: bool,
 ) {
     let (session_id, mut rx, became_online) = state.chat_hub.register(user_id);

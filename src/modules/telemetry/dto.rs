@@ -4,7 +4,10 @@ use utoipa::ToSchema;
 
 use crate::{
     core::telemetry::{EndpointMetricSummary, RequestTrace},
-    modules::telemetry::models::{DatabasePoolMetrics, DomainEntityCounts, ServiceModuleInfo},
+    modules::{
+        monitoring::models::PublicMonitoringSummary,
+        telemetry::models::{DatabasePoolMetrics, DomainEntityCounts, ServiceModuleInfo},
+    },
 };
 
 #[derive(Debug, Clone, Serialize, ToSchema)]
@@ -30,4 +33,6 @@ pub struct DashboardTelemetrySnapshot {
     pub services: Vec<ServiceModuleInfo>,
     pub endpoints: Vec<EndpointMetricSummary>,
     pub recent_traces: Vec<RequestTrace>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub monitoring_summary: Option<PublicMonitoringSummary>,
 }

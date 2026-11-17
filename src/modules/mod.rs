@@ -1,13 +1,17 @@
 pub mod auth;
+pub mod barista_toolkit;
 pub mod bean_scanner;
 pub mod beans;
 pub mod brew_logs;
+pub mod brew_methods_audit;
 pub mod business_pos;
 pub mod chat;
 pub mod communities;
 pub mod gamification;
+pub mod live_brew;
 pub mod marketplace;
 pub mod media;
+pub mod monitoring;
 pub mod notifications;
 pub mod platform;
 pub mod rbac;

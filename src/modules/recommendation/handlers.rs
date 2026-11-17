@@ -4,11 +4,10 @@ use axum::{
     Json,
 };
 use serde_json::json;
-use uuid::Uuid;
 
 use crate::{
     core::{
-        error::{ApiResponse, AppError, AppResult},
+        error::{ApiResponse, AppResult},
         extractors::{AuthUser, OptionalAuthUser},
         AppState,
     },
@@ -18,16 +17,12 @@ use crate::{
     },
 };
 
-fn parse_uid(raw: &str) -> AppResult<Uuid> {
-    Uuid::parse_str(raw).map_err(|_| AppError::BadRequest("User ID tidak valid.".into()))
-}
-
 pub async fn get_for_you_feed(
     OptionalAuthUser(auth): OptionalAuthUser,
     Query(query): Query<ForYouFeedQuery>,
     State(state): State<AppState>,
 ) -> AppResult<impl IntoResponse> {
-    let viewer_id = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok());
+    let viewer_id = auth.as_ref().map(|c| c.sub);
     let data = for_you_ranker::get_for_you_feed(
         &state.pool,
         &state.redis.active_pool(),
@@ -44,7 +39,7 @@ pub async fn get_trending_feed(
     Query(query): Query<TrendingFeedQuery>,
     State(state): State<AppState>,
 ) -> AppResult<impl IntoResponse> {
-    let viewer_id = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok());
+    let viewer_id = auth.as_ref().map(|c| c.sub);
     let data = feed_ranker_service::get_trending_feed(
         &state.pool,
         &state.redis.active_pool(),
@@ -59,7 +54,7 @@ pub async fn get_recommended_clubs(
     OptionalAuthUser(auth): OptionalAuthUser,
     State(state): State<AppState>,
 ) -> AppResult<impl IntoResponse> {
-    let viewer_id = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok());
+    let viewer_id = auth.as_ref().map(|c| c.sub);
     let data = feed_ranker_service::get_recommended_clubs(
         &state.pool,
         &state.taste_profiler,
@@ -75,7 +70,7 @@ pub async fn mark_feed_seen(
     State(state): State<AppState>,
     Json(req): Json<MarkSeenRequest>,
 ) -> AppResult<impl IntoResponse> {
-    let user_id = parse_uid(&claims.sub)?;
+    let user_id = claims.sub;
     feed_ranker_service::mark_seen_best_effort(
         &state.redis.active_pool(),
         user_id,

@@ -1,5 +1,4 @@
 use axum::{extract::State, response::IntoResponse, Json};
-use uuid::Uuid;
 use crate::core::{
     error::{ApiResponse, AppResult},
     extractors::{OptionalAuthUser, ValidatedJson},
@@ -18,7 +17,7 @@ pub async fn scan_and_resolve_bean(
     ValidatedJson(payload): ValidatedJson<BeanScanRequestDto>,
 ) -> AppResult<impl IntoResponse> {
     let resolved = BeanResolverService::resolve(&state.pool, payload).await?;
-    if let Some(uid) = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok()) {
+    if let Some(uid) = auth.as_ref().map(|c| c.sub) {
         if let Ok(text) = serde_json::to_string(&resolved) {
             let profiler = state.taste_profiler.clone();
             tokio::spawn(async move {

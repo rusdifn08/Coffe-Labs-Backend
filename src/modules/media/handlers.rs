@@ -2,8 +2,9 @@ use axum::{extract::State, Json};
 
 use crate::{
     core::{
+        auth_extractor::AuthenticatedUser,
         error::{ApiResponse, AppResult},
-        extractors::{AuthUser, ValidatedJson},
+        extractors::ValidatedJson,
         storage::{CloudinaryStorage, CloudinaryUploadSignature},
     },
     modules::media::dto::UploadSignatureRequest,
@@ -11,7 +12,7 @@ use crate::{
 
 /// Menghasilkan signature SHA-1 Direct Upload untuk klien Flutter tanpa membebani RAM Render.
 pub async fn issue_upload_signature(
-    AuthUser(_claims): AuthUser,
+    _auth: AuthenticatedUser,
     State(storage): State<CloudinaryStorage>,
     ValidatedJson(req): ValidatedJson<UploadSignatureRequest>,
 ) -> AppResult<Json<ApiResponse<CloudinaryUploadSignature>>> {

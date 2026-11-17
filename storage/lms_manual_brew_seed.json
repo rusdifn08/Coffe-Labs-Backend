@@ -1,0 +1,2407 @@
+{
+  "courses": [
+    {
+      "id": "c1010001-0000-4000-8000-000000000001",
+      "slug": "bab-1-sains-ekstraksi-kimia-air-termodinamika",
+      "title": "Bab 1: Sains Fundamental Ekstraksi, Kimia Air & Termodinamika",
+      "subtitle": "TDS, Extraction Yield, Control Chart 1950 vs UC Davis 2023, kation Ca²⁺/Mg²⁺/KH, degassing CO₂ & Extract Chilling (Paragon).",
+      "instructor_name": "Dr. Nadia Aris & Tim Riset Coffee Labs",
+      "difficulty": "NOVICE",
+      "required_tier": "Trial",
+      "competency_level": "Dasar – Menengah",
+      "focus_summary": "TDS, Extraction Yield (EY), Grafik SCA & UC Davis 2023, Kimia Air (GH/KH), Degassing CO2, Extract Chilling (Paragon)",
+      "interactive_engine_type": "Kalkulator Grafik XY Dinamis & Simulasi Partikel Molekuler",
+      "linked_ebook_code": "CL-BOOK-04",
+      "xp_reward_on_complete": 350,
+      "display_order": 1,
+      "total_modules_count": 4,
+      "total_duration_sec": 1400,
+      "lessons": [
+        {
+          "id": "d1010001-0000-4000-8000-000000000101",
+          "course_id": "c1010001-0000-4000-8000-000000000001",
+          "module_number": 1,
+          "lesson_number": 1,
+          "subchapter_code": "1.1",
+          "title": "1.1 Fisika & Matematika Ekstraksi (TDS, EY% & Chart 1950 vs 2023)",
+          "description": "Menguasai pelarutan 30% padatan terlarut, rumus TDS vs Extraction Yield dengan faktor serap air, serta pembaruan SCA/UC Davis 2023.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab1/sub_1_1_bcc.m3u8",
+          "duration_sec": 360,
+          "xp_reward": 90,
+          "linked_ebook_code": "CL-BOOK-03",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Fondasi Matematika Penyeduhan Kopi\nDari seluruh massa biji kopi panggang kering, **hanya ~30% senyawa kimia yang dapat larut dalam air** (asam organik buah, gula/sukrosa terkaramelisasi, kafein, lipid teremulsi, hingga fenol pahit), sementara **~70% sisanya adalah selulosa struktural tidak larut**.\n\n### Dua Sumbu Coffee Brewing Control Chart (BCC)\n1. **Strength / Konsentrasi (Sumbu Y — TDS%)**: Proporsi massa padatan terlarut terhadap berat total minuman cair.\n   - **Standar Golden Cup Filter**: `1,15% – 1,35% TDS` (rentang lanjutan industri hingga `1,45%`).\n   - Di bawah `1,15%` terasa tipis (*watery*); di atas `1,35%–1,45%` terasa pekat (*heavy*).\n   - Variabel utama pengendali TDS adalah **Brew Ratio** (`1:15` sampai `1:17`).\n2. **Extraction Yield (Sumbu X — EY%)**: Persentase massa kopi kering yang berhasil dilarutkan.\n   - **Standar Klasik**: `18,0% – 22,0% EY`.\n   - `< 18%` = **Under-extracted** (asam tajam/asin, kurang manis).\n   - `> 22%` = **Over-extracted** (pahit, kering menyepat / *astringent*).\n   - Variabel pengendali EY: ukuran gilingan, suhu air, waktu kontak, dan agitasi.\n\n### Evolusi UC Davis 2023 & Lima Titik Buta Control Chart\nRiset **UC Davis Coffee Center (Guinard, Ristenpart et al., 2023)** mengidentifikasi **dua klaster preferensi konsumen**: banyak penikmat kopi modern menyukai batas kiri **~18% EY** (keasaman cerah, *citrus*, buah merah), sedangkan klaster lain menyukai intensitas & ekstraksi lebih tinggi. Pada metode imersi penuh (UC Davis 2021), ekstraksi menetap di kesetimbangan **~21%** terlepas dari rasionya.\n\n**5 Variabel yang TIDAK Terbaca Alat Ukur Refractometer (TDS/EY):**\n- Kesegaran pasca-sangrai (*roast age* & sisa CO2)\n- Komposisi mineral air (GH & KH)\n- Cacat sangrai (*baked, scorched, smoky*)\n- Terroir genetika varietas asli (*Kenya citrus* vs *Brazil nutty*)\n- **Channeling**: sebagian *bed* over-extracted & sebagian under-extracted menghasilkan angka rata-rata `20% EY / 1,30% TDS` yang tampak ideal padahal rasa cangkir kacau!",
+          "formulas_latex_json": [
+            {
+              "label": "Rumus Klasik Extraction Yield",
+              "latex": "EY(%) = (M_beverage × TDS%) / M_dose"
+            },
+            {
+              "label": "Koreksi UC Davis / Gagné (Absorbed Water)",
+              "latex": "c = TDS/100; EY = [M_bev × c / (1 - c)] / M_dose"
+            },
+            {
+              "label": "Contoh Soal 250g @ 1.25% TDS / 15g",
+              "latex": "EY = (250 × 0.0125 / 0.9875) / 15 ≈ 21.1%"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Mikroskopis 30% Solubles",
+              "detail": "Memperbesar partikel kopi di air panas: 70% serat kayu selulosa diam vs 30% asam buah, gula, dan kafein yang berdifusi bertahap."
+            },
+            {
+              "scene": "Scene 2: Virtual Refractometer Lab",
+              "detail": "Mendinginkan sampel ke 20°C, menyaring via syringe filter, dan mengukur TDS 1.25% -> EY 21.1%."
+            },
+            {
+              "scene": "Scene 3: Simulasi Channeling vs BCC XY",
+              "detail": "Menunjukkan grafik tetap berada di 20% EY / 1.30% TDS saat air menerobos celah retakan merah-pucat secara tidak merata."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "BCC_XY_SIMULATOR",
+            "title": "Simulator Grafik Kendali SCA & UC Davis 2023",
+            "defaults": {
+              "dose_g": 15.0,
+              "water_ml": 250.0,
+              "grind_um": 680.0,
+              "temp_c": 93.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "30% Solubles vs 70% Selulosa"
+            },
+            {
+              "sec": 95,
+              "label": "Matematika EY% & TDS%"
+            },
+            {
+              "sec": 210,
+              "label": "UC Davis 2023 & Channeling Blindspot"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Berapa persen dari massa biji kopi panggang yang sebenarnya dapat larut dalam air?",
+              "options": [
+                "Sekitar 15%",
+                "Sekitar 30%",
+                "Sekitar 70%"
+              ],
+              "answer_idx": 1
+            },
+            {
+              "q": "Mengapa kopi dengan hasil ukur 20% EY & 1,30% TDS masih bisa terasa asam sekaligus sepat?",
+              "options": [
+                "Karena mengalami channeling (campuran over & under-extraction)",
+                "Karena rasio terlalu pekat",
+                "Karena cangkir terlalu panas"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Variabel utama untuk mengubah Strength (TDS%) tanpa mengubah grind size adalah...",
+              "options": [
+                "Brew Ratio (kopi : air)",
+                "Kecepatan tuangan saja",
+                "Warna kertas filter"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000102",
+          "course_id": "c1010001-0000-4000-8000-000000000001",
+          "module_number": 1,
+          "lesson_number": 2,
+          "subchapter_code": "1.2",
+          "title": "1.2 Kimia Air Seduhan (GH, KH, Ca²⁺ & Mg²⁺ Sticky Ions, APAX LAB)",
+          "description": "Memahami mengapa 98% cangkir kopi filter adalah reaktan aktif kimia, peran ion Mg2+/Ca2+, buffer bikarbonat HCO3-, dan racik air juara dunia.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab1/sub_1_2_water.m3u8",
+          "duration_sec": 380,
+          "xp_reward": 95,
+          "linked_ebook_code": "CL-BOOK-04",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Air Sebagai Reaktan Aktif Ekstraksi (98% Volume Cangkir)\nRiset GC-MS & NMR oleh Dr. Christopher Hendon dan Maxwell Colonna-Dashwood membuktikan kation divalen **Magnesium (Mg²⁺)** dan **Kalsium (Ca²⁺)** bertindak sebagai **Sticky Ions** yang membentuk ikatan koordinasi dengan senyawa rasa kaya oksigen seperti **asam klorogenat, anion sitrat, kafein, dan trigonelin**.\n\n| Parameter Air | Rentang Standar SCA | Sweet Spot Pakar / Kompetisi | Jika Terlalu Rendah | Jika Terlalu Tinggi |\n| :--- | :--- | :--- | :--- | :--- |\n| **TDS Air** | 75 – 250 ppm | 40 – 150 ppm | Rasa kosong (*hollow*) & encer | Pahit kasar, *chalky*, kerak ketel |\n| **GH (Ca²⁺ & Mg²⁺)** | 17 – 85 ppm (50–175 CaCO₃) | ~65–68 ppm CaCO₃ | Ekstraksi lemah & *sour* | Menarik senyawa pahit berlebih |\n| **KH / Alkalinitas (HCO₃⁻)** | 30 – 50 ppm (40–70 CaCO₃) | **30 – 40 ppm CaCO₃** | Keasaman liar & terlalu tajam | Menetralkan asam: **Flat & Dull** |\n| **Natrium (Na⁺) & pH** | Na⁺ ≤ 10 mg/L; pH 6.5–7.5 | Na⁺ ~0; pH 7.0; Bebas Klorin | Korosif (pH rendah) | Rasa asin, metalik, bau kolam |\n\n### Perbedaan Kation & Protokol Meracik Air\n- **Magnesium (Mg²⁺ / MgSO₄·7H₂O)**: Afinitas tinggi terhadap senyawa aromatik ringan — menonjolkan **keasaman buah (*fruity*), floral, dan kejernihan rasa manis**.\n- **Kalsium (Ca²⁺ / CaCl₂)**: Memberikan pembobotan tekstur **creamy body** dan *mouthfeel* bulat.\n- **Bikarbonat (HCO₃⁻ / NaHCO₃)**: Bertindak sebagai perisai asam. Target manis SCA & Scott Rao adalah **30–40 ppm KH**.\n- **Studi Kasus Juara WBrC 2024 (Martin Wölfl)**: `1 Liter RO` + `1 g TONIK [1]` + `1.5 g JAMM [2]` + `1.5 g LYLAC [3]` APAX LAB untuk tekstur sehalus sutra.",
+          "formulas_latex_json": [
+            {
+              "label": "Total General Hardness (GH as CaCO3)",
+              "latex": "GH (ppm) = 2.497·[Ca²⁺] + 4.118·[Mg²⁺]"
+            },
+            {
+              "label": "Kesetimbangan Buffer Asam-Bikarbonat",
+              "latex": "pH_cup = pKa1 + log10([HCO3⁻] / [H2CO3*])"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Sticky Ions Ca²⁺ & Mg²⁺",
+              "detail": "Visual molekuler: air RO murni gagal menarik sitrat, sementara ion Mg²⁺ (hijau) & Ca²⁺ (biru) menarik senyawa rasa keluar dari matriks kopi."
+            },
+            {
+              "scene": "Scene 2: Buffer Perisai Bikarbonat (KH)",
+              "detail": "Slider KH 10 -> 40 -> 100 ppm memperlihatkan transisi warna dari merah asam tajam ke emas seimbang, lalu abu-abu datar (Flat & Dull)."
+            },
+            {
+              "scene": "Scene 3: Meja Racik APAX LAB & DIY",
+              "detail": "Pipet virtual meracik formulasi Martin Wölfl (1g TONIK + 1.5g JAMM + 1.5g LYLAC) dan Carlos Medina (65 ppm 1:1 Ca:Mg)."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "WATER_ION_LAB",
+            "title": "Laboratorium Kation Air (Ca²⁺, Mg²⁺ & Buffer KH)",
+            "defaults": {
+              "ca_ppm": 25.0,
+              "mg_ppm": 35.0,
+              "kh_ppm": 35.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Mekanisme Sticky Ions Mg2+/Ca2+"
+            },
+            {
+              "sec": 130,
+              "label": "Alkalinitas KH 30-40 ppm"
+            },
+            {
+              "sec": 260,
+              "label": "Racikan APAX LAB WBrC 2024"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Ion mineral apa yang paling dominan mengekstraksi catatan rasa buah & keasaman cerah?",
+              "options": [
+                "Magnesium (Mg2+)",
+                "Bikarbonat (HCO3-)",
+                "Klorida"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Apa dampak jika Alkalinitas (KH / HCO3-) air seduh terlalu tinggi (>100 ppm)?",
+              "options": [
+                "Kopi menjadi datar (flat/dull) karena asam alami dinetralkan",
+                "Kopi menjadi jauh lebih asam segar",
+                "Laju drawdown jadi 2x lebih cepat"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000103",
+          "course_id": "c1010001-0000-4000-8000-000000000001",
+          "module_number": 1,
+          "lesson_number": 3,
+          "subchapter_code": "1.3",
+          "title": "1.3 Dinamika Gas Karbon Dioksida (CO₂), Degassing & Fisika Blooming",
+          "description": "Kajian gravimetri Dr. Samo Smrke mengenai degassing CO2 pasca-sangrai, peningkatan permeabilitas bed (Gagné), dan manajemen kopi sangat segar.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab1/sub_1_3_degassing.m3u8",
+          "duration_sec": 320,
+          "xp_reward": 85,
+          "linked_ebook_code": "CL-BOOK-03",
+          "linked_ebook_chapter": 2,
+          "key_takeaways_markdown": "### Kenapa Biji Baru Disangrai Menolak Air?\nSelama *roasting*, reaksi pirolisis & Maillard menghasilkan gas **Karbon Dioksida (CO₂)** yang terperangkap bertekanan di dalam mikropori biji kopi. Studi gravimetri terukur waktu oleh **Dr. Samo Smrke (ZHAW, 2018)** menunjukkan laju pelepasan CO₂ paling cepat terjadi 1–7 hari pertama pasca-sangrai (dan lebih cepat lagi pada sangrai gelap yang lebih berpori).\n\n### Fisika Perkolasi Fase Blooming\n- Gas CO₂ yang menyembur keluar bersifat **penolak kontak air (*hydrophobic barrier*)** sehingga membentuk kantong udara mikro (*dry pockets*) dan membuat ekstraksi gula manis terhambat.\n- **Dosis Air Bloom Standar**: `2,0 ×` hingga `3,0 ×` massa kopi kering (`45–60 g` untuk `20 g` kopi).\n- **Durasi Bloom Ideal**: `30 – 120 detik`. Temuan **Jonathan Gagné** membuktikan waktu kontak *bloom* lebih lama secara efektif **meningkatkan permeabilitas *coffee bed*** pada tuangan utama!\n- **Biji Ultra-Segar (Hari ke-1 s/d ke-10)**: Turunkan suhu sedikit ke `93–94°C`, lakukan **Double Bloom** atau *swirl/stirring* merata, dan beri durasi minimal `45–60 detik` (hingga 2 menit pada *Method 1-2-1*).",
+          "formulas_latex_json": [
+            {
+              "label": "Volume Air Fase Blooming",
+              "latex": "V_bloom = 2.0 × M_coffee  s/d  3.0 × M_coffee"
+            },
+            {
+              "label": "Laju Desorpsi CO2 (Hukum Difusi Ficksian)",
+              "latex": "dm_CO2 / dt = -D_eff(Porosity, Roast) · A · dC/dx"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: X-Ray Partikel Saat Blooming",
+              "detail": "Perbandingan tanpa blooming (CO2 memblokir air -> inti partikel kering) vs blooming 45-120s dengan swirl lembut (pori terisi penuh air)."
+            },
+            {
+              "scene": "Scene 2: Slider Usia Sangrai Hari Ke-2 vs Hari Ke-21",
+              "detail": "Mengamati letupan kubah CO2 besar di hari ke-2 yang menuntut perpanjangan bloom dan agitasi swirl terkalibrasi."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "DEGASSING_BLOOM_LAB",
+            "title": "Simulator Degassing CO2 vs Usia Roast & Durasi Bloom",
+            "defaults": {
+              "roast_age_days": 4.0,
+              "bloom_sec": 45.0,
+              "bloom_ratio": 3.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Temuan Gravimetri Samo Smrke"
+            },
+            {
+              "sec": 110,
+              "label": "Permeabilitas Bed Pasca-Bloom"
+            },
+            {
+              "sec": 220,
+              "label": "Strategi Kopi Ultra-Segar Hari 1-10"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa waktu blooming lebih panjang meningkatkan efisiensi ekstraksi pada tuangan berikutnya?",
+              "options": [
+                "CO2 keluar tuntas sehingga permeabilitas bed meningkat dan air masuk ke pori internal",
+                "Karena suhu air berubah menjadi es",
+                "Karena kertas filter ikut larut"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Berapa kisaran volume air bloom standar untuk 18 g kopi dosis filter?",
+              "options": [
+                "10-15 ml",
+                "36-54 ml (2x-3x dosis)",
+                "180 ml"
+              ],
+              "answer_idx": 1
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000104",
+          "course_id": "c1010001-0000-4000-8000-000000000001",
+          "module_number": 1,
+          "lesson_number": 4,
+          "subchapter_code": "1.4",
+          "title": "1.4 Retensi Senyawa Volatil (VOCs) & Teknologi Extract Chilling (Paragon / ZHAW)",
+          "description": "Teori Prof. Chahan Yeretzian & Sasa Sestic mengunci 40% senyawa aromatik paling volatil menggunakan Chilling Rock (-10°C s/d -20°C) dengan gap < 5 mm.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab1/sub_1_4_paragon.m3u8",
+          "duration_sec": 340,
+          "xp_reward": 100,
+          "linked_ebook_code": "CL-BOOK-05",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Sains Hilangnya Aroma di Udara Ruangan\nSaat ruangan terasa sangat wangi ketika kopi sedang diteteskan, hal tersebut menandakan **Volatile Organic Compounds (VOCs)** — pembawa aroma melati, bergamot, dan buah batu — sedang menguap lepas dari tetesan kopi panas menuju udara dingin sekitar (**Prof. Chahan Yeretzian, ZHAW**, 2018 bersama juara dunia WBC **Sasa Sestic** & **Hugh Kelly**).\n\n### Protokol Operasi Teknis Extract Chilling (Paragon)\n1. **Bekukan Chilling Rock** minimal 1 jam pada suhu **`-10°C hingga -20°C`**.\n2. **Atur Celah Jarak `< 5 mm`** tepat di bawah ujung lubang keluaran *dripper*! Jarak terlalu jauh membuat uap VOC lolos sebelum menyentuh permukaan bola.\n3. **Dinginkan HANYA `20% – 40%` Bagian Pertama Seduhan** (sekitar `60–100 g` dari `250 g`). Fraksi pertama ini menyimpan konsentrasi ester volatil tertinggi.\n4. **Geser Penyangga Bola ke Samping**: Membiarkan 100% cairan melewati batu beku justru akan merusak *mouthfeel* dan membungkam rasa manis & *body* (**Over-chilled / Muted Flavors**).\n5. **Kalibrasi Ilmiah 2026**: Riset ZHAW terbaru mengindikasikan **dispersi aliran film tipis yang tenang (*thin-film dispersion*)** di permukaan bola turut mengurangi turbulensi percikan tetesan selain faktor pendinginan termal.",
+          "formulas_latex_json": [
+            {
+              "label": "Rasio Fraksi Chilling Optimal",
+              "latex": "V_chilled = 0.20 × V_total  s/d  0.40 × V_total"
+            },
+            {
+              "label": "Gap Kritis Jarak Dripper ke Chilling Rock",
+              "latex": "d_gap < 5.0 mm   (T_rock ∈ [-20°C, -10°C])"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Deteksi VOC Tanpa vs Dengan Paragon",
+              "detail": "Tetesan bebas melepaskan partikel ester ke udara, sedangkan aliran film tipis menyelimuti Chilling Rock -15°C mengunci aroma di server."
+            },
+            {
+              "scene": "Scene 2: Mini-Game Gap <5mm & Shift Tuas 30%",
+              "detail": "Atur jarak rak <5mm lalu geser keluar batu pendingin saat berat di server mencapai 30% agar manis/body tidak terbungkam."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "PARAGON_VOC_CHILL",
+            "title": "Simulasi Gap <5mm & Persentase Chilling Paragon ZHAW",
+            "defaults": {
+              "gap_mm": 3.5,
+              "chill_fraction_pct": 30.0,
+              "rock_temp_c": -15.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Mengapa Aroma Menguap (VOCs)"
+            },
+            {
+              "sec": 120,
+              "label": "Aturan Gap < 5mm & 20-40% Ekstrak"
+            },
+            {
+              "sec": 240,
+              "label": "Risiko Over-Chilled & Thin-Film Dispersion"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Berapa persen fraksi awal seduhan yang disarankan melewati Chilling Rock Paragon?",
+              "options": [
+                "20% - 40% bagian pertama saja",
+                "100% seluruh seduhan hingga tetes terakhir",
+                "Hanya 5 ml terakhir"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Mengapa jarak ujung dripper dengan batu pendingin wajib < 5 mm?",
+              "options": [
+                "Meminimalkan jarak paparan udara bebas agar VOC tidak keburu menguap",
+                "Supaya air meluap keluar server",
+                "Menaikkan suhu air"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c1010001-0000-4000-8000-000000000002",
+      "slug": "bab-2-fisika-perkolasi-hidrodinamika-ketel",
+      "title": "Bab 2: Fisika Perkolasi, Hidrodinamika Ketel & Mekanika Fluida",
+      "subtitle": "Hukum Darcy pada bed kopi, channeling & bypass, Efek Kacang Brasil Terbalik, fines migration, serta aliran ketel & Melodrip.",
+      "instructor_name": "Dr. Jonathan & Master Kaito",
+      "difficulty": "ARTISAN",
+      "required_tier": "Trial",
+      "competency_level": "Menengah",
+      "focus_summary": "Hukum Darcy, Fines Migration, Efek Kacang Brasil Terbalik, Turbulensi Ketel, Melodrip",
+      "interactive_engine_type": "Simulasi Dinamika Fluida (CFD Visual) & Penampang Melintang",
+      "linked_ebook_code": "CL-BOOK-03",
+      "xp_reward_on_complete": 360,
+      "display_order": 2,
+      "total_modules_count": 3,
+      "total_duration_sec": 1030,
+      "lessons": [
+        {
+          "id": "d1010001-0000-4000-8000-000000000201",
+          "course_id": "c1010001-0000-4000-8000-000000000002",
+          "module_number": 1,
+          "lesson_number": 1,
+          "subchapter_code": "2.1",
+          "title": "2.1 Hukum Darcy, Permeabilitas Bed Kopi & Fenomena Bypass",
+          "description": "Persamaan aliran media berpori Gagné, koreksi gravitasi hidrostatik, dan pembedahan Channeling vs Bypass vs Fines Clogging.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab2/sub_2_1_darcy.m3u8",
+          "duration_sec": 360,
+          "xp_reward": 95,
+          "linked_ebook_code": "CL-BOOK-03",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Hukum Darcy dalam Seduhan Kopi Saring\nBerdasarkan buku *The Physics of Filter Coffee* (**Jonathan Gagné**), laju aliran air $Q$ menembus *coffee bed* berpori di bawah dorongan gravitasi dijelaskan oleh Hukum Darcy:\n$$Q = \\frac{\\kappa \\cdot A}{\\mu(T) \\cdot L}(\\rho g h_{\\text{water}} + \\Delta P_{\\text{cap}})$$\n- **Permeabilitas ($\\kappa$)**: Berbanding terbalik dengan jumlah *fines* dan kehalusan gilingan.\n- **Viskositas Dinamis ($\\mu(T)$)**: Air bersuhu `93°C` jauh lebih encer (`0,30 mPa·s`) daripada air dingin, sehingga *drawdown* air panas jauh lebih cepat.\n- **Ketebalan Bed ($L$) & Tinggi Kolom Air ($h$)**: *Brew* dosis besar memiliki bed dalam sehingga membutuhkan tekanan kolom air lebih tinggi agar laju turun tetap stabil (di permukaan Bulan, gravitasi kecil membuat kopi menetes $6\\times$ lebih lambat!).\n\n### Tiga Deviasi Hukum Darcy Dunia Nyata\n1. **Channeling**: Air mengikis rongga lemah di *coffee bed* dan lolos cepat (rasa asam campur pahit).\n2. **Bypass**: Air menyelinap melalui celah antara rusuk (*ribs*) *dripper* dan dinding luar kertas filter tanpa pernah menembus *coffee bed* — menurunkan TDS tanpa mengekstraksi gula (*watery*). Bisa ditekan dengan kertas porositas rendah **Sibarist B3** atau **Orea Negotiator**, atau dimanfaatkan terukur sebagai *intentional bypass* (seperti WBrC 2026).\n3. **Fines Migration**: Partikel debu `<100 µm` terbawa air menyumbat pori-pori kertas filter -> menyebabkan aliran macet (*stalling*).",
+          "formulas_latex_json": [
+            {
+              "label": "Hukum Darcy Aliran Slurry V60",
+              "latex": "Q = (κ · A / (μ(T) · L)) · (ρ·g·h + ΔP_cap)"
+            },
+            {
+              "label": "Viskositas Air 93°C vs 20°C",
+              "latex": "μ(93°C) ≈ 0.305 mPa·s  (3.3× lebih encer dari 20°C)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Simulator Gravitasi Bumi vs Bulan",
+              "detail": "Mengubah parameter diameter dripper, ketebalan bed, tinggi slurry, dan gravitasi g untuk mengamati debit tetesan ml/s."
+            },
+            {
+              "scene": "Scene 2: Tracer Jalur Hijau vs Merah Bypass",
+              "detail": "Air menuang ke dinding memicu arus merah bypass lewat celah rusuk; menekan toggle Orea Negotiator menutup jalur merah."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "DARCY_BED_LAB",
+            "title": "Simulator Hukum Darcy & Kontrol Jalur Bypass",
+            "defaults": {
+              "grind_um": 620.0,
+              "slurry_height_cm": 3.5,
+              "water_temp_c": 93.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Variabel Hukum Darcy & Viskositas"
+            },
+            {
+              "sec": 150,
+              "label": "Channeling vs Bypass Samping"
+            },
+            {
+              "sec": 260,
+              "label": "Strategi Cegah Bypass"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa menaikkan suhu air dari 82°C ke 94°C mempercepat laju drawdown perkolasi secara fisik?",
+              "options": [
+                "Viskositas dinamik air μ(T) menurun sehingga hambatan alir mengecil",
+                "Massa jenis kopi berubah jadi 0",
+                "Tekanan atmosfer meningkat 2 kali lipat"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Fenomena ketika air lolos lewat dinding kertas sela rusuk dripper tanpa melewati bed kopi disebut...",
+              "options": [
+                "Bypass",
+                "Blooming",
+                "Degassing"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000202",
+          "course_id": "c1010001-0000-4000-8000-000000000002",
+          "module_number": 1,
+          "lesson_number": 2,
+          "subchapter_code": "2.2",
+          "title": "2.2 Migrasi Fines & Efek Kacang Brasil Terbalik (Kerucut vs Silinder)",
+          "description": "Eksperimen fisika granular Knight et al. (1993) yang membalik arah konveksi partikel pada kerucut V60 serta bahaya Aggressive Swirl.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab2/sub_2_2_brazil_nut.m3u8",
+          "duration_sec": 340,
+          "xp_reward": 95,
+          "linked_ebook_code": "CL-BOOK-03",
+          "linked_ebook_chapter": 2,
+          "key_takeaways_markdown": "### Paradoks Efek Kacang Brasil Terbalik (*Reverse Brazil Nut Effect*)\nDalam fisika partikel granular (**Knight et al., 1993**), ketika wadah berbentuk **Silinder vertikal** (analog *flat-bottom dripper*) digetarkan/diketuk:\n- Gesekan dinding kasar menyeret partikel tepi **turun ke bawah** lalu mendorong partikel di pusat naik **ke atas**, sehingga **boulders (bongkahan kopi besar)** berkumpul di permukaan atas.\n\n**Namun pada kerucut V60 (Cone)**:\n- Geometri dinding miring $60^\\circ$ **MEMBALIKKAN ARAH KONVEKSI 180°!** Partikel di tepi miring mengalir ke atas dan arus tengah bergerak ke bawah, membuat **bongkahan kopi terbesar justru terperangkap di dasar puncak lancip kerucut**!\n\n### Mekanika Fines Migration & Aturan Swirl\nWalaupun partikel besar terisap ke dasar kerucut, partikel debu sangat halus (*fines*) tetap tersuspensi di dalam air dan terbawa menuju dinding/ujung kertas filter.\n- **1x Gentle Rao Swirl (≤ 2 detik)**: Meratakan permukaan *bed*, meruntuhkan bahu dinding (*dry shelves*), dan menutup saluran bypass rusuk.\n- **Aggressive Swirling berulang kali**: Memicu migrasi masif awan *fines* menyumbat pori filter -> **drawdown macet total (stall)** dan cangkir menjadi *muddy* + *astringent*.",
+          "formulas_latex_json": [
+            {
+              "label": "Konveksi Silinder vs Kerucut (Knight 1993)",
+              "latex": "v_wall(Cone) > 0 (Naik)  ⇒  Boulders tenggelam ke apex kerucut"
+            },
+            {
+              "label": "Hukum Difusi Fick Kinetika Partikel",
+              "latex": "J_diff = -D_eff (∂C / ∂r),   D_eff = k_B·T / (6π μ R_mol)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Simulasi Wadah Silinder vs Kerucut Knight 1993",
+              "detail": "Saat wadah diketuk, partikel besar biru naik ke puncak silinder, tetapi di kerucut V60 partikel biru tersedot ke ujung lancip bawah!"
+            },
+            {
+              "scene": "Scene 2: 1x Gentle Swirl vs Aggressive Swirling",
+              "detail": "Putaran agresif menyebarkan awan debu fines menyumbat filter sehingga grafik aliran ml/s anjlok ke 0 ml/s."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "FINES_MIGRATION_LAB",
+            "title": "Simulasi Efek Kacang Brasil & Kontrol Swirl V60",
+            "defaults": {
+              "swirl_intensity": 0.25,
+              "is_conical": true
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Eksperimen Konveksi Knight 1993"
+            },
+            {
+              "sec": 140,
+              "label": "Perbedaan Bed Kerucut, Flat & Osmotic Dome"
+            },
+            {
+              "sec": 240,
+              "label": "Batas Aman Gentle Swirl"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Menurut eksperimen Knight et al. (1993), ke mana arah konveksi partikel besar di dalam wadah berbentuk kerucut (seperti V60)?",
+              "options": [
+                "Ke bagian paling dasar kerucut karena arah aliran konveksi terbalik",
+                "Selalu mengambang di permukaan paling atas",
+                "Hilang menguap lewat dinding"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Apa risiko melakukan agitasi swirl/putaran terlalu keras saat penyeduhan berlangsung?",
+              "options": [
+                "Fines bermigrasi menyumbat kertas filter dan memacetkan drawdown (stalling)",
+                "Air langsung mendidih ulang",
+                "Gas CO2 kembali masuk ke biji"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000203",
+          "course_id": "c1010001-0000-4000-8000-000000000002",
+          "module_number": 1,
+          "lesson_number": 3,
+          "subchapter_code": "2.3",
+          "title": "2.3 Hidrodinamika Ketel Leher Angsa, Turbulensi & Alat Dispersi (Melodrip)",
+          "description": "Mengontrol tinggi ketel agar busur aliran air tetap utuh (arcing stream) vs pemecahan tetesan (droplet breakup) serta penggunaan strategis Melodrip.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab2/sub_2_3_kettle_melodrip.m3u8",
+          "duration_sec": 330,
+          "xp_reward": 90,
+          "linked_ebook_code": "CL-BOOK-03",
+          "linked_ebook_chapter": 3,
+          "key_takeaways_markdown": "### Sains Busur Aliran Ketel (Arcing Stream vs Droplet Breakup)\nMoncong *gooseneck kettle* mengatur momentum vertikal cairan ketika menumbuk *slurry*.\n- **Laminar / Arcing Stream Utuh** (jarak tuang optimal **3–4 inci / ~7–10 cm** di atas *coffee bed*, debit `5–8 ml/s`, ~`50 g` dalam `8–10 detik`): Kolom air utuh mampu menembus masuk dan mengaduk *bed* secara seragam hingga ke dasar dripper tanpa memicu *bypass* samping.\n- **Rayleigh-Plateau Droplet Breakup**: Ketika ketel diangkat terlalu tinggi, tegangan permukaan memecah aliran utuh menjadi butiran tetesan putus-putus (*broken into droplets*). Tetesan ini memercik tak terkendali di permukaan dan memicu *splashing* di dinding kertas filter tanpa mengaduk dasar *bed*!\n\n### Penggunaan Strategis Alat Dispersi (Melodrip & Gabi Master B)\n**Melodrip** mendispersikan air dari ketel lewat cawan mikrolubang sehingga energi kinetik jatuh secara vertikal **nyaris tanpa agitasi**.\n1. **Full Melodrip (WBrC 2024 — Martin Wölfl)**: Dipakai di **keempat tuangan** setelah perataan WDT pada Orea V4 gilingan halus (`490 µm`) guna mencegah penyumbatan fines sama sekali.\n2. **Final-Pour Melodrip (WBrC 2025 — George Peng)**: Dipakai khusus pada **tuangan terakhir `80°C`** untuk mengunci kehalusan aroma floral dan memblokir keluarnya rasa sepat (*astringency*).",
+          "formulas_latex_json": [
+            {
+              "label": "Bilangan Reynolds Aliran Moncong Ketel",
+              "latex": "Re = (ρ · v_stream · D_spout) / μ(T)  < 2300 (Laminar)"
+            },
+            {
+              "label": "Energi Kinetik Tumbukan Slurry",
+              "latex": "P_impact = 0.5 · dm/dt · (v₀² + 2 g Δh_kettle)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Kamera Bawah Air — Arcing Stream vs Droplets",
+              "detail": "Menaikkan ketel tinggi memecah stream menjadi tetesan hujan; pada tinggi 3-4 inci, aliran melengkung mengaduk bed secara halus."
+            },
+            {
+              "scene": "Scene 2: Pemasangan Melodrip Shower Screen",
+              "detail": "Mengaktifkan Melodrip meredam vorteks dan menjaga fines diam di tempatnya."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "GOOSENECK_TURBULENCE_LAB",
+            "title": "Simulasi Tinggi Moncong Ketel & Toggle Melodrip",
+            "defaults": {
+              "pour_height_cm": 8.0,
+              "flow_ml_s": 5.2,
+              "use_melodrip": false
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Tinggi Ketel & Breakup Droplets"
+            },
+            {
+              "sec": 135,
+              "label": "Bilangan Reynolds Aliran Laminar"
+            },
+            {
+              "sec": 225,
+              "label": "Strategi Melodrip Juara Dunia"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa stream air dari ketel tidak boleh pecah menjadi tetesan hujan (droplets breakup) saat menyeduh tanpa Melodrip?",
+              "options": [
+                "Droplets gagal menembus dasar coffee bed dan menimbulkan percikan tak merata di permukaan",
+                "Tetesan hujan membekukan air",
+                "Memperbesar ukuran gilingan"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Bagaimana juara dunia WBrC 2025 George Peng memanfaatkan Melodrip di resepnya?",
+              "options": [
+                "Dipasang khusus pada tuangan terakhir 80°C untuk menekan turbulensi & menjaga floral clarity",
+                "Untuk menggiling kopi",
+                "Untuk memanaskan ketel"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c1010001-0000-4000-8000-000000000003",
+      "slug": "bab-3-rekayasa-geometri-dripper-filter-grinder",
+      "title": "Bab 3: Rekayasa Geometri Dripper, Kertas Filter & Grinder",
+      "subtitle": "Perbandingan Conical vs Flat-Bottom vs Hybrid (V60, Origami, Solo, UFO, Orea, April), kertas CAFEC/Sibarist & Dual-Grind.",
+      "instructor_name": "Raka Pratama (WBrC Coach)",
+      "difficulty": "ARTISAN",
+      "required_tier": "Pro",
+      "competency_level": "Menengah – Lanjut",
+      "focus_summary": "V60, Origami, Solo, UFO vs Kalita, Orea V3/V4, April, B75; Kertas CAFEC & Sibarist; Dual-Grind",
+      "interactive_engine_type": "Eksplorator Geometri 3D & Mikroskop Virtual Serat Kertas",
+      "linked_ebook_code": "CL-BOOK-06",
+      "xp_reward_on_complete": 400,
+      "display_order": 3,
+      "total_modules_count": 3,
+      "total_duration_sec": 1090,
+      "lessons": [
+        {
+          "id": "d1010001-0000-4000-8000-000000000301",
+          "course_id": "c1010001-0000-4000-8000-000000000003",
+          "module_number": 1,
+          "lesson_number": 1,
+          "subchapter_code": "3.1",
+          "title": "3.1 Anatomi Geometri Dripper: Conical vs Flat-Bottom vs Hybrid",
+          "description": "Eksperimen Kurasu Kyoto, analisis 11 dripper kompetitif (V60 NEO, Origami, Solo 40°, UFO V3, Orea V4, April, B75, Hario Switch/GINA) dan manajemen retensi termal material.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab3/sub_3_1_drippers.m3u8",
+          "duration_sec": 400,
+          "xp_reward": 100,
+          "linked_ebook_code": "CL-BOOK-06",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Benchmark Kurasu Kyoto: Kerucut V60 vs Wave Flat-Bottom\nPengujian konsisten Kurasu membuktikan **Hario V60** menyeduh **rata-rata 9 detik lebih cepat** (drainase *bloom* `6–8 s` vs `3–5 s`) dengan EY & TDS sedikit lebih tinggi daripada Wave, serta karakter rasa **lebih tajam, terdefinisi buahnya (*fruity*), dan bersih**, sedangkan *flat-bottom* menonjolkan **rasa manis membulat (*rounded sweetness*)**.\n\n### Peta Rekayasa Dripper Dunia\n| Dripper | Geometri & Sudut | Karakteristik Konstruksi | Profil Rasa & Aplikasi |\n| :--- | :--- | :--- | :--- |\n| **Hario V60 / NEO** | Conical 60° | Rusuk spiral penuh; NEO berbahan resin Tritan untuk multi-tuang 30g | *Clarity* tinggi, cerah & artikulatif |\n| **Solo Dripper** | Conical 40° (Curam) | Plastik PCTG 45g penyerap panas rendah, kolom bed dalam | Saturasi merata untuk seduhan ultra-cepat `1:45` |\n| **UFO Dripper V3** | Conical Sudut Lebar | Bed dangkal dengan *low flow resistance* (kompatibel Switch base) | *Drawdown* sangat cepat ~10 detik imersi |\n| **Origami Air S** | Dual-Filter Conical | 20 lipatan vertikal (*20 creases*), muat kertas Cone maupun Wave | Fleksibel (Cone untuk keasaman, Wave untuk manis) |\n| **Orea V3 / V4 / Baby O** | Flat-Bottom Cepat | Lubang tengah + 4 lubang tepi / V4 Fast Bottom / Baby O tanpa rusuk | Ekstraksi tinggi merata pada gilingan halus (`490–630 µm`) |\n| **April Brewer** | Flat-Bottom Lebar | Menipiskan *coffee bed*; versi plastik lebih *juicy*, keramik seimbang | Perkolasi seragam tanpa *swirling/stirring* |\n| **Hario Switch / GINA** | Hybrid Katup Mekanis | Menggabungkan imersi (katup tertutup) + perkolasi (katup terbuka) | Kontrol ekstraksi bertahap berdasar suhu |\n\n### Fisika Termal Material Dripper\nMaterial **Plastik / PCTG** memiliki kapasitas panas & konduktivitas termal jauh lebih rendah daripada keramik/kaca/logam, sehingga air `96°C` tidak kehilangan panas diserap dinding saat tuangan pertama (*kecuali logam/keramik dipanaskan menyeluruh lebih dulu*).",
+          "formulas_latex_json": [
+            {
+              "label": "Hubungan Sudut Cone & Kedalaman Bed",
+              "latex": "h_bed(Solo 40°) > h_bed(V60 60°) > h_bed(April Flat)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Eksplorator CAD Ketebalan Coffee Bed",
+              "detail": "Memutar model Solo 40°, V60 60°, April Flat, dan UFO V3 untuk membandingkan kedalaman kolom kopi untuk dosis 15 g yang sama."
+            },
+            {
+              "scene": "Scene 2: Kamera Termal Inframerah Material Dripper",
+              "detail": "Air 96°C turun tajam di keramik dingin (-7°C) vs stabil di PCTG Solo/V60 Plastik."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "DRIPPER_CAD_LAB",
+            "title": "Eksplorator Geometri Dripper & Stabilitas Termal",
+            "defaults": {
+              "dripper_id": "v60",
+              "preheated": true
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Data Benchmark Kurasu V60 vs Wave"
+            },
+            {
+              "sec": 150,
+              "label": "Geometri Conical, Flat-Bottom & Hybrid"
+            },
+            {
+              "sec": 290,
+              "label": "Konduktivitas Termal Material Dripper"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa Scott Rao dan George Peng sering memilih material plastik/PCTG untuk dripper mereka?",
+              "options": [
+                "Penyerapan panas paling rendah sehingga suhu slurry tetap stabil tinggi",
+                "Lebih berat dari besi tuang",
+                "Tidak membutuhkan kertas filter"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Keunikan utama Origami Dripper dengan 20 alur lipatan vertikal adalah...",
+              "options": [
+                "Dapat dipasangi kertas filter Conical V60 maupun Flat-Bottom Wave",
+                "Beroperasi tanpa gravitasi",
+                "Memiliki pemanas induksi internal"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000302",
+          "course_id": "c1010001-0000-4000-8000-000000000003",
+          "module_number": 1,
+          "lesson_number": 2,
+          "subchapter_code": "3.2",
+          "title": "3.2 Rekayasa Mikro-Struktur Kertas Filter (CAFEC T-92, T-90, T-83, Abaca & Sibarist)",
+          "description": "Membedah paradoks fisika kertas filter CAFEC Air-Through Dry (kerutan 1-sisi vs 2-sisi, Brake Extraction) dan filter ultra-cepat Sibarist FAST & B3.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab3/sub_3_2_filters.m3u8",
+          "duration_sec": 350,
+          "xp_reward": 100,
+          "linked_ebook_code": "CL-BOOK-03",
+          "linked_ebook_chapter": 2,
+          "key_takeaways_markdown": "### Paradoks Kertas Filter CAFEC (*Air-Through Dry*)\nEmpat variabel menentukan performa kertas: **ketebalan (mm)**, **densitas**, **kerutan (*one-side vs two-side crepe*)**, dan **luas permukaan total**. Di sinilah terletak paradoks mengejutkan CAFEC: **kertas paling tipis justru menyeduh paling lambat, sedangkan kertas paling tebal mengalir paling cepat saat kontak bubuk kopi!**\n\n| Varian Kertas | Tebal | Densitas | Struktur Crepe | Waktu 200cc Air / 13g Kopi | Mekanika Aliran & Target Roast |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n| **CAFEC T-92 / TH-1** | `0,15 mm` (Tertipis) | Tinggi | **One-Side Crepe** (Dalam rata) | Air `18 s` / Kopi **`52 s` (Terlambat!)** | Fines menutup sisi dalam yang rata membentuk *coffee puddle*. Ideal Light Roast 92°C (*aroma & clean*). |\n| **CAFEC T-90 / TH-3** | `0,28 mm` (Tertebal) | Rendah | **Two-Side High Crepe** | Air `11 s` / Kopi **`38 s` (Tercepat!)** | Kerutan dalam menjebak fines di lembah tanpa menyumbat jalur air! Ideal Medium-Dark 90°C (*balance*). |\n| **CAFEC T-83 / TH-2** | `0,22 mm` | Sedang | **Two-Side Low Crepe** | Air `12 s` / Kopi **`49 s`** | **Brake Extraction**: lancar di paruh awal, lalu direm alami di paruh akhir. Ideal Dark Roast 83°C (*sweetness & body*). |\n| **CAFEC Abaca+** | `0,22 mm` | Tinggi | Fine-Grained Dua Sisi | Air `13 s` / Kopi **`32 s`** | Serat Manila hemp ekstra luas, drainase kilat dan bersih. |\n| **Sibarist FAST / B3** | Ultra-tipis | Kalibrasi Pro | Serat Abaca + Organik | Ultra-cepat (`FAST`) / Zero-bypass (`B3`) | Digunakan juara dunia WBrC untuk mencegah *clogging* atau memblokir *bypass*. |",
+          "formulas_latex_json": [
+            {
+              "label": "Mekanisme Brake Extraction T-83",
+              "latex": "Q(t < t_half) = Tinggi  →  Q(t > t_half) menurun (Fines isi crepe pendek)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Mikroskop Virtual Penampang Kertas CAFEC",
+              "detail": "Menggeser lensa pada T-92 (0.15mm dalam polos), T-90 (0.28mm crepe tinggi 2 sisi), dan T-83 (rem bertahap di paruh kedua)."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "FILTER_MICROSTRUCTURE_LAB",
+            "title": "Mikroskop Kertas Filter: CAFEC T-92 vs T-90 vs T-83 vs Sibarist",
+            "defaults": {
+              "filter_code": "T-90"
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "4 Variabel Rekayasa Kertas Air-Through"
+            },
+            {
+              "sec": 120,
+              "label": "Mengapa T-92 Paling Lambat Padahal Paling Tipis"
+            },
+            {
+              "sec": 240,
+              "label": "T-83 Brake Extraction, Abaca+ & Sibarist"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa kertas CAFEC T-92 (0,15 mm) mengalir lebih lambat dengan kopi (52 s) dibanding T-90 (0,28 mm, 38 s)?",
+              "options": [
+                "Sisi dalam T-92 tanpa crepe langsung tertutup fines hingga air menggenang (coffee puddle)",
+                "T-92 menyerap seluruh air hingga kering",
+                "T-90 terbuat dari plastik keras"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Kertas filter mana yang menghasilkan mekanisme 'Brake Extraction' (lancar di awal, direm di akhir)?",
+              "options": [
+                "CAFEC T-83 (0,22 mm, two-side low crepe)",
+                "Sibarist FAST",
+                "Kain flanel tebal"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000303",
+          "course_id": "c1010001-0000-4000-8000-000000000003",
+          "module_number": 1,
+          "lesson_number": 3,
+          "subchapter_code": "3.3",
+          "title": "3.3 Distribusi Ukuran Partikel Grinder (PSD), Mikron & Teknik Dual-Grind",
+          "description": "Kalibrasi mikron melintasi 3 zona (Medium-Fine 490µm, Medium-Coarse 750–1000µm, Super-Coarse 1250µm) dan strategi 3:1 Dual-Grind Sherry Hsu (WBrC 2022).",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab3/sub_3_3_grinder_psd.m3u8",
+          "duration_sec": 340,
+          "xp_reward": 100,
+          "linked_ebook_code": "CL-BOOK-02",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Memetakan Ukuran Partikel (Mikron) Antar-Grinder\nAngka klik di setiap grinder **tidak seragam** karena sebagian mengukur *burr gap displacement* (Comandante C40) sedangkan model lain mengukur pergerakan aksial ulir. Karena itu standar LMS selalu mengacu pada **diameter partikel target (µm)**:\n1. **Zona Medium-Fine (`490 – 650 µm`)**:\n   - **Martin Wölfl (Orea V4 + Sibarist FAST)**: `490–630 µm` (~`21–25 klik` C40 / Mazzer ZM).\n   - **Nas Jaafar (UFO V3 + Switch Base)**: Setelan `4.5` pada 1Zpresso ZP6 Special (tekstur garam meja).\n2. **Zona Medium hingga Coarse (`750 – 1.000 µm`)**:\n   - **Carlos Medina (Origami)**: `750–800 µm` (`26 klik` C40 / `5.5` Timemore S3).\n   - **Emi Fukahori (Switch MAME)**: `750 µm` (`25 klik` C40).\n   - **Matt Winton (Metal V60 5-Pour)**: `800–1.000 µm` (`25–30 klik` C40 / `3.75` JX-Pro).\n3. **Zona Super Coarse (`1.200 – 1.350 µm`)**:\n   - **Tetsu Kasuya 10-Pour (2026)**: `40–45 klik` C40 (butiran kasar *kosher salt*).\n\n### Teknik Lanjutan: Dual-Grind Bimodal (WBrC 2022 — Sherry Hsu)\nMenggiling **75% dosis (`10,5 g`) pada ukuran kasar `~1.000 µm`** dicampur **25% dosis (`3,5 g`) pada ukuran lebih halus `~800 µm`** (rasio `3:1` pada 1Zpresso K-Pro). Fraksi `75%` membuka porositas bed agar *clarity* & keasaman terjaga bersih, sedangkan fraksi `25%` menambah luas permukaan penarik kemanisan dan *body* berlapis tanpa *stalling*!",
+          "formulas_latex_json": [
+            {
+              "label": "Formula Bimodal Dual-Grind Sherry Hsu",
+              "latex": "Dose_14g = 0.75 (10.5g @ ~1000 µm) + 0.25 (3.5g @ ~800 µm)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Konverter Mikron Lintas 8 Grinder Dunia",
+              "detail": "Menggeser slider 490 µm ke 1.350 µm untuk melihat konversi klik C40, ZP6, K-Pro, Timemore S3, dan visual perbandingan butiran."
+            },
+            {
+              "scene": "Scene 2: Laboratorium Dual-Grind 3:1 Sherry Hsu",
+              "detail": "Mencampur 10.5g kasar + 3.5g halus di atas Orea V3/B75 agar clarity dan sweetness berlapis tercapai."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "GRINDER_PSD_DUALGRIND",
+            "title": "Konverter Mikron Grinder & Racik Dual-Grind 3:1",
+            "defaults": {
+              "target_um": 780.0,
+              "fine_fraction_pct": 25.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "3 Zona Kalibrasi Mikron Manual Brew"
+            },
+            {
+              "sec": 140,
+              "label": "Tabel Konversi Grinder Spesialti"
+            },
+            {
+              "sec": 230,
+              "label": "Dual-Grind Bimodal Sherry Hsu 2022"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa rasio Dual-Grind 3:1 (75% kasar + 25% lebih halus) ala Sherry Hsu meningkatkan kompleksitas cangkir?",
+              "options": [
+                "75% fraksi kasar menjaga aliran lancar dan clarity sementara 25% fraksi halus mengangkat kemanisan & body",
+                "Karena memperbanyak ampas dibuang",
+                "Untuk memperlambat grinder berputar"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Berapa ukuran partikel Super Coarse pada metode 10-Pour Tetsu Kasuya 2026?",
+              "options": [
+                "1.200 – 1.350 µm (40–45 klik Comandante C40)",
+                "200 µm (Turkish espresso)",
+                "50 µm (debu fines)"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c1010001-0000-4000-8000-000000000004",
+      "slug": "bab-4-penguasaan-hario-v60-teknik-pakar-dunia",
+      "title": "Bab 4: Penguasaan Hario V60 & Teknik Ikonik Pakar Dunia",
+      "subtitle": "James Hoffmann 1-Cup V60, The Rao Spin (Scott Rao & Gagné), Lance Hedrick 1-2-1/Samo Bloom, & CAFEC Osmotic Flow.",
+      "instructor_name": "Master Kaito & Tim Edukasi",
+      "difficulty": "ARTISAN",
+      "required_tier": "Pro",
+      "competency_level": "Menengah – Lanjut",
+      "focus_summary": "James Hoffmann 1-Cup, Scott Rao Spin, Lance Hedrick 1-2-1 & Samo Bloom, Cafec Osmotic Flow",
+      "interactive_engine_type": "Simulator Tuangan (Pouring Tracker) Berbasis Metronom & Akselerometer",
+      "linked_ebook_code": "CL-BOOK-02",
+      "xp_reward_on_complete": 420,
+      "display_order": 4,
+      "total_modules_count": 4,
+      "total_duration_sec": 1370,
+      "lessons": [
+        {
+          "id": "d1010001-0000-4000-8000-000000000401",
+          "course_id": "c1010001-0000-4000-8000-000000000004",
+          "module_number": 1,
+          "lesson_number": 1,
+          "subchapter_code": "4.1",
+          "title": "4.1 Metode 'A Better 1-Cup V60' — James Hoffmann (WBC 2007)",
+          "description": "Menguasai protokol 5 tuangan @ 50 g dengan jeda 10 detik (15 g : 250 mL @ 95°C) untuk memaksimalkan konsistensi termal cangkir tunggal.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab4/sub_4_1_hoffmann_1cup.m3u8",
+          "duration_sec": 320,
+          "xp_reward": 95,
+          "linked_ebook_code": "CL-BOOK-02",
+          "linked_ebook_chapter": 2,
+          "key_takeaways_markdown": "### Kenapa 1-Cup V60 Tidak Bisa Disamakan dengan 2-Cup?\nPada dosis kecil `15 g : 250 mL` (rasio `1:16,67`), *coffee bed* jauh lebih tipis dan cepat dingin dibanding resep `30 g : 500 g`. Oleh karena itu, **James Hoffmann** memecah `250 g` air panas (**95°C**, atau mendidih untuk *light roast*) menjadi **5 pulsa seragam masing-masing @ 50 g** dengan **jeda istirahat 10 detik** untuk menstabilkan tinggi *slurry* dan menjaga suhu ekstraksi.\n\n### Jadwal Kronologis 5× 50g (`15 g : 250 mL`, Target `3:00`)\n| Waktu | Aksi & Gerakan | Berat Target | Fungsi Fisika |\n| :--- | :--- | :--- | :--- |\n| `0:00 – 0:15` | Tuang **50 g** merata; detik `0:10` lakukan *gentle swirl* hingga `0:15` | **50 g** (Bloom) | Pecahkan kantong bubuk kering & lepas CO₂ |\n| `0:15 – 0:45` | Istirahat fase *bloom* | **50 g** | Tingkatkan permeabilitas pori kopi |\n| `0:45 – 1:00` | Tuang spiral pulsa ke-2, lalu tunggu 10s (`1:00–1:10`) | **100 g** (+50g) | Menjaga *head pressure* seragam |\n| `1:10 – 1:20` | Tuang spiral pulsa ke-3, tunggu 10s (`1:20–1:30`) | **150 g** (+50g) | Stabilkan suhu *slurry* tetap tinggi |\n| `1:30 – 1:40` | Tuang spiral pulsa ke-4, tunggu 10s (`1:40–1:50`) | **200 g** (+50g) | Lanjutkan difusi gula karamel |\n| `1:50 – 3:00` | Tuang pulsa ke-5 (`2:00`), lalu *gentle swirl* akhir `2:00–2:05`, tunggu tuntas | **250 g** | Ratakan dinding kertas agar menjadi **Flat Bed** |",
+          "formulas_latex_json": [
+            {
+              "label": "Rasio & Ritme 5×50g Hoffmann",
+              "latex": "R = 250g / 15g = 16.67 : 1;   5 × (50g tuang + 10s jeda)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Pacer Laju Tuang 5 g/s & Jeda 10s",
+              "detail": "Menjaga debit stabil 50 g dalam 10 detik lalu menahan ketel 10 detik di antara setiap pulsa."
+            },
+            {
+              "scene": "Scene 2: Fisika Swirl pada 0:10 & 2:00",
+              "detail": "Memecah kantong kering di awal dan mencuci butir kopi dari dinding filter di akhir untuk flat bed rata."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "RECIPE_TIMELINE_POUR",
+            "title": "Simulator Kronologi Hoffmann 1-Cup 5x50g",
+            "defaults": {
+              "dose_g": 15.0,
+              "water_ml": 250.0,
+              "temp_c": 95.0,
+              "pulses": 5
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Perbedaan Termodinamika 1-Cup vs 2-Cup"
+            },
+            {
+              "sec": 110,
+              "label": "Timeline 5x 50g & Jeda 10 Detik"
+            },
+            {
+              "sec": 220,
+              "label": "Teknik Swirl Awal & Akhir"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Berapa berat air tiap pulsa dalam resep 'A Better 1-Cup V60' James Hoffmann untuk 15 g kopi?",
+              "options": [
+                "5 pulsa @ 50 g (total 250 g)",
+                "2 pulsa @ 125 g",
+                "10 pulsa @ 25 g"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Apa fungsi jeda 10 detik di antara tuangan 50 g pada metode ini?",
+              "options": [
+                "Menstabilkan tinggi kolom slurry agar agitasi terkontrol dan bed tidak banjir",
+                "Mendinginkan kopi hingga suhu ruang",
+                "Membuang kertas filter"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000402",
+          "course_id": "c1010001-0000-4000-8000-000000000004",
+          "module_number": 1,
+          "lesson_number": 2,
+          "subchapter_code": "4.2",
+          "title": "4.2 Metode Ilmiah Scott Rao & Jonathan Gagné ('The Rao Spin')",
+          "description": "Optimalisasi V60 plastik suhu tinggi 96–97°C/100°C, bloom besar 3× dosis, serta eksekusi Rao Spin singkat untuk menutup rib channels tanpa memicu stalls.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab4/sub_4_2_rao_spin.m3u8",
+          "duration_sec": 330,
+          "xp_reward": 100,
+          "linked_ebook_code": "CL-BOOK-03",
+          "linked_ebook_chapter": 3,
+          "key_takeaways_markdown": "### Filosofi High-Temperature Extraction & Rao Spin\nBersama Jonathan Gagné, **Scott Rao** merancang metode untuk mengekstrak manis & kejernihan maksimal (**20 g : 340 g @ 96°C**, rasio `1:17`; atau `20 g : 330 g @ 97°C`, rasio `1:16,5`) menggunakan **V60 plastik** (retensi termal superior) dan gerak **The Rao Spin**:\n- Saat **Bloom (`0:00–0:45`, `60 g` / 3× dosis)**: putar mantap namun lembut hingga basah 100% tanpa gumpalan.\n- Setelah **Tuangan Utama 1 (`0:45–1:08`, `+150 g` -> `210 g`, 6.5 g/s)**: putar singkat di `1:13`, lalu biarkan air turun **50–70%** volume sebelum tuangan kedua.\n- Setelah **Tuangan Utama 2 (`1:30–3:30`, `+130 g` -> `340 g`)**: lakukan **1× Rao Spin paling ringan (2 detik saja)** untuk:\n  1. Meruntuhkan ampas yang tersangkut tinggi di dinding kertas,\n  2. **Menutup *rib channels*** (saluran pintas di antara rusuk V60),\n  3. Menghasilkan **Flat Coffee Bed** horisontal sempurna — **tanpa berputar terlalu agresif** yang membuat *fines* menyumbat kertas (*stalling*).",
+          "formulas_latex_json": [
+            {
+              "label": "Parameter Rasio Scott Rao",
+              "latex": "20g Kopi : 340g Air @ 96°C (Rasio 1:17, Bloom 60g 3×)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Penutupan Rib Channels oleh Rao Spin",
+              "detail": "Menunjukkan saluran mikro bypass di rusuk spiral sebelum & sesudah Light Rao Spin 2 detik -> flat bed horisontal terbentuk tanpa fines clogging."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "RAO_SPIN_SIMULATOR",
+            "title": "Simulator Suhu Tinggi 96°C & Intensitas Rao Spin",
+            "defaults": {
+              "temp_c": 96.0,
+              "spin_sec": 2.0,
+              "bypass_risk": 0.12
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Retensi Panas V60 Plastik & Suhu 96-100°C"
+            },
+            {
+              "sec": 130,
+              "label": "Tahapan Bloom Spin & Drainase 50-70%"
+            },
+            {
+              "sec": 230,
+              "label": "Fungsi Krusial Light Rao Spin"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa Scott Rao menegaskan agar Rao Spin setelah tuangan utama harus singkat dan ringan?",
+              "options": [
+                "Mencegah migrasi fines berlebihan menyumbat kertas filter dan memacetkan aliran (stalling)",
+                "Agar suhu air naik menjadi 120°C",
+                "Agar seluruh ampas menempel ke atas dinding"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Berapa target bloom ratio standar pada protokol Scott Rao V60 20 g kopi?",
+              "options": [
+                "60 g (3x dosis kopi)",
+                "15 g (0.75x dosis)",
+                "200 g"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000403",
+          "course_id": "c1010001-0000-4000-8000-000000000004",
+          "module_number": 1,
+          "lesson_number": 3,
+          "subchapter_code": "4.3",
+          "title": "4.3 Metode Lance Hedrick: '1-2-1 Method', 'Double Bloom' & 'Samo Bloom' 50–60°C",
+          "description": "Long bloom 2 menit (Gagné permeability boost), teknik radikal Cold/Warm Samo Bloom 50–60°C pengunci ester volatil, dan varian Double Bloom V60.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab4/sub_4_3_hedrick.m3u8",
+          "duration_sec": 370,
+          "xp_reward": 110,
+          "linked_ebook_code": "CL-BOOK-03",
+          "linked_ebook_chapter": 2,
+          "key_takeaways_markdown": "### 1. Metode 1-2-1 Lance Hedrick (`18 g : 306 g @ 100°C`, Rasio 1:17)\nDibangun di atas temuan permeabilitas *bloom* panjang Jonathan Gagné menggunakan filter aliran cepat **CAFEC Abaca**:\n- **Angka `1` (0:00–0:15)**: Tuang `54 g` (3× dosis, 6 g/s dalam 9 detik) lalu *vigorous swirl* hingga semua bubuk jenuh sempurna.\n- **Angka `2` (0:15–2:00)**: **Long Bloom 2 Menit Penuh!** Gas CO₂ keluar tuntas dan air meresap ke inti sel partikel -> menaikkan potensi Extraction Yield (`20–23% EY`) dengan *body* ringan bersih.\n- **Angka `1` (2:00–3:50)**: **Satu tuangan kontinu spiral penuh** (`+252 g -> 306 g`, `6,3–8 ml/s`), akhiri *gentle swirl* di `2:45`.\n\n### 2. Revolusi Samo Bloom (`50°C–60°C` Bloom, `95°C` Main Pour)\nBerdasarkan riset Dr. Samo Smrke untuk kopi sangat aromatik (`15 g : 250 mL`):\n- `0:00–0:10`: Tuang **45 g air suhu rendah `50°C – 60°C`** — membasahi kopi & melepas CO₂ **tanpa menguapkan VOC aromatik buah/bunga ke udara!**\n- `0:10–2:00`: Diamkan bloom sembari memanaskan ketel naik menuju **`95°C`**.\n- `2:00–3:00`: Tuang sisa air `95°C` hingga `250 mL` untuk mengekstrak kemanisan dengan seluruh aroma terkunci utuh!\n\n### 3. Double Bloom V60 (`15 g : 225 g @ 93°C`)\n`0:00` Bloom 1 `45 g` -> `0:30` Bloom 2 `+45 g` (`90 g`) -> `1:00` Tuang cepat di titik tengah hingga `225 g` dalam 12s -> selesai `2:00–2:30`.",
+          "formulas_latex_json": [
+            {
+              "label": "Protokol 1-2-1 Lance Hedrick",
+              "latex": "54g (3×) + Vigorous Swirl + 120s Rest + 252g Single Pour = 306g"
+            },
+            {
+              "label": "Dual-Temp Samo Bloom",
+              "latex": "T_bloom ∈ [50°C, 60°C] (Lock VOC)  →  T_main = 95°C"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Hot Bloom 96°C vs Samo Bloom 55°C",
+              "detail": "Visualisasi inframerah uap VOC menguap keluar pada bloom 96°C vs tertahan aman pada bloom hangat 55°C sebelum ketel naik ke 95°C."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "SAMO_VS_121_LAB",
+            "title": "Lab Komparasi Samo Bloom 55°C vs Metode 1-2-1 (2 Menit)",
+            "defaults": {
+              "bloom_temp_c": 55.0,
+              "bloom_duration_s": 120.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Filosofi 1-2-1 & Long Bloom 2 Menit"
+            },
+            {
+              "sec": 140,
+              "label": "Protokol Samo Bloom 50-60°C"
+            },
+            {
+              "sec": 260,
+              "label": "Double Bloom & 4-Pour Base"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Apa keunggulan utama melakukan Samo Bloom di suhu 50°C–60°C sebelum tuangan utama 95°C?",
+              "options": [
+                "Melepas CO2 sambil mencegah senyawa aromatik volatil (VOC) menguap lebih awal",
+                "Membuat ampas kopi membeku",
+                "Mengubah kopi dark roast jadi teh"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Apa arti dari penamaan metode '1-2-1' milik Lance Hedrick?",
+              "options": [
+                "1 Bloom (3x), 2 Menit jeda bloom, dan 1 Tuangan utama kontinu",
+                "1 g kopi : 21 ml air",
+                "1 detik aduk, 2 detik tunggu"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000404",
+          "course_id": "c1010001-0000-4000-8000-000000000004",
+          "module_number": 1,
+          "lesson_number": 4,
+          "subchapter_code": "4.4",
+          "title": "4.4 Filosofi Jepang 'Osmotic Flow' (CAFEC) & Kegagalan 'Antlion Pit'",
+          "description": "Pendekatan seduhan statis Jepang (25 g : 300 mL @ 80–83°C Dark Roast) mempertahankan 'Breathing Dome' & tanggul tepi (Levee) tanpa meruntuhkan kubah menjadi kawah pahit.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab4/sub_4_4_osmotic_flow.m3u8",
+          "duration_sec": 350,
+          "xp_reward": 105,
+          "linked_ebook_code": "CL-BOOK-06",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Pendekatan Statis untuk Dark Roast Manis & Bersih\nBerbeda dari metode agitasi dinamis, **Katsuya Takigawa (CEO CAFEC)** mengajarkan **Osmotic Flow**: rasio tinggi (**25 g kopi Dark Roast : 300 mL air = 1:12**), gilingan **Medium-Coarse**, air suhu lembut **80°C – 83°C** di **CAFEC Flower Dripper** (target `3:00–3:30`).\n\n### 3 Fase Operasi Osmotic Flow\n1. **Tahap 1 — Pembentukan Kubah (`0:00–0:45`, `30–40 mL`)**: Tuang lembut di tengah, **sisakan sedikit bubuk kering di pinggir kerucut sebagai fondasi tanggul**; biarkan gas CO₂ mengembangkan bubuk membentuk **kubah (*dome*)**.\n2. **Tahap 2 — *The Essence* (Hingga `~100 mL` / 1/3 pertama)**: Tuangkan air tipis **hanya di titik pusat**! Tuang saat kubah mulai mengempis dan **berhenti sejenak saat kubah kembali mengembang (\"bernapas\")**. Munculnya **gelembung busa putih halus (*white fine bubbles*)** membuktikan gradien konsentrasi osmotik bekerja mengekstraksi saripati lezat tanpa menyedot rasa pahit tepi.\n3. **Tahap 3 — *The Volume* (`100 mL -> 300 mL`)**: Tuang melingkar kecil *hanya di zona busa putih tengah*. **Aturan Mutlak: Never Collapse the Levee!** Jangan menyiram dinding luar atau membanjiri kubah!\n\n### Diagnostik Visual Akhir: Intact Dome vs Antlion Pit\nJika tanggul dinding jebol oleh air berlebih, ampas di akhir seduhan berbentuk cekungan kawah mirip **sarang undur-undur (*Antlion Pit*)** — pertanda rasa kasar/getir dari dinding samping telah ikut terekstraksi ke cangkir!",
+          "formulas_latex_json": [
+            {
+              "label": "Resep Osmotic Flow Dark Roast CAFEC",
+              "latex": "25g Kopi Dark Roast : 300mL Air @ 80°C–83°C (Rasio 1:12)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Simulasi Breathing Dome vs Antlion Pit Collapse",
+              "detail": "Kursor menjaga tetesan di pusat busa putih menjaga tanggul levee tetap utuh; menyiram tepi luar langsung meruntuhkan dinding membentuk kawah Antlion Pit merah."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "OSMOTIC_DOME_LAB",
+            "title": "Simulator Breathing Dome Osmotic Flow (Jaga Tanggul Levee!)",
+            "defaults": {
+              "temp_c": 82.0,
+              "center_precision": 0.95
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Fisika Statis vs Agitasi Dinamis"
+            },
+            {
+              "sec": 120,
+              "label": "Tahap Essence, Busa Putih & Pernapasan Kubah"
+            },
+            {
+              "sec": 240,
+              "label": "Mencegah Bencana Kawah Antlion Pit"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Apa tanda visual kegagalan fatal ketika dinding tanggul (levee) ikut tersiram dan runtuh di akhir seduhan Osmotic Flow?",
+              "options": [
+                "Terbentuknya kawah cekung menyerupai 'Antlion Pit' pertanda rasa kasar/getir larut ke cangkir",
+                "Terbentuknya lapisan minyak emas di server",
+                "Kopinya menjadi dingin seketika"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Berapa suhu air yang disarankan untuk teknik Osmotic Flow pada biji Dark Roast?",
+              "options": [
+                "80°C – 83°C",
+                "99°C – 100°C",
+                "40°C"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c1010001-0000-4000-8000-000000000005",
+      "slug": "bab-5-evolusi-tiga-era-tetsu-kasuya",
+      "title": "Bab 5: Evolusi Tiga Era Teknik Tetsu Kasuya (2016–2026)",
+      "subtitle": "Dari 4:6 Method (2016), Hybrid/Devil's Recipe pada Hario Switch (2024–2025), hingga 10-Pour Super-Coarse V60 NEO (2026).",
+      "instructor_name": "Raka Pratama (Kyoto Archive)",
+      "difficulty": "ALCHEMIST",
+      "required_tier": "Pro",
+      "competency_level": "Lanjut",
+      "focus_summary": "4:6 Method (2016), Hario Switch Devil/Hybrid (2024-2025), 10-Pour Super Coarse V60 NEO (2026)",
+      "interactive_engine_type": "Sequencer Multi-Tuangan & Simulator Katup Buka-Tutup",
+      "linked_ebook_code": "CL-BOOK-05",
+      "xp_reward_on_complete": 450,
+      "display_order": 5,
+      "total_modules_count": 3,
+      "total_duration_sec": 1020,
+      "lessons": [
+        {
+          "id": "d1010001-0000-4000-8000-000000000501",
+          "course_id": "c1010001-0000-4000-8000-000000000005",
+          "module_number": 1,
+          "lesson_number": 1,
+          "subchapter_code": "5.1",
+          "title": "5.1 Era 1 (2016): Metode Legendaris Tetsu Kasuya '4:6 Method'",
+          "description": "Matematika moduler 40% (kendali manis vs asam) & 60% (kendali strength/body) memakai gilingan kasar, air lunak, dan aturan jeda tiris 45 detik.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab5/sub_5_1_kasuya_46.m3u8",
+          "duration_sec": 340,
+          "xp_reward": 105,
+          "linked_ebook_code": "CL-BOOK-05",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Prinsip Dasar Metode 4:6 (`20 g : 300 g @ 83–93°C`, Kasar, Rasio 1:15)\n**Tetsu Kasuya** menjuarai WBrC 2016 dengan membagi seduhan atas dua blok fungsi terpisah menggunakan gilingan **Coarse** dan **Hario V60 Kasuya Model** (tanpa rusuk bawah agar aliran stabil lambat), dengan aturan kunci: **tunggu air dari tuangan sebelumnya hampir habis menetes tiap 45 detik sebelum tuangan berikutnya masuk!**\n\n### Kendali Equalizer Rasa: Blok 40% Awal (`120 g`) vs Blok 60% Akhir (`180 g`)\n1. **Blok 40% Pertama (`120 g` dibagi 2 tuangan) = Keseimbangan Asam vs Manis**:\n   - **Lebih Manis (*Sweeter*)**: `50 g` (`0:00`) + `70 g` (`0:45`).\n   - **Seimbang (*Balanced*)**: `60 g` (`0:00`) + `60 g` (`0:45`).\n   - **Lebih Cerah / Asam (*Brighter*)**: `70 g` (`0:00`) + `50 g` (`0:45`).\n2. **Blok 60% Kedua (`180 g` mulai `1:30`) = Kekuatan & Body**:\n   - **Light Body**: 1 tuangan langsung `180 g`.\n   - **Medium (Cocok Dark Roast)**: 2 tuangan `@ 90 g` (`1:30`, `2:15`).\n   - **Strong & Rich**: 3 tuangan `@ 60 g` (`1:30`, `2:15`, `2:45`), **angkat dripper tepat pada `3:30`**!",
+          "formulas_latex_json": [
+            {
+              "label": "Partisi 4:6 Tetsu Kasuya (300g Total)",
+              "latex": "V_sweet_acid = 0.40×V (120g)  +  V_strength = 0.60×V (180g)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Equalizer 40% (50+70 vs 70+50) & 60% Body",
+              "detail": "Menggeser pembagi fase 1 & jumlah pulsa fase 2 serta mengamati air surut kering setiap 45 detik sebelum tuangan berikutnya."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "KASUYA_46_EQUALIZER",
+            "title": "Equalizer Interaktif Tetsu Kasuya 4:6",
+            "defaults": {
+              "pour1_g": 50.0,
+              "pour2_g": 70.0,
+              "strength_splits": 3
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Konsep Coarser Grind & Tunggu Tiris 45s"
+            },
+            {
+              "sec": 120,
+              "label": "Matematika 40% Sweet vs Bright"
+            },
+            {
+              "sec": 240,
+              "label": "Pembagian 60% Kekuatan Body & Cut 3:30"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Bagaimana pembagian tuangan fase 40% (120 g) yang dipilih Kasuya bila ingin menonjolkan RASA MANIS (Sweeter)?",
+              "options": [
+                "Tuangan 1 lebih kecil dari Tuangan 2 (misal 50 g lalu 70 g)",
+                "Tuangan 1 lebih besar (70 g lalu 50 g)",
+                "Dituang sekaligus 300 g di awal"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Mengapa dripper wajib diangkat tepat pada menit 3:30 di akhir resep 4:6 standar?",
+              "options": [
+                "Memotong sisa tetesan terakhir yang membawa rasa kasar/sepat berlebih",
+                "Supaya air bertambah",
+                "Karena timer habis"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000502",
+          "course_id": "c1010001-0000-4000-8000-000000000005",
+          "module_number": 1,
+          "lesson_number": 2,
+          "subchapter_code": "5.2",
+          "title": "5.2 Era 2 (2024–2025): 'The Devil's Recipe' & New Hybrid di Hario Switch",
+          "description": "Membuka katup pada 2 tuangan awal bersuhu 93°C (perkolasi), lalu menurunkan air ke 70–75°C & menutup katup Switch untuk imersi bulat bebas pahit.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab5/sub_5_2_devil_switch.m3u8",
+          "duration_sec": 360,
+          "xp_reward": 115,
+          "linked_ebook_code": "CL-BOOK-05",
+          "linked_ebook_chapter": 2,
+          "key_takeaways_markdown": "### Membalik Pakem Hybrid: Mengapa 'Devil's Recipe'?\nSenyawa buah & asam organik manis terekstraksi di awal seduhan, sedangkan tanin pahit mendominasi akhir ekstraksi. Maka pada **Hario Switch (`20 g ~20 klik C40 : 280 g air`, rasio 1:14, selesai `3:00`)**:\n1. **`0:00 – 0:30` (Katup TERBUKA @ `93°C`)**: Tuang **60 g** spiral dalam 10 detik, biarkan mengalir turun selama 30 detik (*perkolasi cepat mengambil aroma awal*).\n2. **`0:30 – 1:14` (Katup TERBUKA @ `93°C`)**: Tuang lagi **`+60 g`** (`total 120 g`). Di `0:45–1:00`, **tambahkan air dingin ke ketel hingga suhunya turun ke `70°C – 75°C`**!\n3. **`1:14 – 1:45` (TUTUP Katup Switch -> Imersi @ `70°C`)**: Tutup katup saat 120 g awal tuntas mengalir, lalu tuang **`+160 g` air dingin-hangat `70°C`** (`total 280 g`) dan rendam (`steep`) `25–30 detik`!\n4. **`1:45 – 3:00` (BUKA Katup Switch & Drawdown)**: Buka tuas dan tunggu tuntas di `3:00` -> hasilnya manis tebal seperti sirup tanpa sedikit pun pahit!\n\n### Evolusi New Hybrid V2 (2025): `20 g (28 klik C40) : 300 g`\n`0:00` Tutup katup, tuang `40–50g @ 90°C` -> `0:35` Buka katup -> `0:40` ke `120g` -> `1:30` ke `200g` -> dinginkan ketel `70–80°C` -> `2:05` Tutup katup, tuang ke `300g` -> `2:45` Buka katup (tuntas `3:30`).",
+          "formulas_latex_json": [
+            {
+              "label": "Devil's Recipe Dual-Temp Profile",
+              "latex": "120g @ 93°C (Open Percolation)  +  160g @ 70°C (Closed Immersion)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Simulator Katup Switch & Pendinginan Ketel 93°C->70°C",
+              "detail": "Katup terbuka meneteskan air panas merah-oranye 60+60g, lalu siswa mendinginkan ketel ke 70°C (biru sejuk), menutup tuas pada 1:14, merendam 30 detik, dan membuka katup pada 1:45."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "HYBRID_SWITCH_DEVIL_LAB",
+            "title": "Simulator Katup Hario Switch & Thermal Drop 93°C -> 70°C",
+            "defaults": {
+              "valve_open": true,
+              "kettle_temp_c": 93.0,
+              "drop_target_c": 70.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Prinsip Ekstraksi Selektif Dua Fase"
+            },
+            {
+              "sec": 120,
+              "label": "Timeline Devil's Recipe 20g:280g"
+            },
+            {
+              "sec": 250,
+              "label": "Upgrade New Hybrid 2025 (20g:300g)"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa katup Hario Switch justru DITUTUP dan suhu air diturunkan ke 70°C pada tuangan terakhir Devil's Recipe?",
+              "options": [
+                "Membangun body bulat dan kemanisan via imersi tanpa menarik senyawa pahit astringent di akhir",
+                "Karena air di ketel habis menguap",
+                "Untuk mempercepat waktu di bawah 30 detik"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Berapa gram total air yang dituangkan pada dua fase terbuka awal (sebelum katup ditutup) dalam Devil's Recipe 280 g?",
+              "options": [
+                "120 g (60 g + 60 g @ 93°C)",
+                "280 g sekaligus",
+                "20 g saja"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000503",
+          "course_id": "c1010001-0000-4000-8000-000000000005",
+          "module_number": 1,
+          "lesson_number": 3,
+          "subchapter_code": "5.3",
+          "title": "5.3 Era 3 (2026): '10-Pour Super-Coarse Method' (V60 NEO)",
+          "description": "Resep perayaan 1 dekade juara dunia: gilingan ekstrem 1.200–1.350 µm (40–45 klik C40), air 95–96°C, dan 10 pulsa mikro @ 30 g tiap 15 detik untuk mouthfeel selembut sirup.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab5/sub_5_3_kasuya_10pour.m3u8",
+          "duration_sec": 320,
+          "xp_reward": 115,
+          "linked_ebook_code": "CL-BOOK-05",
+          "linked_ebook_chapter": 3,
+          "key_takeaways_markdown": "### Filosofi 10-Pour Super-Coarse (`20 g : 300 g @ 95–96°C`, Rasio 1:15)\nDirilis tahun **2026** menggunakan **Hario V60 NEO** (resin Tritan rusuk rapat):\n- **Gilingan Super Kasar (`1.200 – 1.350 µm` / `40 – 45 klik` Comandante C40)**: Hampir tanpa hambatan aliran -> air tak pernah menggenang.\n- **Suhu Air Wajib `95°C – 96°C`** (khusus Light / Medium-Light): Karena partikel besar luas permukaannya kecil, panas tinggi menjaga ekstraksi permukaan berjalan efisien.\n- **10 Pulsa Beruntun @ `30 g`**: Menjaga pencucian berulang (*surface rinsing*) hingga menghasilkan **`~1,28% – 1,30% TDS` kental bersirup**, tetapi **Extraction Yield tetap < 17% EY sehingga 0% pahit**!\n\n### Jadwal Metronom 10 Pulsa (Mulai `0:00`, Interval `15 Detik` Pasca-Bloom)\n1. `0:00 – 0:30` (Bloom `30 g` — satu-satunya jeda `30 detik`)\n2. `0:30` (`60 g`) -> `0:45` (`90 g`) -> `1:00` (`120 g`) -> `1:15` (`150 g`) -> `1:30` (`180 g`)\n3. `1:45` (`210 g`) -> `2:00` (`240 g`) -> `2:15` (`270 g`) -> `2:30` (`300 g`, tuntas `3:00–3:30`).",
+          "formulas_latex_json": [
+            {
+              "label": "Profil Ekstraksi 10-Pour Super Coarse",
+              "latex": "TDS ≈ 1.28%–1.30% (Syrupy)  &  EY < 17% (Zero Bitterness)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Metronom 15 Detik pada Hario V60 NEO",
+              "detail": "Mengikuti detak 15s menuangkan tepat 30 g air 96°C di atas butiran super-kasar 45 klik hingga melapisi permukaan dengan gula kental bebas sepat."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "TEN_POUR_METRONOME_LAB",
+            "title": "Metronom 15-Detik 10-Pour Super-Coarse V60 NEO",
+            "defaults": {
+              "grind_clicks_c40": 42,
+              "temp_c": 96.0,
+              "pulses": 10
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Paradoks High TDS + Low EY <17%"
+            },
+            {
+              "sec": 125,
+              "label": "Peran Suhu 96°C & V60 NEO"
+            },
+            {
+              "sec": 220,
+              "label": "Jadwal 10x 30g Interval 15 Detik"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Apa keunggulan karakteristik rasa dari kombinasi gilingan super-kasar (40-45 klik C40) + 10 tuangan @ 30g @ 96°C?",
+              "options": [
+                "TDS tinggi (~1.30%, syrupy mouthfeel) namun EY rendah (<17%) sehingga nyaris tanpa rasa pahit",
+                "Menjadikan kopi tipis seperti teh",
+                "Menghasilkan waktu seduh 12 menit"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Berapa interval antar tuangan mulai pulsa ke-2 hingga pulsa ke-10?",
+              "options": [
+                "Setiap 15 detik",
+                "Setiap 90 detik",
+                "Setiap 3 menit"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c1010001-0000-4000-8000-000000000006",
+      "slug": "bab-6-flat-bottom-dripper-hybrid-immersion",
+      "title": "Bab 6: Spesialisasi Flat-Bottom & Hybrid Immersion-Percolation",
+      "subtitle": "April Brewer System Patrik Rolf, Orea V4 + Negotiator ('No Difference Recipe'), GINA & MAME Emi Fukahori Switch.",
+      "instructor_name": "Master Kaito & Elena Roaster",
+      "difficulty": "ALCHEMIST",
+      "required_tier": "Pro",
+      "competency_level": "Lanjut",
+      "focus_summary": "April System, Orea Negotiator, GINA, Emi Fukahori Switch, Cold Bloom Switch",
+      "interactive_engine_type": "Simulasi Vektor Aliran Air (Arcing vs Center Pour) & Dinamika Slurry",
+      "linked_ebook_code": "CL-BOOK-06",
+      "xp_reward_on_complete": 460,
+      "display_order": 6,
+      "total_modules_count": 3,
+      "total_duration_sec": 1010,
+      "lessons": [
+        {
+          "id": "d1010001-0000-4000-8000-000000000601",
+          "course_id": "c1010001-0000-4000-8000-000000000006",
+          "module_number": 1,
+          "lesson_number": 1,
+          "subchapter_code": "6.1",
+          "title": "6.1 Ekosistem Flat-Bottom Patrik Rolf (April Brewer System)",
+          "description": "Aturan emas 'No Tapping, No Swirling', serta tiga resep resmi April Brewer: 60g Circular + 40g Center Pour, April 5-Pour Classic, & 3-Pour Kafe.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab6/sub_6_1_april_system.m3u8",
+          "duration_sec": 340,
+          "xp_reward": 105,
+          "linked_ebook_code": "CL-BOOK-06",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Filosofi Ekosistem April Brewer (Patrik Rolf)\nDiameter lebar **April Brewer** menciptakan lapisan *coffee bed* dangkal sehingga kontak air berlangsung cepat & seragam. Aturan wajib Patrik Rolf: **NO TAPPING, NO SWIRLING, NO STIRRING!** Seluruh agitasi harus berasal murni dari momentum aliran busur ketel (*arcing stream*).\n\n### Tiga Protokol Resmi April Coffee Copenhagen\n1. **April Brewing System (\"Circle + Center Pour\" — `12g:200g` atau `20g:300g` @ `92–93°C`)**:\n   - Tambahkan **1 tetes April Water Minerals** ke server; giling di setelan `8` (12g) atau `9` (20g) April Grinder (`~27–28 klik` C40).\n   - Tiap pulsa `100 g` (`0:00` & `0:35` untuk 12g; atau `0:00`, `0:35`, `1:05` untuk 20g) dilakukan kontinu **60 g *circular pour*** -> **40 g *center pour***! (selesai `2:20–2:50`).\n2. **April Classic 5-Pour Spiral (`15 g : 250 g @ 93°C`, selesai `3:20`)**:\n   - 5 pulsa `@ 50 g` (`0:00`, `0:40`, `1:10`, `1:40`, `2:10`) masing-masing selesai tuang dalam 8 detik (`6,2 g/s`).\n3. **Resep Kafe 3-Pour (`13 g : 200 g @ 99°C`)**: `0:00` Bloom `40g` -> `0:30` spiral+tengah ke `150g` -> `1:10` tengah ke `200g`.",
+          "formulas_latex_json": [
+            {
+              "label": "Pola Vektor 100g April System",
+              "latex": "100g Pulse = 60g Circular Pour (Agitasi) + 40g Center Pour (Penetrasi Vertikal)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Pelatih Gerakan '60g Circular + 40g Center' Tanpa Swirl",
+              "detail": "Mengikuti lintasan luar lalu langsung mengunci di tengah; menekan Swirl/Tap memicu peringatan Patrik Rolf."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "APRIL_CIRCLE_CENTER_LAB",
+            "title": "Simulator April System (60g Circular + 40g Center)",
+            "defaults": {
+              "circular_g": 60.0,
+              "center_g": 40.0,
+              "dose_g": 12.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Mengapa Tanpa Swirl/Tap di April Brewer"
+            },
+            {
+              "sec": 120,
+              "label": "Teknik 60g Circular + 40g Center"
+            },
+            {
+              "sec": 240,
+              "label": "Perbandingan April 5-Pour & Kafe 3-Pour"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Apa prinsip pengadukan (agitasi) wajib pada metode Patrik Rolf April Brewer System?",
+              "options": [
+                "Tanpa mengetuk (no tapping) atau memutar (no swirling); agitasi murni dari tuangan ketel",
+                "Wajib diaduk dengan sendok 15 kali tiap tuangan",
+                "Wajib dibanting di meja"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Bagaimana pembagian setiap pulsa tuangan 100 g dalam April Brewing System?",
+              "options": [
+                "60 g circular pour diikuti langsung 40 g center pour",
+                "100 g tepat di pinggir kertas filter",
+                "100 g dari tinggi 50 cm"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000602",
+          "course_id": "c1010001-0000-4000-8000-000000000006",
+          "module_number": 1,
+          "lesson_number": 2,
+          "subchapter_code": "6.2",
+          "title": "6.2 Teknik Flat-Bottom Cepat (Orea V3/V4, B75) & 'No Difference Recipe'",
+          "description": "Menguasai alat Orea Negotiator penghilang side-channeling dan protokol ultra-cepat 90 detik 'No Difference Recipe' (96°C -> 80°C) milik George Peng.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab6/sub_6_2_no_difference.m3u8",
+          "duration_sec": 330,
+          "xp_reward": 105,
+          "linked_ebook_code": "CL-BOOK-06",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Menghapus *Side-Channeling* dengan Orea Negotiator\n*Dripper flat-bottom* beraliran cepat seperti **Orea V3/V4** dan **Timemore B75** dapat dipasangi kertas bergelombang standar maupun ditekan rata menempel ke dinding dalam menggunakan **Negotiator (*negotiated wave filter*)** sehingga 0% air bocor lewat lipatan gelombang dinding (*zero bypass*)!\n\n### Resep Ultra-Cepat 90 Detik: \"No Difference Recipe\" (George Peng)\nDirancang untuk **Orea V4 + Negotiator** atau Fellow Stagg X (`15 g` kopi giling *Medium-Coarse ~26–28 klik C40*):\n1. **`0:00 – 0:30` (Tuangan 1 — Bloom @ `96°C`, Rasio `1:3`)**: Tuang **45 g** air `96°C` (`90–92°C` bila kopi *heavily fermented*) melingkar, tunggu `30 detik`.\n2. **`0:30 – 1:00` (Tuangan 2 — Fast Circular @ `96°C`, Rasio `+1:6`)**: Tuang **`+90 g`** (`total 135 g`) melingkar relatif cepat.\n3. **`1:00 – 1:30` (Tuangan 3 — Slow & Low Center Pour @ `80°C`)**: Turunkan suhu ketel ke **`80°C`**, lalu tuang lambat & rendah tepat di **pusat** sesuai kekuatan target:\n   - **`+60 g` (`total 195 g`)**: Pekat & intens (*concentrated*).\n   - **`+75 g` (`total 210 g`)**: Seimbang (*balanced*).\n   - **`+90 g` (`total 225 g`)**: Lembut & jernih (*mellow & clear*).",
+          "formulas_latex_json": [
+            {
+              "label": "Skema 90-Detik George Peng",
+              "latex": "45g (96°C) + 90g (96°C) + [60|75|90g] (80°C)  →  Total ~1:30"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Pasang Orea Negotiator & Pilihan Rasio 80°C",
+              "detail": "Menekan kertas Kalita Wave dengan Negotiator merapat sempurna ke Orea V4 lalu menguji variasi +60g/+75g/+90g pada 80°C."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "NO_DIFFERENCE_OREA_LAB",
+            "title": "Lab Orea Negotiator & No Difference Recipe 90s",
+            "defaults": {
+              "use_negotiator": true,
+              "third_pour_g": 75.0,
+              "final_temp_c": 80.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Cara Kerja Orea Negotiator (Zero Bypass)"
+            },
+            {
+              "sec": 120,
+              "label": "Fase 96°C pada No Difference Recipe"
+            },
+            {
+              "sec": 230,
+              "label": "Tuning Konsentrasi via +60/75/90g @ 80°C"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Apa tujuan utama menekan kertas wave menggunakan Orea Negotiator?",
+              "options": [
+                "Merapatkan kertas ke dinding dripper guna menghilangkan side-channeling dan bypass",
+                "Memperlebar sudut kerucut menjadi 90°",
+                "Mendinginkan slurry 20°C"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Berapa target total waktu seduh resep 'No Difference Recipe' karya George Peng?",
+              "options": [
+                "Sekitar 90 detik (1:30)",
+                "6 menit penuh",
+                "15 detik"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000603",
+          "course_id": "c1010001-0000-4000-8000-000000000006",
+          "module_number": 1,
+          "lesson_number": 3,
+          "subchapter_code": "6.3",
+          "title": "6.3 Masterclass Hybrid: Resep MAME Emi Fukahori & Cold Bloom Switch",
+          "description": "Kebalikan Devil's Recipe: Closed-Valve Immersion Bloom di awal diikuti Open-Valve Single Center Pour (14 g : 200 g dalam 2:20) dan protokol Cold Bloom Hybrid.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab6/sub_6_3_fukahori_switch.m3u8",
+          "duration_sec": 340,
+          "xp_reward": 110,
+          "linked_ebook_code": "CL-BOOK-05",
+          "linked_ebook_chapter": 2,
+          "key_takeaways_markdown": "### Pendekatan MAME (Zurich / Jenewa / Tokyo) — Emi Fukahori Switch\nAlih-alih membuka katup di awal, juara dunia WBrC 2018 **Emi Fukahori** menerapkan urutan terbalik yang super cepat (**2:20** total) & mudah diulang (**14 g kopi `750 µm` / 25 klik C40 : 200 g air @ 93°C**, rasio `1:14,29`):\n1. **`0:00 – 0:30` (Fase 1 — Bloom Katup TERTUTUP)**: Tutup katup Hario Switch, tuang **50 g** air `93°C`, biarkan imersi penuh menjenuhkan seluruh bubuk selama 30 detik.\n2. **`0:30 – 1:10` (Fase 2 — Perkolasi Katup TERBUKA)**: Buka katup pada `0:30` dan langsung tuangkan sisa **`+150 g` (`total 200 g`) dalam satu aliran kontinu tunggal di pusat (*single continuous center pour*)**.\n3. **`1:10 – 2:20` (Drawdown)**: Biarkan menetes tuntas pada `2:20`.\n\n### Cold Bloom Hybrid Switch (Kombinasi Samo Bloom + Switch)\n- **`0:00 – 0:40` (Closed Valve)**: Tuang `40 mL` air **suhu ruang** melingkar + *swirl vigorous* 10 detik, diamkan hingga `0:40`.\n- **`0:40 – 1:20` (Open Valve @ `94°C`)**: Buka katup -> tuang melingkar hingga `110 mL`.\n- **`1:20 – 3:30/4:00`**: Tuang hingga `200 mL` & biarkan mengalir tuntas.",
+          "formulas_latex_json": [
+            {
+              "label": "Resep Switch MAME Emi Fukahori",
+              "latex": "50g Closed Bloom (0:00–0:30)  →  150g Open Center Pour (0:30–1:10)  →  2:20"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Komparasi 'Steep First' MAME vs 'Cold Bloom Switch'",
+              "detail": "Mengamati saturasi penuh fase 30s tertutup diikuti aliran tunggal center pour vs kunci volatil air suhu ruang 40mL."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "MAME_SWITCH_COMPARE",
+            "title": "Simulasi Hario Switch: Steep-First MAME vs Cold Bloom",
+            "defaults": {
+              "mode": "MAME_FUKAHORI",
+              "bloom_temp_c": 93.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Konsep Steep-First Hario Switch"
+            },
+            {
+              "sec": 130,
+              "label": "Single Center Pour 150g MAME (2:20)"
+            },
+            {
+              "sec": 230,
+              "label": "Cold Bloom Hybrid & Baseline 1:16 Pemula"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Bagaimana posisi katup Hario Switch selama 30 detik pertama dalam resep MAME Emi Fukahori?",
+              "options": [
+                "Tertutup (Closed-Valve Immersion Bloom) dengan 50 g air 93°C",
+                "Terbuka penuh dengan 200 g es",
+                "Dilepas total dari base"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Apa keunggulan metode Cold Bloom 40 mL air suhu ruang sebelum tuangan 94°C pada Hybrid Switch?",
+              "options": [
+                "Menjenuhkan bubuk dan melepas gas tanpa menguapkan aroma volatil saat bloom",
+                "Menghilangkan kafein 100%",
+                "Mengurangi dosis kopi"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c1010001-0000-4000-8000-000000000007",
+      "slug": "bab-7-sains-japanese-iced-coffee-flash-brew",
+      "title": "Bab 7: Sains & Teknik Japanese Iced Coffee (Flash Brew)",
+      "subtitle": "Termodinamika rasio air-es 60:40 vs 80:20, Iced V60 Hoffmann, Ultimate Flash Brew Hedrick, & 15s Rapid Pour Kasuya.",
+      "instructor_name": "Dr. Nadia Aris",
+      "difficulty": "ARTISAN",
+      "required_tier": "Pro",
+      "competency_level": "Menengah – Lanjut",
+      "focus_summary": "Termodinamika Es, Rasio 60:40 vs 80:20, Iced V60 Hoffmann, Flash Brew Hedrick, Kasuya & April Iced",
+      "interactive_engine_type": "Kalkulator Kesetimbangan Termal & Simulasi Penguncian Aromatik",
+      "linked_ebook_code": "CL-BOOK-09",
+      "xp_reward_on_complete": 400,
+      "display_order": 7,
+      "total_modules_count": 3,
+      "total_duration_sec": 940,
+      "lessons": [
+        {
+          "id": "d1010001-0000-4000-8000-000000000701",
+          "course_id": "c1010001-0000-4000-8000-000000000007",
+          "module_number": 1,
+          "lesson_number": 1,
+          "subchapter_code": "7.1",
+          "title": "7.1 Termodinamika Flash Brew vs Cold Brew & Split Rasio Air-Es",
+          "description": "Sains mengapa menyeduh panas di atas es menangkap asam organik & ester buah yang gagal diekstrak Cold Brew, aturan bilas filter di wastafel, & rasio 60:40 vs 80:20.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab7/sub_7_1_flash_thermo.m3u8",
+          "duration_sec": 310,
+          "xp_reward": 95,
+          "linked_ebook_code": "CL-BOOK-09",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Kenapa Flash Brew Unggul dalam Kejernihan & Aroma Buah?\nPelarutan senyawa asam buah (*citric/malic*), sukrosa aromatik, dan ester volatil memerlukan **energi termal tinggi (`>88°C`)** yang tidak terjadi pada *Cold Brew* (`4–22°C`), sementara pendinginan instan oleh es batu **mengunci senyawa volatil** sebelum menguap ke udara ruangan.\n\n### Matematika Split Rasio Air Panas : Es Batu\nKarena es batu yang meleleh menjadi bagian dari cairan minuman, total massa pelarut $M_{\\text{total}} = M_{\\text{air panas}} + M_{\\text{es}}$.\n- **Split Klasik & James Hoffmann (`60 : 40`)**: 60% air panas melewati kopi + 40% es di dalam server -> butuh **gilingan Medium-Fine** agar air panas yang volumenya lebih sedikit tetap mencapai Extraction Yield optimal!\n- **Split Lance Hedrick (`80 : 20` Post-Brew)**: 80% air panas menyeduh kopi murni dulu untuk ekstraksi maksimal, baru didinginkan dengan 20% es batu di akhir.\n\n### Kesalahan Fatal Pemula: Membilas Kertas di Atas Server!\n**Wajib bilas filter di atas wastafel (*above the sink*)**, bukan di atas server! Server kaca panas akan langsung mencairkan sebagian besar es batu sebelum seduhan dimulai, menyebabkan kopi menjadi encer.",
+          "formulas_latex_json": [
+            {
+              "label": "Kesetimbangan Kalor Lebur Es Flash Brew",
+              "latex": "Q_lepas(Kopi Panas) = m_es · (L_f + c_air·ΔT),   L_f = 334 J/g"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Simulasi Kesetimbangan Termal & Pemanasan Server",
+              "detail": "Menunjukkan es batu langsung mencair sia-sia bila kertas dibilas di atas server, vs tetap solid bila dibilas di wastafel."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "FLASH_BREW_THERMAL_LAB",
+            "title": "Kalkulator Kesetimbangan Kalor & Split Air Panas / Es Batu",
+            "defaults": {
+              "hot_pct": 60.0,
+              "ice_pct": 40.0,
+              "total_ml": 500.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Perbandingan Energi Ekstraksi Flash Brew vs Cold Brew"
+            },
+            {
+              "sec": 120,
+              "label": "Matematika 60:40 vs 80:20"
+            },
+            {
+              "sec": 210,
+              "label": "Aturan Emas: Bilas Filter di Wastafel!"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa kertas filter wajib dibilas di atas wastafel (bukan di atas server) sebelum menaruh es batu pada Japanese Iced Coffee?",
+              "options": [
+                "Agar server tidak panas dan mencairkan es batu sebelum proses seduh dimulai",
+                "Agar aroma kopi bertambah",
+                "Agar es batu cepat menguap"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Mengapa ukuran gilingan perlu diperhalus pada metode Flash Brew 60% air panas : 40% es?",
+              "options": [
+                "Mengompensasi berkurangnya volume air panas pelarut yang melewati bubuk kopi",
+                "Agar es tidak mencair",
+                "Agar kertas filter tidak basah"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000702",
+          "course_id": "c1010001-0000-4000-8000-000000000007",
+          "module_number": 1,
+          "lesson_number": 2,
+          "subchapter_code": "7.2",
+          "title": "7.2 Komparasi Japanese Iced V60 Hoffmann vs 'Ultimate Flash Brew' Hedrick",
+          "description": "Menguasai jadwal rinci Hoffmann (32,5 g : 300 g + 200 g es) vs filosofi ekstraksi penuh Hedrick Post-Brew Quenching (20 g : 240 mL + 60 g es) & Classic 13g Recipe.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab7/sub_7_2_hoffmann_hedrick_ice.m3u8",
+          "duration_sec": 340,
+          "xp_reward": 100,
+          "linked_ebook_code": "CL-BOOK-02",
+          "linked_ebook_chapter": 2,
+          "key_takeaways_markdown": "### 1. Resep James Hoffmann Iced V60 (`32,5 g : 300 g Panas + 200 g Es`, `2:55`)\n- **Persiapan**: Bilas filter di wastafel. Taruh `200 g` es di server, pasang V60 berisi `32,5 g` kopi *medium-fine* & *tare*.\n- `0:00 – 0:45`: Tuang **`97,5 g` air panas (`3× dosis`)**; di detik `0:10` **aduk sedikit (*stir the bloom*)**; diamkan hingga `0:45`.\n- `0:45 – 2:30`: Tuang sisa air panas perlahan hingga tepat **300 g air panas** (`500 g` total).\n- `2:30 – 2:55`: Di `2:30` aduk 1× searah & 1× berlawanan jarum jam; di `2:40` goyangkan (*swirl*) server hingga seluruh es meleleh -> sajikan di atas es baru!\n\n### 2. Lance Hedrick's Ultimate Flash Brew (`20 g : 240 mL @ 93°C + 60 g Es di Akhir`, `~3:15`)\nAgar EY tidak turun akibat air panas sedikit, Lance menyeduh **tanpa es di server** lebih dahulu (`rasio 1:12`), baru mendinginkan cepat (`post-brew ice quenching`):\n- `0:00 – 1:00`: *Long bloom* `60 g @ 93°C` selama 60 detik.\n- `1:00 – 2:30`: Tuangan 1 (`+90 g -> 150 g`) lalu Tuangan 2 (`+90 g -> 240 g`), *swirl*, tuntas `2:30`.\n- `2:30 – 3:15`: Jatuhkan **60 g es batu**, aduk hingga seluruh es leleh & suhu turun ke `5–10°C`.\n\n### 3. Classic Japanese Iced (`13 g : 120 mL @ 90°C + 100 g Es`): 4× `30 mL` setiap 30 detik.",
+          "formulas_latex_json": [
+            {
+              "label": "Hoffmann Over-Ice vs Hedrick Post-Ice",
+              "latex": "Hoffmann: 300g Panas atas 200g Es  |  Hedrick: 240g Panas -> +60g Es Akhir"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Simulasi Berdampingan Hoffmann vs Hedrick",
+              "detail": "Mengamati lonjakan EY% lebih tinggi pada Hedrick (240g air penuh mencuci bed 20g) sebelum es 60g dijatuhkan pada menit 2:30."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "ICED_HOFFMANN_HEDRICK_LAB",
+            "title": "Simulasi Hoffmann Over-Ice vs Hedrick Post-Brew Ice",
+            "defaults": {
+              "method": "HEDRICK_FLASH",
+              "ice_g": 60.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Protokol Over-Ice James Hoffmann"
+            },
+            {
+              "sec": 135,
+              "label": "Mengapa Hedrick Menaruh Es Di Akhir"
+            },
+            {
+              "sec": 240,
+              "label": "Classic 4x 30mL Japanese Iced"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa Lance Hedrick tidak menaruh es batu di awal penyeduhan pada 'Ultimate Flash Brew'-nya?",
+              "options": [
+                "Agar seluruh 240 g air panas (1:12) memaksimalkan Extraction Yield lebih dulu sebelum didinginkan es 60 g",
+                "Karena server tidak muat",
+                "Supaya kopi menjadi Espresso"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Berapa gram air bloom (3x dosis) untuk resep Iced V60 James Hoffmann 32,5 g kopi?",
+              "options": [
+                "97,5 g air panas",
+                "32,5 g",
+                "200 g"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000703",
+          "course_id": "c1010001-0000-4000-8000-000000000007",
+          "module_number": 1,
+          "lesson_number": 3,
+          "subchapter_code": "7.3",
+          "title": "7.3 Flash Brew Agresif 15 Detik Tetsu Kasuya & April Iced Coffee",
+          "description": "Teknik konsentrat berkecepatan ekstrem 20 g/s pada gilingan halus (25 g : 300 g dalam 15 detik, tuntas 1:30) serta rasio 1:10 April Iced Brewer.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab7/sub_7_3_kasuya_15s_iced.m3u8",
+          "duration_sec": 290,
+          "xp_reward": 100,
+          "linked_ebook_code": "CL-BOOK-06",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Metode Agresif 15 Detik Tetsu Kasuya (`25 g Halus : 300 g @ 95–96°C`, Rasio 1:12)\nKetika membutuhkan ekstraksi konsentrat dingin super cepat dan bertenaga manis:\n1. Giling **25 g kopi cukup halus (*finely ground*)**.\n2. Panaskan air tinggi ke **`95°C – 96°C`**.\n3. Nyalakan timer dan **tuangkan SELURUH 300 g air hanya dalam waktu 15 DETIK secara agresif (`20 g/detik`)**:\n   - **10 detik pertama (`0:00–0:10`)**: Gerakan melingkar cepat (*circle pour*).\n   - **5 detik terakhir (`0:10–0:15`)**: Fokus tajam di titik tengah (*center pour*).\n4. Biarkan mengalir tuntas — berkat aliran deras bertekanan tinggi, *drawdown* selesai cepat sekitar **1 menit 30 detik (`1:30`)** siap disajikan di atas es batu!\n\n### Resep April Iced Coffee (*Light Roast Concentrate*)\nGunakan **18 g kopi : 180 g air panas (`1:10` concentrate)** @ **`96°C`** di atas es batu di April Brewer dengan total waktu **`2:20`** — menghasilkan *juicy crisp acidity* menyegarkan.",
+          "formulas_latex_json": [
+            {
+              "label": "Debit Tuang Agresif Kasuya 15s",
+              "latex": "Flux = 300g / 15s = 20.0 g/s  (10s Circle + 5s Center, Drawdown ~1:30)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Tantangan Kecepatan Tuang 15 Detik (20 g/detik)",
+              "detail": "Timer menghitung mundur 15 detik sambil menjaga pola 10s spiral + 5s center pada 25 g kopi halus hingga drawdown tuntas 1:30."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "RAPID_15S_ICED_LAB",
+            "title": "Tantangan Tuang Cepat 15 Detik Tetsu Kasuya (20 g/s)",
+            "defaults": {
+              "pour_window_sec": 15.0,
+              "dose_g": 25.0,
+              "water_g": 300.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Sains Turbulensi Tinggi Gilingan Halus 15s"
+            },
+            {
+              "sec": 120,
+              "label": "Teknik 10s Circle + 5s Center Pour"
+            },
+            {
+              "sec": 210,
+              "label": "Resep Konsentrat 1:10 April Iced"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Berapa pembagian gerakan tuangan dalam jendela waktu 15 detik metode Tetsu Kasuya (300 g air)?",
+              "options": [
+                "10 detik pertama circle pour + 5 detik terakhir center pour",
+                "15 detik diam tidak menuang",
+                "15 kali tuangan @ 20 g selama 5 menit"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Rasio konsentrat kopi-ke-air yang dipakai pada April Iced Coffee (18 g : 180 g) adalah...",
+              "options": [
+                "1:10",
+                "1:20",
+                "1:5"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c1010001-0000-4000-8000-000000000008",
+      "slug": "bab-8-dekonstruksi-resep-juara-dunia-wbrc",
+      "title": "Bab 8: Dekonstruksi Resep Juara Dunia WBrC (2018–2026)",
+      "subtitle": "Bedah parameter panggung Emi Fukahori, Matt Winton, Sherry Hsu, Carlos Medina, Martin Wölfl, George Peng & Nas Jaafar.",
+      "instructor_name": "Coffee Labs Championship Faculty",
+      "difficulty": "WBRC_MASTER",
+      "required_tier": "Business",
+      "competency_level": "Masterclass / Advance",
+      "focus_summary": "Emi Fukahori (2018), Matt Winton (2021), Sherry Hsu (2022), Carlos Medina (2023), Martin Wölfl (2024), George Peng (2025), Nas Jaafar (2026)",
+      "interactive_engine_type": "Laboratorium Replikasi Panggung Kompetisi (Virtual Stage Telemetry)",
+      "linked_ebook_code": "CL-BOOK-05",
+      "xp_reward_on_complete": 550,
+      "display_order": 8,
+      "total_modules_count": 4,
+      "total_duration_sec": 1510,
+      "lessons": [
+        {
+          "id": "d1010001-0000-4000-8000-000000000801",
+          "course_id": "c1010001-0000-4000-8000-000000000008",
+          "module_number": 1,
+          "lesson_number": 1,
+          "subchapter_code": "8.1",
+          "title": "8.1 Juara WBrC 2018 (Emi Fukahori) & 2021 (Matt Winton)",
+          "description": "Replikasi resep panggung 4-fase katup GINA Emi Fukahori (Laurina CM) dan 5-Pour Metal V60 Dual-Temp 93°C->88°C Matt Winton (Eugenoides) + catatan Domatiotis & Jia Ning Du.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab8/sub_8_1_fukahori_winton.m3u8",
+          "duration_sec": 380,
+          "xp_reward": 125,
+          "linked_ebook_code": "CL-BOOK-05",
+          "linked_ebook_chapter": 2,
+          "key_takeaways_markdown": "### WBrC 2018 — Emi Fukahori (Swiss): GINA Hybrid + Laurina Semi-Carbonic\n Menggunakan **17 g kopi kasar : 220 g air Zurich (`100–110 ppm`)** (rasio `1:12,9`), 4 fase dalam **`2:55`**:\n1. `0:00–0:45` (**GINA TERTUTUP @ `80°C`**): Tuang **50 g** air `80°C` -> ekstrak manis & *orange blossom*.\n2. `0:45–1:45` (**GINA TERBUKA @ `95°C`**): Tuang **`+100 g`** air `95°C` di tengah -> membuka keasaman *red grape*.\n3. `1:45–2:30` (**GINA TERTUTUP @ `80°C`**): Tuang **`+70 g`** air `80°C` (`total 220 g`) -> bangun *juicy body*.\n4. `2:30–2:55` (**Final Drip & Cut**): Buka katup 25 detik lalu angkat bersih di `2:55`.\n\n### WBrC 2021 — Matt Winton (Swiss): Metal V60 5-Pour (`93°C -> 88°C`, No Swirl!)\nMenggunakan **Hario Metal V60**, **20 g** kopi kasar (`800–1.000 µm / 25–30 klik C40`) : **300 g air** (`1:15`), menuang dari ketinggian tanpa pernah memutar dripper:\n- `0:00`: **50 mL @ `93°C`** melingkar tengah -> luar.\n- `0:30`: **`+70 mL` (`120 mL`) @ `88°C`** (tunggu *bed* nyaris tuntas menetes).\n- `1:10`: **`+60 mL` (`180 mL`) @ `88°C`** | `1:50`: **`+60 mL` (`240 mL`) @ `88°C`** | `2:30–3:30`: **`+60 mL` (`300 mL`) @ `88°C`**.\n\n**Arsip Juara Klasik**: Stefanos Domatiotis (WBrC 2014: V60 15g:250mL @ 93°C `40->120->180->250mL`) & Jia Ning Du (WBrC 2019: Origami 16g:240mL @ 94°C debit presisi `6 -> 4 -> 5 g/s`).",
+          "formulas_latex_json": [
+            {
+              "label": "4-Fase GINA Fukahori",
+              "latex": "50g(80°C Closed) → 100g(95°C Open) → 70g(80°C Closed) → 25s Open"
+            },
+            {
+              "label": "5-Pour Dual-Temp Matt Winton",
+              "latex": "50mL(93°C) + 70 + 60 + 60 + 60mL(88°C)  [No Swirl, Cut 3:30]"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Simulator GINA 4-Fase Emi Fukahori",
+              "detail": "Mengoperasikan tuas katup putar GINA serta ketel 80°C dan 95°C bergantian hingga pemotongan akurat di 2:55."
+            },
+            {
+              "scene": "Scene 2: Sensor Tetesan Metal V60 Matt Winton",
+              "detail": "Menunggu tetesan menipis sebelum menyiram pulsa berikutnya pada 88°C dari ketinggian tanpa swirl."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "WBRC_STAGE_2018_2021",
+            "title": "Virtual Stage WBrC: GINA Fukahori (2018) & Metal V60 Winton (2021)",
+            "defaults": {
+              "preset": "WINTON_2021"
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Bedah Protokol Katup 4-Fase Emi Fukahori"
+            },
+            {
+              "sec": 160,
+              "label": "Metal V60 93°C->88°C No-Swirl Matt Winton"
+            },
+            {
+              "sec": 290,
+              "label": "Catatan Domatiotis (2014) & Jia Ning Du (2019)"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Pada resep WBrC 2018 Emi Fukahori di GINA, suhu air berapa yang digunakan pada dua fase imersi tertutup?",
+              "options": [
+                "80°C (dan 95°C pada fase perkolasi terbuka di tengah)",
+                "100°C terus menerus",
+                "50°C untuk semua fase"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Kapan saat yang tepat memulai tuangan baru pada resep 5-Pour Matt Winton?",
+              "options": [
+                "Ketika coffee bed hampir kering / V60 hampir berhenti menetes",
+                "Setiap 5 detik tanpa jeda",
+                "Saat air penuh menggenang bibir cone"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000802",
+          "course_id": "c1010001-0000-4000-8000-000000000008",
+          "module_number": 1,
+          "lesson_number": 2,
+          "subchapter_code": "8.2",
+          "title": "8.2 Juara WBrC 2022 (Sherry Hsu) & 2023 (Carlos Medina)",
+          "description": "Dual-Grind + Dual-Temp 70°C->95°C Sherry Hsu pada Orea V3 serta konsistensi 5x50g tiap 30 detik Carlos Medina di Origami Air S dengan air seimbang 65 ppm 1:1.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab8/sub_8_2_hsu_medina.m3u8",
+          "duration_sec": 370,
+          "xp_reward": 130,
+          "linked_ebook_code": "CL-BOOK-05",
+          "linked_ebook_chapter": 2,
+          "key_takeaways_markdown": "### WBrC 2022 Melbourne — Shih Yuan Hsu (Sherry Hsu, Taiwan)\nMenggunakan **Orea V3 Black** (kertas Kalita 185, atau **Timemore B75**), **Natural Carbonic Maceration Geisha**:\n- **Dual-Grind (`14 g`)**: `75% (10.5g) @ ~1.000 µm` + `25% (3.5g) @ ~800 µm` di 1Zpresso K-Pro.\n- **Suhu & Mineral Bertingkat**:\n  - `0:00–0:30` (Bloom @ **`70°C`** / air 75 ppm): **50 g** melingkar -> kunci ester volatil CM!\n  - `0:30–1:00` (Ketel 2 @ **`95°C`** / air 90 ppm): **`+50 g` -> 100 g** melingkar.\n  - `1:00–1:30` (`95°C` tengah): **`+50 g` -> 150 g** -> `1:30–2:30`: **`+50 g` -> 200 g** (*center pour*).\n\n### WBrC 2023 Athena — Carlos Medina (Chili)\nFilosofi replikabilitas tinggi dengan **Origami Air S** + **kertas Conical (Cafec Abaca)** (memilih Conical alih-alih Wave agar Sidra Natural mengekstrak *apple/pineapple malic brightness* lebih kuat!).\n- **Parameter**: `15,5 g` (`750–800 µm` / 26 klik C40 / 5.5 S3) : `250 g` air `91°C` (**65 ppm, 1:1 Ca:Mg**).\n- **Ritme Presisi**: **5 tuangan setara @ 50 g** tiap 30 detik (`0:00, 0:30, 1:00, 1:30, 2:00` -> `2:45`), spiral keluar-masuk (*spiraling out & in*).",
+          "formulas_latex_json": [
+            {
+              "label": "Sherry Hsu 70°C->95°C Protocol",
+              "latex": "50g(70°C Bloom) + 50g(95°C Circle) + 50g(95°C Center) + 50g(95°C Center)"
+            },
+            {
+              "label": "Carlos Medina Origami Rhythm",
+              "latex": "5 × 50g @ 91°C  (Tiap 30s, Air 65 ppm 1:1 Ca:Mg, Conical Paper)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Dua Ketel 70°C -> 95°C + Dual-Grind Sherry Hsu",
+              "detail": "Menjaga ester halus Carbonic Maceration di 70°C sebelum mengoptimalkan manisnya di 95°C."
+            },
+            {
+              "scene": "Scene 2: Ritme Presisi 5x50g & Evolusi Suhu Carlos Medina",
+              "detail": "Merekam perubahan persepsi sensorik dari Panas (Dark Cherry), Hangat (Concord Grape), ke Dingin (Fuji Apple Juice)."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "WBRC_STAGE_2022_2023",
+            "title": "Virtual Stage WBrC: Sherry Hsu (2022) & Carlos Medina (2023)",
+            "defaults": {
+              "preset": "HSU_2022"
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Dual-Grind + Dual-Temp 70°C->95°C Sherry Hsu"
+            },
+            {
+              "sec": 170,
+              "label": "Mengapa Carlos Medina Pilih Kertas Conical di Origami"
+            },
+            {
+              "sec": 280,
+              "label": "Evolusi Rasa Hot-Warm-Cold Sidra Natural"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa Carlos Medina sengaja memasang kertas Conical di dalam Origami Air S (bukan kertas Wave Flat-Bottom)?",
+              "options": [
+                "Untuk menarik keasaman buah segar (apple/pineapple) pada kopi Natural Sidra yang sudah sangat manis",
+                "Karena kertas Wave tidak muat sama sekali",
+                "Untuk menaikkan suhu air jadi 105°C"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Bagaimana kombinasi suhu air dalam 4 tuangan resep juara WBrC 2022 Sherry Hsu?",
+              "options": [
+                "70°C di tuangan pertama (50 g) diikuti 95°C pada tiga tuangan berikutnya",
+                "100°C lalu 20°C",
+                "85°C konstan"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000803",
+          "course_id": "c1010001-0000-4000-8000-000000000008",
+          "module_number": 1,
+          "lesson_number": 3,
+          "subchapter_code": "8.3",
+          "title": "8.3 Juara WBrC 2024 (Martin Wölfl) & WBrC 2025 Jakarta (George Jinyang Peng)",
+          "description": "6 inovasi terintegrasi Martin Wölfl (481 poin: Mazzer ZM + WDT + Orea V4 + Sibarist FAST + APAX + Melodrip) & 'Temperature as a Sensory Tool' George Peng (Triple Roast + 1:45 Solo + Spout Flush).",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab8/sub_8_3_wolfl_peng.m3u8",
+          "duration_sec": 400,
+          "xp_reward": 140,
+          "linked_ebook_code": "CL-BOOK-05",
+          "linked_ebook_chapter": 3,
+          "key_takeaways_markdown": "### WBrC 2024 Chicago — Martin Wölfl (Austria, 481 Poin)\nMenyatukan 6 inovasi teknis pada *Panama Anaerobic Geisha* (`17 g : 270 mL @ 93°C`, tuntas **`2:20–2:25`**):\n- Giling di panggung **Mazzer ZM (`490 µm`)** -> ratakan bed pakai **jarum WDT** -> **Orea V4 Fast Bottom + Sibarist FAST** -> air **APAX LAB** (`1g TONIK + 1.5g JAMM + 1.5g LYLAC`) -> **Melodrip** di seluruh 4 tuangan: **`60 mL` (`0:00`) -> `+60 mL` (`0:40`) -> `+50 mL` (`1:20`) -> `+100 mL` (`2:00` -> `2:22`)**.\n\n### WBrC 2025 Jakarta — George Jinyang Peng: *\"Temperature as a Sensory Tool\"*\n- **Triple Roast Blend (`15 g`)**: Campuran `5g @ 185°F` (floral) + `5g @ 187°F` (ripe fruit) + `5g @ 189°F` (sweetness).\n- **Solo Dripper (40° PCTG, dipanaskan 80mL)** + gilingan 11 klik FM + **`210 g` air (`40 ppm TDS`)**.\n- **Preheating Moncong Ketel (*Spout Flush*)**: Wajib buang sedikit air melewati moncong sebelum `0:00` agar logam tidak mendinginkan tetesan pertama!\n- **Jadwal Super-Cepat (`1:45`!)**:\n  - `0:00–0:30` (`96°C`): **30 g** dalam *3 lingkaran berlawanan arah jarum jam* (~6s).\n  - `0:30–1:10` (`96°C`): **`+90 g -> 120 g`** (tuang 10s).\n  - `1:10–1:45` (**`80°C` lewat Melodrip**): **`+90 g -> 210 g`** -> tuntas tepat `1:45`!\n  - **Protokol SaJi 65°C ke 50°C**: Tunggu *carafe* turun ke **`65°C`**, lalu tuang ke cangkir keramik yang telah dipanaskan (`40°C`) sehingga suhu minum juri tepat **`50°C`**!",
+          "formulas_latex_json": [
+            {
+              "label": "Martin Wölfl Melodrip Sequence",
+              "latex": "60mL (0:00) → +60mL (0:40) → +50mL (1:20) → +100mL (2:00) @ 93°C"
+            },
+            {
+              "label": "George Peng 1:45 Express Protocol",
+              "latex": "30g(96°C) + 90g(96°C) + 90g(80°C Melodrip)  →  Carafe 65°C → Cup 50°C"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Panggung Chicago WBrC 2024 Martin Wölfl",
+              "detail": "Menggunakan WDT needle di Orea V4 + Sibarist FAST dan menyiram 60->60->50->100mL melewati holder Melodrip dalam 2:22."
+            },
+            {
+              "scene": "Scene 2: Panggung Jakarta WBrC 2025 George Peng",
+              "detail": "Mencampur Triple Roast, Spout Flush ketel, Solo 40°, Melodrip 80°C di akhir (1:45), lalu menunggu termometer carafe mencapai 65°C -> saji 50°C."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "WBRC_STAGE_2024_2025",
+            "title": "Virtual Stage WBrC: Martin Wölfl (2024) & George Peng (2025)",
+            "defaults": {
+              "preset": "PENG_2025",
+              "carafe_temp_c": 65.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "6 Inovasi Terpadu Martin Wölfl Chicago"
+            },
+            {
+              "sec": 170,
+              "label": "Triple Roast & Spout Flush George Peng Jakarta"
+            },
+            {
+              "sec": 290,
+              "label": "Protokol Termometer Carafe 65°C ke Cup 50°C"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa George Jinyang Peng mengalirkan air panas melewati moncong ketel (spout flush) sesaat sebelum tuangan bloom?",
+              "options": [
+                "Agar logam moncong ketel ikut panas dan tidak mencuri suhu air kontak pertama",
+                "Untuk mengurangi kadar garam di air",
+                "Untuk menyumbat ketel"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Alat filter & dripper apakah yang mengantarkan Martin Wölfl mencapai drawdown cepat pada gilingan halus 490 µm?",
+              "options": [
+                "Orea V4 Fast Bottom + Kertas Sibarist FAST + Melodrip",
+                "French Press kasar",
+                "Moka Pot aluminium"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000804",
+          "course_id": "c1010001-0000-4000-8000-000000000008",
+          "module_number": 1,
+          "lesson_number": 4,
+          "subchapter_code": "8.4",
+          "title": "8.4 Juara WBrC 2026 Brussels (Nas Jaafar) & Tren 2026 (Ethan Park & Sierra)",
+          "description": "Konsep 'Flow Resistance' pada UFO V3 + Hario Switch Base (15 g : 200 g dalam 2:10 dengan 10s fast drawdown), plus Neo Switch Dual-Temp Ethan Park & Orea Baby O Sierra.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab8/sub_8_4_nas_jaafar_2026.m3u8",
+          "duration_sec": 360,
+          "xp_reward": 145,
+          "linked_ebook_code": "CL-BOOK-05",
+          "linked_ebook_chapter": 3,
+          "key_takeaways_markdown": "### WBrC 2026 Brussels — Nas Jaafar (Juara Pertama Asal Malaysia, 469 Poin!)\nRevolusi **\"Flow Resistance\"**: menggabungkan kerucut sudut lebar **UFO V3 Clear** dengan dudukan katup **Hario Switch Base** & kertas ultra-cepat **UFO Type F (Fast)** (`15 g` gilingan *ZP6 Special 4.5* seukuran garam meja : **`200 g` air @ `92°C`**, rasio `1:13,3`, total waktu **`~2:10`**):\n1. **`0:00 – 0:58` (Fase 1 — Katup TERBUKA untuk Clarity)**: Tuang hingga **100 g** air `92°C`, biarkan mengalir mengekstrak kejernihan (*clean clarity*).\n2. **`0:58` (Tutup Katup)**: Tekan tuas Switch tepat di detik `0:58`.\n3. **`1:00 – 2:00` (Fase 2 — Imersi Katup TERTUTUP untuk Sweetness)**: Tuang **`+100 g` (`200 g` total)** dan rendam penuh selama 1 menit.\n4. **`2:00 – 2:10` (Buka Katup -> 10s Ultra-Fast Drawdown)**: Karena hambatan alir rendah UFO V3 + kertas Type F, seluruh `100 g` imersi terkuras hanya dalam **10 detik**!\n\n### Finalis Terkini WBrC 2026 Brussels\n- **Ethan Junseong Park (Korea Selatan — Hario Neo Switch)**: `16 g` (`~1.000 µm`) : `200 g` dua suhu (**95°C & 70°C**) dengan imersi dingin di akhir + *intentional bypass* -> `2:10`.\n- **Sierra (Swiss Champion — Orea Baby O)**: Ridge-free flatbread di atas *Dragonfly Server*, dua tuangan `93°C` + tuangan akhir `84°C`, saji di **`50°C–55°C`**.",
+          "formulas_latex_json": [
+            {
+              "label": "Arsitektur Flow Resistance Nas Jaafar (2:10)",
+              "latex": "100g(Open 0:00–0:58) + 100g(Closed Immersion 1:00–2:00) + 10s Fast Drop"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Panggung WBrC 2026 Brussels (UFO V3 + Switch Base)",
+              "detail": "Merakit UFO V3 Clear di Switch Base dengan kertas Type F, menuang 100g terbuka lalu 100g imersi (1:00-2:00) yang tuntas terkuras tepat 10 detik saat katup dibuka!"
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "WBRC_STAGE_2026_JAAFAR",
+            "title": "Virtual Stage WBrC 2026 Brussels: Nas Jaafar (UFO V3 + Switch)",
+            "defaults": {
+              "switch_close_sec": 58,
+              "switch_open_sec": 120
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Konsep Low Flow Resistance UFO V3"
+            },
+            {
+              "sec": 120,
+              "label": "Timeline 100g Open -> 100g Closed -> 10s Drop"
+            },
+            {
+              "sec": 240,
+              "label": "Studi Ethan Park & Sierra WBrC 2026"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Mengapa cairan imersi pada resep Nas Jaafar (WBrC 2026) bisa tuntas mengalir hanya dalam ~10 detik setelah katup dibuka?",
+              "options": [
+                "Berkat hambatan aliran sangat rendah dari UFO V3 bersudut lebar + kertas UFO Type F Fast",
+                "Karena dosis kopi hanya 1 gram",
+                "Karena kertas filter dilubangi jarum"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Apa fungsi masing-masing dari dua fase 100 g dalam resep Nas Jaafar?",
+              "options": [
+                "100 g pertama (terbuka) untuk Clarity, 100 g kedua (tertutup imersi) untuk Sweetness",
+                "Keduanya dibuang sebelum diminum",
+                "Hanya untuk mendinginkan cangkir"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c1010001-0000-4000-8000-000000000009",
+      "slug": "bab-9-diagnostik-sensorik-cooling-curve-ujian-akhir",
+      "title": "Bab 9: Diagnostik Sensorik, Cooling Curve & Lab Ujian Akhir",
+      "subtitle": "Sensory Cooling Curve 65°C ke 50°C, 8 roda rasa varietas Gagné, Matriks koreksi satu variabel & Ujian Compulsory/Open WBrC.",
+      "instructor_name": "Board of Sensory Judges Coffee Labs",
+      "difficulty": "WBRC_MASTER",
+      "required_tier": "Business",
+      "competency_level": "Masterclass / Advance",
+      "focus_summary": "Sensory Cooling Curve (65°C ke 50°C), Asam Organik, Matriks Troubleshooting, Ujian Simulasi Mandiri",
+      "interactive_engine_type": "Pohon Keputusan Interaktif & Lab Virtual World Brewers Cup",
+      "linked_ebook_code": "CL-BOOK-10",
+      "xp_reward_on_complete": 650,
+      "display_order": 9,
+      "total_modules_count": 3,
+      "total_duration_sec": 1070,
+      "lessons": [
+        {
+          "id": "d1010001-0000-4000-8000-000000000901",
+          "course_id": "c1010001-0000-4000-8000-000000000009",
+          "module_number": 1,
+          "lesson_number": 1,
+          "subchapter_code": "9.1",
+          "title": "9.1 Kurva Pendinginan Sensorik (Sensory Cooling Curve 65°C ke 50°C)",
+          "description": "Mengatasi 'Thermal Masking' reseptor lidah, protokol penyatuan lapisan server, 8 Roda Rasa Varietas Gagné, & sinyal diagnostik saat kopi mendingin.",
+          "kind": "HLS_VIDEO",
+          "hls_manifest_path": "coffeelabs/lms/bab9/sub_9_1_cooling_curve.m3u8",
+          "duration_sec": 320,
+          "xp_reward": 115,
+          "linked_ebook_code": "CL-BOOK-10",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Bahaya *Thermal Masking* pada Evaluasi Panas (>65°C)\nPada suhu tinggi, reseptor sakit/panas (*somatosensory*) menyamarkan persepsi rasa manis, nuansa buah kompleks, maupun cacat kekeringan (*astringency*). Semua juara dunia melakukan dua langkah penting sebelum evaluasi:\n1. **Swirl Carafe Setelah Drawdown**: Menyatukan lapisan ekstraksi pekat di dasar dengan lapisan atas yang lebih ringan.\n2. **Evaluasi Lintas Suhu (*Hot 65°C -> Warm 55°C -> Cool 35–40°C*)**:\n   - **George Peng & Champions Target**: Tunggu *carafe* turun ke **`65°C`** lalu tuang ke cangkir terpanaskan sehingga suhu minum juri tepat **`50°C – 55°C`**!\n   - **Contoh Real Sidra Natural (Carlos Medina)**: Nanas matang saat Panas (`65°C`) -> **asam fosforat & malat** saat Hangat (`55°C`) -> **jus apel hijau & apel Fuji** saat Dingin (`40°C`).\n\n### Hukum Diagnostik Pendinginan\n- Jika saat panas terasa agak tajam namun saat dingin menjadi **manis & hidup** -> ekstraksi sudah di jalur ideal!\n- **Jika rasa akhir semakin mengering di lidah seiring kopi mendingin (*finish grows drying as it cools*)** -> sinyal kuat *over-extraction / fines channeling*: **giling lebih kasar** atau kurangi agitasi!",
+          "formulas_latex_json": [
+            {
+              "label": "Zona Suhu Penilaian Sensorik Optimal",
+              "latex": "T_carafe_pour = 65°C  →  T_cup_tasting ∈ [50°C, 55°C]"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Simulator Cooling Curve 75°C -> 65°C -> 50°C -> 35°C",
+              "detail": "Panel lidah buram pada 75°C (Thermal Masking Warning) lalu membuka resolusi penuh 8 roda rasa varietas Gagné tepat pada 50-55°C."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "COOLING_CURVE_SENSORY_LAB",
+            "title": "Simulator Kurva Pendinginan Sensorik 75°C -> 50°C",
+            "defaults": {
+              "temp_c": 52.0
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Mengapa Suhu >65°C Menyamarkan Rasa"
+            },
+            {
+              "sec": 120,
+              "label": "Protokol 65°C Carafe ke 50°C Cangkir"
+            },
+            {
+              "sec": 220,
+              "label": "Membaca Sinyal Drying Finish Saat Dingin"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Jika rasa akhir kopi terasa semakin mengering/sepat di lidah ketika suhunya mendingin ke 40°C, perbaikan utama yang tepat adalah...",
+              "options": [
+                "Giling lebih kasar atau kurangi agitasi/suhu untuk menekan over-extraction",
+                "Giling jauh lebih halus",
+                "Tambah dosis bubuk 2 kali lipat"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Pada kisaran suhu minum berapakah kejelasan asam organik, manis, & rasa buah mencapai puncak optimal menurut protokol juri WBrC?",
+              "options": [
+                "50°C – 55°C (setelah didinginkan dari carafe 65°C)",
+                "95°C mendidih",
+                "0°C beku"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000902",
+          "course_id": "c1010001-0000-4000-8000-000000000009",
+          "module_number": 1,
+          "lesson_number": 2,
+          "subchapter_code": "9.2",
+          "title": "9.2 Matriks Diagnostik Troubleshooting & Aturan Satu Variabel",
+          "description": "Menguasai protokol ilmiah dial-in: mengubah HANYA SATU variabel dalam satu pengujian menggunakan matriks gejala rasa -> penyebab fisika -> urutan koreksi.",
+          "kind": "INTERACTIVE_SIMULATION",
+          "hls_manifest_path": "coffeelabs/lms/bab9/sub_9_2_diagnostics_matrix.m3u8",
+          "duration_sec": 330,
+          "xp_reward": 120,
+          "linked_ebook_code": "CL-BOOK-08",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Aturan Emas Ilmiah Dial-In: *Change Only One Variable at a Time!*\nJangan pernah mengubah ukuran gilingan, suhu air, dan rasio kopi **secara bersamaan** dalam satu percobaan! Catat setiap parameter di *Brew Log* sehingga hubungan sebab-akibat terukur akurat.\n\n| Gejala Rasa / Visual | Akar Masalah Fisika & Ekstraksi | Urutan Koreksi (Ubah 1 Variabel Saja!) |\n| :--- | :--- | :--- |\n| **Asam tajam (*sour*), tipis, cepat habis (<2:00)** | **Under-Extracted (EY < 18%)** | 1. **Perhalus gilingan** (*primary fix*). 2. Naikkan suhu +1–2°C. 3. Swirl merata di *bloom*. |\n| **Pahit, kering menyepat (*astringent*), lambat** | **Over-Extracted (EY > 22%)** | 1. **Perkasar gilingan**. 2. Turunkan suhu akhir (70–80°C). 3. Kurangi agitasi / pakai Melodrip. |\n| **Manis seimbang, tetapi encer (*sweet but weak*)** | **Strength Rendah (TDS < 1,15%)** | **Perkuat Brew Ratio** (misal tambah dosis `15g -> 16g` atau ubah `1:16 -> 1:14,5`) sebelum mengutak-atik gilingan! |\n| **Berat keruh (*muddy*) atau tetesan macet (*stall*)** | **Fines Migration & Clogging** | Perkasar gilingan, **stop *aggressive swirl***, buka katup lebih awal, gunakan filter CAFEC T-90 / Abaca+ / Sibarist FAST. |\n| **EY 20% & TDS 1,30% sudah di kotak ideal, tapi hampa** | **Air KH Tinggi / Biji Stale / Bypass** | Turunkan alkalinitas air (KH) ke **30–40 ppm**, cek usia roast & ganti kertas filter anti-bypass. |",
+          "formulas_latex_json": [
+            {
+              "label": "Diferensiasi Strength vs Extraction",
+              "latex": "Sweet & Weak = Naikkan Ratio (TDS↑)  |  Sour/Thin = Haluskan Grind (EY↑)"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Pohon Keputusan Interaktif Single-Variable Fix",
+              "detail": "Mengatasi kasus 'Manis tapi terlalu encer pada waktu 3:10' dengan memisahkan diagnosis Rasio (Strength) dari Gilingan (EY)."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "DIAGNOSTIC_TREE_SANDBOX",
+            "title": "Matriks Diagnostik Interaktif Brew Doctor",
+            "defaults": {
+              "symptom": "sweet_but_weak"
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Mengapa Wajib Ubah 1 Variabel Sekaligus"
+            },
+            {
+              "sec": 120,
+              "label": "Memisahkan Masalah TDS (Ratio) vs EY (Grind)"
+            },
+            {
+              "sec": 230,
+              "label": "Kasus Ideal Box Namun Terasa Hampa"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Kopi sudah terasa manis dan seimbang pada waktu ideal 3:10, tetapi kekuatannya terasa terlalu tipis/encer (weak). Koreksi pertama yang paling tepat?",
+              "options": [
+                "Memperkuat rasio kopi-ke-air (tambah dosis kopi, misal 15 g ke 16 g)",
+                "Menggiling jauh lebih halus agar waktu molor menjadi 5 menit",
+                "Membekukan air seduh"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Apa kesalahan metodologis fatal saat melakukan kalibrasi dial-in manual brew?",
+              "options": [
+                "Mengubah grind size, suhu, dosis, dan metode sekaligus dalam satu seduhan percobaan",
+                "Mencatat waktu drawdown",
+                "Menimbang dosis 0.1 g"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        },
+        {
+          "id": "d1010001-0000-4000-8000-000000000903",
+          "course_id": "c1010001-0000-4000-8000-000000000009",
+          "module_number": 1,
+          "lesson_number": 3,
+          "subchapter_code": "9.3",
+          "title": "9.3 Proyek Ujian Akhir LMS — 'Virtual World Brewers Cup Sandbox'",
+          "description": "Simulasi dua babak resmi WBrC: Babak 1 Compulsory Service (kalibrasi kopi misterius blind) & Babak 2 Open Service (presentasi penuh resep juara dunia di meja telemetri).",
+          "kind": "QUIZ_ASSESSMENT",
+          "hls_manifest_path": "coffeelabs/lms/bab9/sub_9_3_wbrc_exam.m3u8",
+          "duration_sec": 420,
+          "xp_reward": 250,
+          "linked_ebook_code": "CL-BOOK-10",
+          "linked_ebook_chapter": 1,
+          "key_takeaways_markdown": "### Struktur Ujian Akhir Sertifikasi Coffee Labs Barista Academy\nKelulusan penuh kurikulum 9 Bab / 30 Sub-bab mewajibkan peserta menyelesaikan dua babak simulasi **World Brewers Cup** terkalibrasi:\n\n1. **Babak 1 — *Compulsory Service* (Biji Misterius Blind)**:\n   - Seluruh kandidat mendapat lot kopi misterius identik tanpa deskripsi rasa.\n   - Uji coba awal -> baca **TDS** & **EY%** -> evaluasi kondisi *bed* (*Flat* vs *Antlion/Channeling*) -> koreksi **satu demi satu variabel** (*dripper* V60/Origami/Orea V4/April/Switch, kertas T-92/T-90/T-83/Sibarist FAST, ukuran mikron gilingan, serta racikan air GH/KH).\n2. **Babak 2 — *Open Service* (Presentasi Resep Juara Dunia)**:\n   - Pilih salah satu lot kompetisi (*Panama Anaerobic Geisha*, *Colombia Sidra Natural*, atau *Brazil Laurina Semi-Carbonic*) dan eksekusi protokol presisi penuh mulai *spout preheating*, manajemen suhu ganda (`96°C->80°C` / `70°C->95°C`), Melodrip/Paragon, hingga penyajian pada **`50°C – 55°C`**!\n   - Kartu skor juri mengevaluasi 7 atribut SCA: *Aroma, Flavor, Aftertaste, Acidity, Sweetness, Mouthfeel, Overall*.",
+          "formulas_latex_json": [
+            {
+              "label": "Formula Skor Akhir Sertifikasi SCA/WBrC",
+              "latex": "Score = Σ(7 Atribut Sensorik Hot/Warm/Cold) + Penalti Uniformity & Defect"
+            }
+          ],
+          "storyboard_scenes_json": [
+            {
+              "scene": "Scene 1: Meja Kompetisi Virtual WBrC & Telemetri",
+              "detail": "Operasikan 2 ketel, grinder mikron, 6 kertas filter, APAX/DIY water, Paragon/Melodrip, serta flow meter realtime."
+            },
+            {
+              "scene": "Scene 2: Kartu Skor Juri & Sertifikat Kelulusan Digital",
+              "detail": "Penerbitan skor akhir EY/TDS, rating Flat Bed, dan pemicu sertifikat Coffee Labs Academy."
+            }
+          ],
+          "simulation_config_json": {
+            "lab_kind": "WBRC_FINAL_SANDBOX",
+            "title": "Ujian Akhir Virtual WBrC: Compulsory + Open Service",
+            "defaults": {
+              "service_round": "OPEN_SERVICE"
+            }
+          },
+          "chapter_markers_json": [
+            {
+              "sec": 0,
+              "label": "Aturan Compulsory Service Blind Coffee"
+            },
+            {
+              "sec": 180,
+              "label": "Presentasi Open Service Juara Dunia"
+            },
+            {
+              "sec": 300,
+              "label": "Rubrik Kartu Skor Juri & Sertifikasi"
+            }
+          ],
+          "quiz_questions_json": [
+            {
+              "q": "Dalam babak Compulsory Service kompetisi World Brewers Cup, kondisi apa yang membedakannya dengan Open Service?",
+              "options": [
+                "Seluruh peserta menyeduh biji kopi misterius identik (blind compulsory coffee) untuk menguji kemampuan dial-in murni",
+                "Peserta boleh memakai kopi racikan bebas dari rumah",
+                "Hanya menilai seni menggambar latte art"
+              ],
+              "answer_idx": 0
+            },
+            {
+              "q": "Sebelum menyajikan kopi dari carafe ke cangkir penjurian pada Open Service, tindakan wajib untuk memastikan seluruh lapisan ekstraksi tercampur merata adalah...",
+              "options": [
+                "Mengaduk/memutar (swirl) carafe perlahan serta menjaga suhu saji 50°C–55°C",
+                "Menambahkan es batu 300 g saat menyajikan minuman panas",
+                "Membuang 80% cairan pertama"
+              ],
+              "answer_idx": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

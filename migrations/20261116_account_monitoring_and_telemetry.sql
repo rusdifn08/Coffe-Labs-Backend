@@ -1,0 +1,142 @@
+-- =============================================================================
+-- COFFEE LABS REAL-TIME ACCOUNT MONITORING, SCREEN TIME & FEATURE ADOPTION (MODUL 4.1)
+-- Migration: 20261116_account_monitoring_and_telemetry.sql
+-- Optimized for NeonDB Serverless PostgreSQL & Render 512MB RAM Free Tier
+-- =============================================================================
+
+-- 1. Sequence Monotonik untuk RoaringBitmap user_seq_id (DAU/WAU/MAU & Cohorts O(1))
+CREATE SEQUENCE IF NOT EXISTS user_bitmap_seq START WITH 1 INCREMENT BY 1;
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS bitmap_seq_id BIGINT UNIQUE;
+ALTER TABLE users ALTER COLUMN bitmap_seq_id SET DEFAULT nextval('user_bitmap_seq');
+UPDATE users SET bitmap_seq_id = nextval('user_bitmap_seq') WHERE bitmap_seq_id IS NULL;
+
+-- 2. Materialized View 360-Degree Dossier per Akun
+CREATE TABLE IF NOT EXISTS account_monitoring_dossiers (
+    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    bitmap_seq_id BIGINT NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    role VARCHAR(20) NOT NULL DEFAULT 'user',
+    account_tier VARCHAR(20) NOT NULL DEFAULT 'Trial',
+    avatar_url TEXT,
+    is_online BOOLEAN NOT NULL DEFAULT FALSE,
+    last_seen_at TIMESTAMPTZ,
+    current_active_route VARCHAR(80),
+    current_feature_bucket VARCHAR(32),
+    platform VARCHAR(20) NOT NULL DEFAULT 'android',
+    app_version VARCHAR(30),
+    device_model VARCHAR(80),
+    today_screen_time_sec INT NOT NULL DEFAULT 0,
+    today_aod_time_sec INT NOT NULL DEFAULT 0,
+    total_7d_screen_time_sec INT NOT NULL DEFAULT 0,
+    total_30d_screen_time_sec INT NOT NULL DEFAULT 0,
+    total_lifetime_screen_time_sec BIGINT NOT NULL DEFAULT 0,
+    avg_daily_screen_time_sec INT NOT NULL DEFAULT 0,
+    total_sessions_30d INT NOT NULL DEFAULT 0,
+    total_brews_executed INT NOT NULL DEFAULT 0,
+    total_recipes_created INT NOT NULL DEFAULT 0,
+    total_social_posts INT NOT NULL DEFAULT 0,
+    total_ai_scans INT NOT NULL DEFAULT 0,
+    feature_time_breakdown_json JSONB NOT NULL DEFAULT '{}'::jsonb,
+    top_favorite_features JSONB NOT NULL DEFAULT '[]'::jsonb,
+    last_brewed_recipe_title VARCHAR(150),
+    last_brewed_method VARCHAR(50),
+    health_score SMALLINT NOT NULL DEFAULT 50,
+    churn_risk_level VARCHAR(16) NOT NULL DEFAULT 'MEDIUM',
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_mon_dossier_online_last_seen
+    ON account_monitoring_dossiers (is_online DESC, last_seen_at DESC NULLS LAST);
+
+CREATE INDEX IF NOT EXISTS idx_mon_dossier_tier_health
+    ON account_monitoring_dossiers (account_tier, health_score DESC, total_7d_screen_time_sec DESC);
+
+CREATE INDEX IF NOT EXISTS idx_mon_dossier_churn_risk
+    ON account_monitoring_dossiers (churn_risk_level, updated_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_mon_dossier_lower_search
+    ON account_monitoring_dossiers (LOWER(username) text_pattern_ops, LOWER(full_name) text_pattern_ops);
+
+-- 3. Time-Series Rollup Harian Screen Time & Fitur per Akun
+CREATE TABLE IF NOT EXISTS account_daily_telemetry_rollups (
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    metric_date DATE NOT NULL,
+    active_screen_time_sec INT NOT NULL DEFAULT 0,
+    aod_kiosk_time_sec INT NOT NULL DEFAULT 0,
+    session_count INT NOT NULL DEFAULT 0,
+    feature_seconds_json JSONB NOT NULL DEFAULT '{}'::jsonb,
+    events_count INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (user_id, metric_date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_daily_rollup_date_screen
+    ON account_daily_telemetry_rollups (metric_date DESC, active_screen_time_sec DESC);
+
+-- 4. Brew Experiment Logs (Resep V60 / Espresso / Manual Brew yang Dicoba)
+CREATE TABLE IF NOT EXISTS account_brew_experiment_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    session_id UUID NOT NULL,
+    recipe_id VARCHAR(64),
+    recipe_title VARCHAR(150) NOT NULL,
+    brew_method VARCHAR(50) NOT NULL DEFAULT 'V60',
+    bean_origin VARCHAR(120),
+    brew_duration_sec INT NOT NULL DEFAULT 0,
+    completed BOOLEAN NOT NULL DEFAULT TRUE,
+    steps_completed INT NOT NULL DEFAULT 0,
+    rating SMALLINT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_brew_exp_user_date
+    ON account_brew_experiment_logs (user_id, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_brew_exp_recipe_top
+    ON account_brew_experiment_logs (recipe_title, completed, created_at DESC);
+
+-- 5. RoaringBitmap Snapshot Harian per Metric Key
+CREATE TABLE IF NOT EXISTS telemetry_daily_bitmaps (
+    metric_date DATE NOT NULL,
+    metric_key VARCHAR(40) NOT NULL,
+    roaring_bitmap_bytes BYTEA NOT NULL,
+    cardinality INT NOT NULL DEFAULT 0,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (metric_date, metric_key)
+);
+
+-- 6. Raw Telemetry Events (Partitioned by Month + Default Partition)
+CREATE TABLE IF NOT EXISTS telemetry_raw_events (
+    event_id UUID NOT NULL,
+    user_id UUID NOT NULL,
+    session_id UUID NOT NULL,
+    event_type VARCHAR(32) NOT NULL,
+    feature_bucket VARCHAR(32) NOT NULL,
+    route_name VARCHAR(80) NOT NULL,
+    duration_sec INT NOT NULL DEFAULT 0,
+    metadata_json JSONB NOT NULL DEFAULT '{}'::jsonb,
+    recorded_at TIMESTAMPTZ NOT NULL,
+    PRIMARY KEY (event_id, recorded_at)
+) PARTITION BY RANGE (recorded_at);
+
+CREATE TABLE IF NOT EXISTS telemetry_raw_events_2026_11
+    PARTITION OF telemetry_raw_events
+    FOR VALUES FROM ('2026-11-01 00:00:00+00') TO ('2026-12-01 00:00:00+00');
+
+CREATE TABLE IF NOT EXISTS telemetry_raw_events_2026_12
+    PARTITION OF telemetry_raw_events
+    FOR VALUES FROM ('2026-12-01 00:00:00+00') TO ('2027-01-01 00:00:00+00');
+
+CREATE TABLE IF NOT EXISTS telemetry_raw_events_2027_01
+    PARTITION OF telemetry_raw_events
+    FOR VALUES FROM ('2027-01-01 00:00:00+00') TO ('2027-02-01 00:00:00+00');
+
+CREATE TABLE IF NOT EXISTS telemetry_raw_events_default
+    PARTITION OF telemetry_raw_events DEFAULT;
+
+CREATE INDEX IF NOT EXISTS idx_raw_events_user_time
+    ON telemetry_raw_events (user_id, recorded_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_raw_events_feature_time
+    ON telemetry_raw_events (feature_bucket, recorded_at DESC);

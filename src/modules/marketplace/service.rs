@@ -3,7 +3,7 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::{
-    core::{error::AppResult, security::Claims},
+    core::{error::AppResult, jwt::JwtClaims},
     modules::marketplace::{
         dto::{PlaceOrderRequest, ValidateVoucherRequest, VoucherValidationResponse},
         error::MarketplaceError,
@@ -44,10 +44,10 @@ pub fn evaluate_voucher(req: ValidateVoucherRequest) -> AppResult<VoucherValidat
 
 pub async fn create_order(
     pool: &PgPool,
-    auth: Option<Claims>,
+    auth: Option<JwtClaims>,
     req: PlaceOrderRequest,
 ) -> AppResult<MarketplaceOrderRow> {
-    let user_id = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok());
+    let user_id = auth.as_ref().map(|c| c.sub);
     let username = auth
         .map(|c| c.username)
         .unwrap_or_else(|| "guest".to_string());
@@ -94,7 +94,7 @@ pub async fn create_order(
 
 pub async fn get_user_orders(
     pool: &PgPool,
-    auth: Option<Claims>,
+    auth: Option<JwtClaims>,
 ) -> AppResult<Vec<MarketplaceOrderRow>> {
     let username = auth.map(|c| c.username).unwrap_or_default();
     repository::list_orders(pool, &username).await

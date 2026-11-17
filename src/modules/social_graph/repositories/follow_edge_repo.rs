@@ -32,8 +32,9 @@ struct PairEdgeRow {
 pub async fn resolve_target_user(
     pool: &PgPool,
     target: &str,
+    viewer_id: Option<Uuid>,
 ) -> Result<TargetUserRow, SocialGraphError> {
-    let uid = resolve_target_user_id(pool, target, None)
+    let uid = resolve_target_user_id(pool, target, viewer_id)
         .await
         .map_err(|_| SocialGraphError::NotFound("Pengguna target tidak ditemukan.".to_string()))?;
     let _ = ensure_projection_exists(pool, uid).await;

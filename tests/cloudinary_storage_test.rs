@@ -6,24 +6,25 @@ use axum::{
 use coffe_labs_backend::{
     core::{
         config::parse_cloudinary_url,
-        security::JwtKeyRing,
+        jwt::JwtManager,
         storage::{auto_optimize_url, CloudinaryStorage},
     },
     modules::media::routes::media_router,
 };
-use secrecy::{ExposeSecret, SecretString};
+use secrecy::ExposeSecret;
 use serde_json::{json, Value};
 use tower::ServiceExt;
+use uuid::Uuid;
 
 #[derive(Clone)]
 struct MediaTestState {
-    jwt_keys: JwtKeyRing,
+    jwt: JwtManager,
     cloudinary: CloudinaryStorage,
 }
 
-impl FromRef<MediaTestState> for JwtKeyRing {
+impl FromRef<MediaTestState> for JwtManager {
     fn from_ref(state: &MediaTestState) -> Self {
-        state.jwt_keys.clone()
+        state.jwt.clone()
     }
 }
 
@@ -159,13 +160,11 @@ fn auto_optimize_url_inserts_f_auto_q_auto_idempotently() {
 
 #[tokio::test]
 async fn media_upload_signature_endpoint_requires_auth_and_returns_signed_payload() {
-    let jwt_keys =
-        JwtKeyRing::from_seed(&SecretString::from("test_seed_cloudinary_2026".to_string()))
-            .expect("jwt keys");
+    let jwt = JwtManager::new("test_secret_cloudinary_2026_minimum_32bytes!", 3600);
     let cloudinary = CloudinaryStorage::from_url("cloudinary://api_123:sec_456@irn72dwa")
         .expect("cloudinary storage");
     let state = MediaTestState {
-        jwt_keys: jwt_keys.clone(),
+        jwt: jwt.clone(),
         cloudinary,
     };
     let app = media_router::<MediaTestState>().with_state(state);
@@ -181,8 +180,8 @@ async fn media_upload_signature_endpoint_requires_auth_and_returns_signed_payloa
     assert_eq!(unauth_resp.status(), StatusCode::UNAUTHORIZED);
 
     // 2. Authenticated valid request returns signed upload contract
-    let token = jwt_keys
-        .sign_access_token("user-1", "barista", "user", "Pro", "active")
+    let token = jwt
+        .generate_user_token(Uuid::new_v4(), "barista", "user", "Pro", "active")
         .expect("sign token");
     let auth_req = Request::builder()
         .method("POST")

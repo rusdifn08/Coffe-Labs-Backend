@@ -1,5 +1,5 @@
 use axum::{
-    routing::{delete, get, patch, post},
+    routing::{delete, get, post},
     Router,
 };
 
@@ -16,7 +16,7 @@ pub fn router() -> Router<AppState> {
         )
         .route(
             "/api/v1/social/profiles/me",
-            patch(profile_handler::update_my_profile),
+            get(profile_handler::get_my_profile).patch(profile_handler::update_my_profile),
         )
         .route(
             "/api/v1/social/profiles/{target}",

@@ -1,9 +1,11 @@
+pub mod auth_extractor;
 pub mod cache;
 pub mod config;
 pub mod database;
 pub mod error;
 pub mod extractors;
 pub mod fcm_oauth;
+pub mod jwt;
 pub mod middleware;
 pub mod migrations;
 pub mod pagination;
@@ -24,8 +26,8 @@ use tokio::sync::RwLock;
 use crate::{
     core::{
         cache::AppCaches, config::AppConfig, fcm_oauth::FcmOAuthManager,
-        middleware::SecurityRateLimiter, rabbitmq::RabbitMqClient, redis::RedisManager,
-        security::JwtKeyRing, storage::CloudinaryStorage, telemetry::TelemetryRegistry,
+        jwt::JwtManager, middleware::SecurityRateLimiter, rabbitmq::RabbitMqClient,
+        redis::RedisManager, storage::CloudinaryStorage, telemetry::TelemetryRegistry,
     },
     modules::{
         chat::services::{
@@ -39,6 +41,8 @@ use crate::{
                 club_cache_service::ClubCacheService, secret_join_service::SecretJoinService,
             },
         },
+        monitoring::MonitoringEngine,
+        live_brew::services::live_telemetry_hub::LiveTelemetryHub,
         notifications::services::producer_service::NotificationProducerService,
         platform::models::AppVersionConfig,
         recommendation::{
@@ -56,7 +60,7 @@ use crate::{
 pub struct AppState {
     pub pool: PgPool,
     pub config: AppConfig,
-    pub jwt_keys: JwtKeyRing,
+    pub jwt: JwtManager,
     pub telemetry: TelemetryRegistry,
     pub rate_limiter: SecurityRateLimiter,
     pub version_cache: Arc<RwLock<AppVersionConfig>>,
@@ -77,6 +81,8 @@ pub struct AppState {
     pub club_cache: Arc<ClubCacheService>,
     pub secret_join_service: Arc<SecretJoinService>,
     pub taste_profiler: Arc<TasteProfilerService>,
+    pub monitoring: Arc<MonitoringEngine>,
+    pub live_brew_hub: Arc<LiveTelemetryHub>,
 }
 
 pub fn init_module35_engines(
@@ -89,7 +95,7 @@ pub fn init_module35_engines(
     Arc<TasteProfilerService>,
 ) {
     let club_cache = Arc::new(ClubCacheService::new(redis_pool.clone()));
-    let hmac_key = derive_hmac_key(config.jwt_seed.expose_secret());
+    let hmac_key = derive_hmac_key(config.jwt_secret.expose_secret());
     let secret_join = Arc::new(SecretJoinService::new(
         pool.clone(),
         hmac_key,
@@ -106,9 +112,9 @@ impl FromRef<AppState> for PgPool {
     }
 }
 
-impl FromRef<AppState> for JwtKeyRing {
+impl FromRef<AppState> for JwtManager {
     fn from_ref(state: &AppState) -> Self {
-        state.jwt_keys.clone()
+        state.jwt.clone()
     }
 }
 

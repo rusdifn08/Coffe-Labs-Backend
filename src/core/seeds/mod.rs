@@ -1,5 +1,7 @@
 pub mod accounts;
 pub mod curated_content;
+pub mod toolkit_content_seed;
+pub mod toolkit_lms_seed;
 
 use sqlx::PgPool;
 use crate::core::error::AppResult;
@@ -10,5 +12,7 @@ pub async fn run_seeds(pool: &PgPool) -> AppResult<()> {
     curated_content::seed_version_config(pool).await?;
     curated_content::seed_social_posts(pool).await?;
     curated_content::seed_curated_beans(pool).await?;
+    toolkit_lms_seed::seed_lms_courses_and_lessons(pool).await?;
+    toolkit_content_seed::seed_ebooks_and_game_chapters(pool).await?;
     Ok(())
 }

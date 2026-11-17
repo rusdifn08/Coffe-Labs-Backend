@@ -1,11 +1,11 @@
-use fred::{clients::RedisPool, interfaces::KeysInterface, types::Expiration};
+use fred::{clients::RedisPool, interfaces::{ClientLike, KeysInterface}};
 use moka::future::Cache;
 use sqlx::PgPool;
-use std::sync::Arc;
+use std::{sync::Arc, time::Duration};
 use uuid::Uuid;
 
 use crate::{
-    core::{cache::AppCaches, redis::PROFILE_CACHE_TTL_SECS},
+    core::{cache::AppCaches, redis::{redis_get_bounded, redis_set_ex_bounded, PROFILE_CACHE_TTL_SECS}},
     modules::{
         chat::services::moderation_guard::{ModerationGuard, ModerationMode},
         social_feed::{
@@ -41,9 +41,9 @@ impl ProfileCqrsService {
 
     pub async fn invalidate_profile(&self, user_id: Uuid) {
         self.l1_cache.invalidate(&user_id).await;
-        if let Some(pool) = &self.redis_pool {
+        if let Some(pool) = self.redis_pool.as_ref().filter(|p| p.is_connected()) {
             let key = format!("{REDIS_PROFILE_PREFIX}{user_id}");
-            let _ = pool.del::<i64, _>(key).await;
+            let _ = tokio::time::timeout(Duration::from_millis(200), pool.del::<i64, _>(key)).await;
         }
     }
 
@@ -73,7 +73,7 @@ impl ProfileCqrsService {
         }
         if let Some(redis) = &self.redis_pool {
             let key = format!("{REDIS_PROFILE_PREFIX}{target_id}");
-            if let Ok(Some(raw)) = redis.get::<Option<String>, _>(&key).await {
+            if let Some(raw) = redis_get_bounded(redis, &key).await {
                 if let Ok(parsed) = serde_json::from_str::<MaterializedProfileDto>(&raw) {
                     let arc = Arc::new(parsed);
                     if let Ok(val) = serde_json::to_value(arc.as_ref()) { self.l1_cache.insert(target_id, Arc::new(val)).await; }
@@ -86,7 +86,7 @@ impl ProfileCqrsService {
         if let Some(redis) = &self.redis_pool {
             if let Ok(serialized) = serde_json::to_string(arc.as_ref()) {
                 let key = format!("{REDIS_PROFILE_PREFIX}{target_id}");
-                let _ = redis.set::<(), _, _>(key, serialized, Some(Expiration::EX(PROFILE_CACHE_TTL_SECS)), None, false).await;
+                redis_set_ex_bounded(redis, &key, serialized, PROFILE_CACHE_TTL_SECS).await;
             }
         }
         Ok(arc)

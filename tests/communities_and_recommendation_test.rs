@@ -2,7 +2,9 @@ use coffe_labs_backend::{
     core::migrations::communities_schema,
     modules::{
         communities::{
+            dto::CreateCommunityRequest,
             error::CommunitiesError,
+            invite_dto::InviteUsersToClubRequest,
             models::{is_privileged_role, normalize_club_role, normalize_privacy_level},
             secret_id_crypto::{
                 derive_hmac_key, generate_secret_id, mask_secret_preview,
@@ -12,6 +14,10 @@ use coffe_labs_backend::{
                 club_cache_service::{CachedClubMembers, ClubCacheService},
                 secret_join_service::SecretJoinService,
             },
+        },
+        notifications::{
+            club_builders::{build_club_invitation_event, build_club_invite_response_event},
+            events::{ActorSummary, NotificationActionButton},
         },
         recommendation::{
             scoring_math::{
@@ -176,7 +182,74 @@ fn communities_ddl_registers_all_core_tables_and_privacy_filter_index() {
     assert!(joined.contains("CREATE TABLE IF NOT EXISTS coffee_communities"));
     assert!(joined.contains("CREATE TABLE IF NOT EXISTS community_invite_secrets"));
     assert!(joined.contains("CREATE TABLE IF NOT EXISTS community_members"));
+    assert!(joined.contains("CREATE TABLE IF NOT EXISTS community_member_invitations"));
+    assert!(joined.contains("CREATE INDEX IF NOT EXISTS idx_comm_invites_invitee_pending"));
     assert!(joined.contains("CREATE TABLE IF NOT EXISTS community_channels"));
     assert!(joined.contains("CREATE TABLE IF NOT EXISTS user_taste_affinity_profiles"));
     assert!(joined.contains("WHERE privacy_level <> 'SECRET_VAULT'"));
+}
+
+#[test]
+fn club_direct_invitation_dtos_and_notification_events_wire_cleanly() {
+    let target_id = Uuid::new_v4();
+    let raw_create = serde_json::json!({
+        "name": "Bandung V60 Guild",
+        "description": "Eksperimen seduhan pagi",
+        "privacy_level": "RESTRICTED",
+        "focus_tags": ["V60", "Washed"],
+        "invited_user_ids": [target_id],
+        "invite_message": "Gabung yuk ke guild!"
+    });
+    let parsed_create: CreateCommunityRequest =
+        serde_json::from_value(raw_create).expect("parse create community req");
+    assert_eq!(parsed_create.invited_user_ids, vec![target_id]);
+    assert_eq!(
+        parsed_create.invite_message.as_deref(),
+        Some("Gabung yuk ke guild!")
+    );
+
+    let raw_invite = serde_json::json!({
+        "user_ids": [target_id],
+        "role_granted": "BARISTA_MEMBER",
+        "message": "Ayo diskusi dial-in"
+    });
+    let parsed_invite: InviteUsersToClubRequest =
+        serde_json::from_value(raw_invite).expect("parse invite users req");
+    assert_eq!(parsed_invite.user_ids.len(), 1);
+
+    let club_id = Uuid::new_v4();
+    let invite_id = Uuid::new_v4();
+    let actor = ActorSummary {
+        user_id: Uuid::new_v4(),
+        username: "rusdifn08".to_string(),
+        display_name: "Rusdi".to_string(),
+        avatar_url: None,
+    };
+
+    let invite_evt = build_club_invitation_event(
+        target_id,
+        club_id,
+        "Bandung V60 Guild",
+        invite_id,
+        "Gabung yuk!",
+        actor.clone(),
+    );
+    assert_eq!(invite_evt.event_type, "CLUB_MEMBER_INVITED");
+    assert_eq!(invite_evt.deep_link_path, "/social/clubs");
+    assert_eq!(invite_evt.entity_id.as_deref(), Some(invite_id.to_string().as_str()));
+    assert!(invite_evt
+        .action_buttons
+        .contains(&NotificationActionButton::AcceptClubInvite));
+    assert!(invite_evt
+        .action_buttons
+        .contains(&NotificationActionButton::DeclineClubInvite));
+
+    let accepted_evt = build_club_invite_response_event(
+        actor.user_id,
+        club_id,
+        "Bandung V60 Guild",
+        true,
+        actor,
+    );
+    assert_eq!(accepted_evt.event_type, "CLUB_INVITE_ACCEPTED");
 }

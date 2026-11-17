@@ -1,6 +1,6 @@
 use axum::{
     extract::{rejection::JsonRejection, FromRef, FromRequest, FromRequestParts, Request},
-    http::{header, request::Parts},
+    http::request::Parts,
     Json,
 };
 use serde::de::DeserializeOwned;
@@ -8,8 +8,9 @@ use std::marker::PhantomData;
 use validator::Validate;
 
 use crate::core::{
+    auth_extractor::{AuthenticatedUser, OptionalAuthenticatedUser},
     error::AppError,
-    security::{Claims, JwtKeyRing},
+    jwt::{JwtClaims, JwtManager},
 };
 
 pub struct ValidatedJson<T>(pub T);
@@ -53,44 +54,29 @@ where
 }
 
 #[derive(Debug, Clone)]
-pub struct AuthUser(pub Claims);
+pub struct AuthUser(pub JwtClaims);
 
 impl<S> FromRequestParts<S> for AuthUser
 where
     S: Send + Sync,
-    JwtKeyRing: FromRef<S>,
+    JwtManager: FromRef<S>,
 {
     type Rejection = AppError;
 
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        let keyring = JwtKeyRing::from_ref(state);
-        let auth_header = parts
-            .headers
-            .get(header::AUTHORIZATION)
-            .and_then(|v| v.to_str().ok());
-
-        let token = match auth_header {
-            Some(auth) if auth.starts_with("Bearer ") => &auth[7..],
-            _ => {
-                return Err(AppError::Unauthorized(
-                    "Akses ditolak: Token autentikasi tidak ditemukan.".to_string(),
-                ));
-            }
-        };
-
-        let claims = keyring.verify_token(token)?;
-        Ok(AuthUser(claims))
+        let user = AuthenticatedUser::from_request_parts(parts, state).await?;
+        Ok(AuthUser(user.claims))
     }
 }
 
 #[derive(Debug, Clone)]
 #[allow(dead_code)]
-pub struct AdminUser(pub Claims);
+pub struct AdminUser(pub JwtClaims);
 
 impl<S> FromRequestParts<S> for AdminUser
 where
     S: Send + Sync,
-    JwtKeyRing: FromRef<S>,
+    JwtManager: FromRef<S>,
 {
     type Rejection = AppError;
 
@@ -106,27 +92,19 @@ where
 }
 
 #[derive(Debug, Clone)]
-pub struct OptionalAuthUser(pub Option<Claims>);
+pub struct OptionalAuthUser(pub Option<JwtClaims>);
 
 impl<S> FromRequestParts<S> for OptionalAuthUser
 where
     S: Send + Sync,
-    JwtKeyRing: FromRef<S>,
+    JwtManager: FromRef<S>,
 {
     type Rejection = AppError;
 
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        let keyring = JwtKeyRing::from_ref(state);
-        let auth_header = parts
-            .headers
-            .get(header::AUTHORIZATION)
-            .and_then(|v| v.to_str().ok());
-
-        let claims = match auth_header {
-            Some(auth) if auth.starts_with("Bearer ") => keyring.verify_token(&auth[7..]).ok(),
-            _ => None,
-        };
-        Ok(OptionalAuthUser(claims))
+        let OptionalAuthenticatedUser(opt_user) =
+            OptionalAuthenticatedUser::from_request_parts(parts, state).await?;
+        Ok(OptionalAuthUser(opt_user.map(|u| u.claims)))
     }
 }
 
@@ -153,12 +131,12 @@ impl TierRequirement for TierBusiness {
     fn tier_name() -> &'static str { "Business" }
 }
 
-pub struct RequireTier<T: TierRequirement>(pub Claims, pub PhantomData<T>);
+pub struct RequireTier<T: TierRequirement>(pub JwtClaims, pub PhantomData<T>);
 
 impl<S, T> FromRequestParts<S> for RequireTier<T>
 where
     S: Send + Sync,
-    JwtKeyRing: FromRef<S>,
+    JwtManager: FromRef<S>,
     T: TierRequirement,
 {
     type Rejection = AppError;

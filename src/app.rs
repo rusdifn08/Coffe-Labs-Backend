@@ -13,9 +13,11 @@ use crate::{
         attach_governor_layer, build_cors_layer, telemetry_and_security_middleware,
     },
     modules::{
-        auth, bean_scanner, beans, brew_logs, business_pos, chat, communities, gamification,
-        marketplace, media, notifications, platform, rbac, recipes, recommendation, social,
-        social_feed, social_graph, telemetry, users, vision_dataset,
+        auth, barista_toolkit, bean_scanner, beans, brew_logs, brew_methods_audit, business_pos,
+        chat, communities,
+        gamification, live_brew, marketplace, media, monitoring, notifications, platform, rbac,
+        recipes, recommendation, social, social_feed, social_graph, telemetry, users,
+        vision_dataset,
     },
 };
 
@@ -33,6 +35,10 @@ pub fn build_app(state: AppState) -> Router {
 
     let router = Router::new()
         .merge(telemetry::routes::router())
+        .merge(monitoring::routes::router())
+        .merge(barista_toolkit::routes::router())
+        .merge(live_brew::routes::router())
+        .merge(brew_methods_audit::routes::router())
         .route("/api/v1/health/rabbitmq", get(telemetry::handlers::rabbitmq_health))
         .route("/api/v1/health/redis", get(telemetry::handlers::redis_health))
         .merge(auth::routes::router())

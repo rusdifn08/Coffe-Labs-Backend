@@ -65,6 +65,8 @@ pub struct ActorSummary {
 pub enum NotificationActionButton {
     QuickFollback,
     InlineReply,
+    AcceptClubInvite,
+    DeclineClubInvite,
     MarkAsRead,
 }
 
@@ -73,6 +75,8 @@ impl NotificationActionButton {
         match self {
             Self::QuickFollback => "QUICK_FOLLBACK",
             Self::InlineReply => "INLINE_REPLY",
+            Self::AcceptClubInvite => "ACCEPT_CLUB_INVITE",
+            Self::DeclineClubInvite => "DECLINE_CLUB_INVITE",
             Self::MarkAsRead => "MARK_AS_READ",
         }
     }

@@ -4,7 +4,7 @@ use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
 use crate::core::{
-    error::{ApiResponse, AppError, AppResult},
+    error::{ApiResponse, AppResult},
     extractors::{RequireTier, TierBusiness, ValidatedJson},
     AppState,
 };
@@ -12,10 +12,6 @@ use crate::modules::business_pos::{
     kiosk_dto::{EmergencyUnlockDto, EmergencyUnlockResponse, KioskHeartbeatDto, KioskHeartbeatResponse},
     services::BusinessPosService,
 };
-
-fn parse_user_id(sub: &str) -> AppResult<Uuid> {
-    Uuid::parse_str(sub).map_err(|_| AppError::Unauthorized("ID Pengguna pada token tidak valid.".to_string()))
-}
 
 /// Menghasilkan 6-digit dynamic recovery PIN yang berubah setiap 15 menit
 fn generate_dynamic_recovery_pin(store_id: &Uuid) -> String {
@@ -35,8 +31,7 @@ pub async fn kiosk_heartbeat(
     RequireTier(claims, _): RequireTier<TierBusiness>,
     ValidatedJson(dto): ValidatedJson<KioskHeartbeatDto>,
 ) -> AppResult<Json<ApiResponse<KioskHeartbeatResponse>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let _config = BusinessPosService::get_config(&state.pool, user_id).await?;
+    let _config = BusinessPosService::get_config(&state.pool, claims.sub).await?;
 
     tracing::info!(
         device_id = %dto.device_id,
@@ -61,7 +56,7 @@ pub async fn emergency_unlock(
     RequireTier(claims, _): RequireTier<TierBusiness>,
     ValidatedJson(_dto): ValidatedJson<EmergencyUnlockDto>,
 ) -> AppResult<Json<ApiResponse<EmergencyUnlockResponse>>> {
-    let user_id = parse_user_id(&claims.sub)?;
+    let user_id = claims.sub;
     let config = BusinessPosService::get_config(&state.pool, user_id).await?;
     let recovery_pin = generate_dynamic_recovery_pin(&config.id);
 
@@ -85,8 +80,7 @@ pub async fn get_recovery_pin(
     State(state): State<AppState>,
     RequireTier(claims, _): RequireTier<TierBusiness>,
 ) -> AppResult<Json<ApiResponse<String>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let config = BusinessPosService::get_config(&state.pool, user_id).await?;
+    let config = BusinessPosService::get_config(&state.pool, claims.sub).await?;
     let recovery_pin = generate_dynamic_recovery_pin(&config.id);
 
     Ok(ApiResponse::ok(

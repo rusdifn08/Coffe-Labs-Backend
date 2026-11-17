@@ -13,6 +13,7 @@ pub struct UpdateProfileRequest {
 
 #[derive(Debug, Deserialize, Validate, ToSchema)]
 pub struct UpdateUserTierRequest {
-    #[validate(length(min = 3, max = 20, message = "Tier harus berupa 'trial', 'pro', atau 'business'."))]
+    #[validate(length(min = 3, max = 30, message = "Tier harus berupa 'trial', 'trial_7d', 'pro', atau 'business'."))]
     pub tier: String,
+    pub trial_days: Option<i32>,
 }

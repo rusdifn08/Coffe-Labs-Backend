@@ -1,8 +1,7 @@
 use sqlx::PgPool;
-use uuid::Uuid;
 
 use crate::{
-    core::{error::AppResult, security::Claims},
+    core::{error::AppResult, jwt::JwtClaims},
     modules::brew_logs::{
         dto::{BrewAnalyticsResponse, BrewLogQuery},
         models::BrewLogRow,
@@ -12,7 +11,7 @@ use crate::{
 
 pub async fn fetch_brew_logs(
     pool: &PgPool,
-    auth: Option<Claims>,
+    auth: Option<JwtClaims>,
     log_type: &str,
     q: BrewLogQuery,
 ) -> AppResult<Vec<serde_json::Value>> {
@@ -24,11 +23,11 @@ pub async fn fetch_brew_logs(
 
 pub async fn record_brew_entry(
     pool: &PgPool,
-    auth: Option<Claims>,
+    auth: Option<JwtClaims>,
     log_type: &str,
     payload: serde_json::Value,
 ) -> AppResult<BrewLogRow> {
-    let user_id = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok());
+    let user_id = auth.as_ref().map(|c| c.sub);
     let username = auth
         .map(|c| c.username)
         .unwrap_or_else(|| "guest".to_string());
@@ -68,7 +67,7 @@ pub async fn record_brew_entry(
 
 pub async fn remove_journal_entry(
     pool: &PgPool,
-    auth: Option<Claims>,
+    auth: Option<JwtClaims>,
     local_id: i64,
 ) -> AppResult<()> {
     let username = auth.map(|c| c.username).unwrap_or_default();
@@ -78,7 +77,7 @@ pub async fn remove_journal_entry(
 
 pub async fn compute_analytics(
     pool: &PgPool,
-    auth: Option<Claims>,
+    auth: Option<JwtClaims>,
     q: BrewLogQuery,
 ) -> AppResult<BrewAnalyticsResponse> {
     let username = auth.map(|c| c.username).or(q.username).unwrap_or_default();

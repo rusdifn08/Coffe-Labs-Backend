@@ -1,14 +1,14 @@
 use axum::{extract::FromRef, routing::post, Router};
 
 use crate::{
-    core::{security::JwtKeyRing, storage::CloudinaryStorage, AppState},
+    core::{jwt::JwtManager, storage::CloudinaryStorage, AppState},
     modules::media::handlers,
 };
 
 pub fn media_router<S>() -> Router<S>
 where
     S: Clone + Send + Sync + 'static,
-    JwtKeyRing: FromRef<S>,
+    JwtManager: FromRef<S>,
     CloudinaryStorage: FromRef<S>,
 {
     Router::new().route(

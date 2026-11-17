@@ -4,7 +4,6 @@ use axum::{
     Json,
 };
 use serde_json::{json, Value};
-use sqlx::PgPool;
 use utoipa::OpenApi;
 
 use crate::{
@@ -55,10 +54,10 @@ use crate::{
             models::SocialComment,
         },
         telemetry::{
-            dashboard_ui::render_dashboard_html,
             dto::DashboardTelemetrySnapshot,
             models::{DatabasePoolMetrics, DomainEntityCounts, ServiceModuleInfo},
             service,
+            ui::render_dashboard_html,
         },
         users::models::{AdminUserStats, BaristaProfile},
     },
@@ -161,15 +160,13 @@ pub async fn redis_health(State(state): State<AppState>) -> impl IntoResponse {
     }))
 }
 
-pub async fn serve_dashboard() -> impl IntoResponse {
-    Html(render_dashboard_html())
-}
+pub async fn serve_dashboard() -> impl IntoResponse { Html(render_dashboard_html("apm")) }
+pub async fn serve_dashboard_monitoring() -> impl IntoResponse { Html(render_dashboard_html("monitoring")) }
+pub async fn serve_dashboard_admin() -> impl IntoResponse { Html(render_dashboard_html("admin")) }
+pub async fn serve_dashboard_services() -> impl IntoResponse { Html(render_dashboard_html("services")) }
 
-pub async fn get_telemetry_metrics(
-    State(pool): State<PgPool>,
-    State(telemetry): State<TelemetryRegistry>,
-) -> AppResult<impl IntoResponse> {
-    let snapshot = service::build_snapshot(&pool, &telemetry).await;
+pub async fn get_telemetry_metrics(State(state): State<AppState>) -> AppResult<impl IntoResponse> {
+    let snapshot = service::build_snapshot(&state).await;
     Ok(ApiResponse::ok(
         "Real-time backend telemetry snapshot berhasil dimuat.",
         snapshot,

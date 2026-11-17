@@ -7,6 +7,9 @@ pub enum CommunitiesError {
     #[error("Komunitas atau channel kopi tidak ditemukan.")]
     ClubNotFound,
 
+    #[error("Undangan masuk Coffee Club tidak ditemukan atau sudah diproses.")]
+    InvitationNotFound,
+
     #[error("Kode Secret ID atau link undangan tidak valid, kedaluwarsa, atau sudah dicabut.")]
     InvalidOrExpiredSecret,
 
@@ -35,7 +38,9 @@ pub enum CommunitiesError {
 impl From<CommunitiesError> for AppError {
     fn from(err: CommunitiesError) -> Self {
         match err {
-            CommunitiesError::ClubNotFound => AppError::NotFound(err.to_string()),
+            CommunitiesError::ClubNotFound | CommunitiesError::InvitationNotFound => {
+                AppError::NotFound(err.to_string())
+            }
             CommunitiesError::InvalidOrExpiredSecret | CommunitiesError::BadRequest(_) => {
                 AppError::BadRequest(err.to_string())
             }

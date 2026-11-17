@@ -26,7 +26,7 @@ pub async fn list_connections(
     cursor: Option<String>,
     limit: Option<i64>,
 ) -> Result<SocialGraphCursorPageDto<SocialGraphUserItemDto>, SocialGraphError> {
-    let target_row = follow_edge_repo::resolve_target_user(pool, target).await?;
+    let target_row = follow_edge_repo::resolve_target_user(pool, target, viewer_id).await?;
     let parsed_cursor = cursor.as_deref().map(GraphCursor::decode).transpose()?;
     let clamped_limit = limit.unwrap_or(20).clamp(1, 50);
 

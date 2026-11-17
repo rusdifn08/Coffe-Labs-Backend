@@ -42,6 +42,10 @@ pub async fn dispatch_client_frame(
     state
         .chat_presence
         .refresh_heartbeat(user_id, &state.chat_bridge);
+    state
+        .monitoring
+        .live_presence
+        .touch_ws_activity(user_id, "", "/social/chat");
 
     match frame {
         ClientFrame::SendMessage {

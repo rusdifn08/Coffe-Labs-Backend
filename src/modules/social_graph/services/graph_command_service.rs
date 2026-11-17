@@ -73,7 +73,7 @@ impl GraphCommandService {
         actor_id: Uuid,
         target: &str,
     ) -> Result<FollowMutationResponseDto, SocialGraphError> {
-        let target_row = follow_edge_repo::resolve_target_user(pool, target).await?;
+        let target_row = follow_edge_repo::resolve_target_user(pool, target, Some(actor_id)).await?;
         if actor_id == target_row.user_id {
             return Err(SocialGraphError::SelfFollowNotAllowed);
         }
@@ -128,7 +128,7 @@ impl GraphCommandService {
         actor_id: Uuid,
         target: &str,
     ) -> Result<FollowMutationResponseDto, SocialGraphError> {
-        let target_row = follow_edge_repo::resolve_target_user(pool, target).await?;
+        let target_row = follow_edge_repo::resolve_target_user(pool, target, Some(actor_id)).await?;
         if actor_id == target_row.user_id {
             return Err(SocialGraphError::SelfFollowNotAllowed);
         }

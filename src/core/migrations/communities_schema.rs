@@ -11,6 +11,9 @@ pub fn statements() -> &'static [&'static str] {
             IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'community_channel_kind') THEN
                 CREATE TYPE community_channel_kind AS ENUM ('REALTIME_CHAT', 'RECIPE_VAULT', 'BREW_FEED');
             END IF;
+            IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'community_invite_status') THEN
+                CREATE TYPE community_invite_status AS ENUM ('PENDING', 'ACCEPTED', 'DECLINED', 'CANCELLED');
+            END IF;
         END
         $$"#,
         r#"CREATE TABLE IF NOT EXISTS coffee_communities (
@@ -60,6 +63,22 @@ pub fn statements() -> &'static [&'static str] {
         )"#,
         "CREATE INDEX IF NOT EXISTS idx_comm_members_user_clubs ON community_members (user_id, joined_at DESC)",
         "CREATE INDEX IF NOT EXISTS idx_comm_members_leaderboard ON community_members (community_id, club_xp_contributed DESC)",
+        r#"CREATE TABLE IF NOT EXISTS community_member_invitations (
+            id UUID PRIMARY KEY,
+            community_id UUID NOT NULL REFERENCES coffee_communities(id) ON DELETE CASCADE,
+            inviter_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            invitee_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            role_granted community_member_role NOT NULL DEFAULT 'BARISTA_MEMBER',
+            message TEXT NOT NULL DEFAULT '',
+            status community_invite_status NOT NULL DEFAULT 'PENDING',
+            responded_at TIMESTAMPTZ,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            CONSTRAINT uq_community_member_invite UNIQUE (community_id, invitee_id),
+            CONSTRAINT chk_no_self_club_invite CHECK (inviter_id <> invitee_id)
+        )"#,
+        "CREATE INDEX IF NOT EXISTS idx_comm_invites_invitee_pending ON community_member_invitations (invitee_id, updated_at DESC) WHERE status = 'PENDING'",
+        "CREATE INDEX IF NOT EXISTS idx_comm_invites_club_pending ON community_member_invitations (community_id, updated_at DESC) WHERE status = 'PENDING'",
         r#"CREATE TABLE IF NOT EXISTS community_channels (
             id UUID PRIMARY KEY,
             community_id UUID NOT NULL REFERENCES coffee_communities(id) ON DELETE CASCADE,

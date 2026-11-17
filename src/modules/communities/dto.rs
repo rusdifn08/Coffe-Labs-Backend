@@ -24,6 +24,11 @@ pub struct CreateCommunityRequest {
     pub banner_url: Option<String>,
     #[serde(default)]
     pub focus_tags: Vec<String>,
+    #[serde(default)]
+    pub invited_user_ids: Vec<Uuid>,
+    #[serde(default)]
+    #[validate(length(max = 280, message = "Pesan undangan maksimal 280 karakter."))]
+    pub invite_message: Option<String>,
 }
 
 fn default_privacy() -> String {

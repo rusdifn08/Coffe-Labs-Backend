@@ -1,10 +1,9 @@
 use sqlx::PgPool;
 use std::collections::HashSet;
+use tracing::warn;
 use uuid::Uuid;
 
-use crate::modules::social_feed::{
-    cursor::DirectoryCursor, error::SocialFeedError, models::ProfileDirectoryRow,
-};
+use crate::modules::social_feed::{error::SocialFeedError, models::ProfileDirectoryRow};
 
 pub async fn fetch_follow_relationship(
     pool: &PgPool,
@@ -15,17 +14,22 @@ pub async fn fetch_follow_relationship(
         return Ok((false, false));
     }
 
-    let (is_followed_by_viewer, is_following_viewer): (bool, bool) = sqlx::query_as(
+    match sqlx::query_as::<_, (bool, bool)>(
         r#"SELECT
-            EXISTS(SELECT 1 FROM user_follows WHERE follower_id = $1 AND following_id = $2 AND status = 'ACCEPTED'),
-            EXISTS(SELECT 1 FROM user_follows WHERE follower_id = $2 AND following_id = $1 AND status = 'ACCEPTED')"#,
+            EXISTS(SELECT 1 FROM user_follows WHERE follower_id = $1 AND following_id = $2 AND status::text = 'ACCEPTED'),
+            EXISTS(SELECT 1 FROM user_follows WHERE follower_id = $2 AND following_id = $1 AND status::text = 'ACCEPTED')"#,
     )
     .bind(viewer_id)
     .bind(target_user_id)
     .fetch_one(pool)
-    .await?;
-
-    Ok((is_followed_by_viewer, is_following_viewer))
+    .await
+    {
+        Ok(pair) => Ok(pair),
+        Err(err) => {
+            warn!(viewer_id = %viewer_id, target_user_id = %target_user_id, error = %err, "Gagal membaca relasi user_follows; fallback ke (false, false)");
+            Ok((false, false))
+        }
+    }
 }
 
 pub async fn toggle_follow_atomic(
@@ -89,51 +93,6 @@ pub async fn toggle_follow_atomic(
     Ok((is_now_following, followers_count))
 }
 
-pub async fn list_directory_profiles(
-    pool: &PgPool,
-    search: Option<&str>,
-    cursor: Option<DirectoryCursor>,
-    limit: i64,
-) -> Result<Vec<ProfileDirectoryRow>, SocialFeedError> {
-    let pattern = format!("%{}%", search.unwrap_or("").trim());
-    let rows = match cursor {
-        Some(c) => {
-            sqlx::query_as::<_, ProfileDirectoryRow>(
-                r#"SELECT user_id, username, display_name, bio, avatar_url, account_tier,
-                          total_xp, barista_level, barista_rank_title, followers_count,
-                          total_threads_count, recent_brew_snapshot, updated_at
-                   FROM user_profile_projections
-                   WHERE ($1 = '%%' OR username ILIKE $1 OR display_name ILIKE $1)
-                     AND (total_xp < $2 OR (total_xp = $2 AND user_id < $3))
-                   ORDER BY total_xp DESC, user_id DESC
-                   LIMIT $4"#,
-            )
-            .bind(&pattern)
-            .bind(c.total_xp)
-            .bind(c.user_id)
-            .bind(limit)
-            .fetch_all(pool)
-            .await?
-        }
-        None => {
-            sqlx::query_as::<_, ProfileDirectoryRow>(
-                r#"SELECT user_id, username, display_name, bio, avatar_url, account_tier,
-                          total_xp, barista_level, barista_rank_title, followers_count,
-                          total_threads_count, recent_brew_snapshot, updated_at
-                   FROM user_profile_projections
-                   WHERE ($1 = '%%' OR username ILIKE $1 OR display_name ILIKE $1)
-                   ORDER BY total_xp DESC, user_id DESC
-                   LIMIT $2"#,
-            )
-            .bind(&pattern)
-            .bind(limit)
-            .fetch_all(pool)
-            .await?
-        }
-    };
-    Ok(rows)
-}
-
 pub async fn list_follow_connections(
     pool: &PgPool,
     target_user_id: Uuid,
@@ -143,19 +102,19 @@ pub async fn list_follow_connections(
     let sql = if fetch_followers {
         r#"SELECT p.user_id, p.username, p.display_name, p.bio, p.avatar_url, p.account_tier,
                   p.total_xp, p.barista_level, p.barista_rank_title, p.followers_count,
-                  p.total_threads_count, p.recent_brew_snapshot, p.updated_at
+                  p.total_threads_count, p.recent_brew_snapshot
            FROM user_follows f
            INNER JOIN user_profile_projections p ON p.user_id = f.follower_id
-           WHERE f.following_id = $1 AND f.status = 'ACCEPTED'
+           WHERE f.following_id = $1 AND f.status::text = 'ACCEPTED'
            ORDER BY f.created_at DESC
            LIMIT $2"#
     } else {
         r#"SELECT p.user_id, p.username, p.display_name, p.bio, p.avatar_url, p.account_tier,
                   p.total_xp, p.barista_level, p.barista_rank_title, p.followers_count,
-                  p.total_threads_count, p.recent_brew_snapshot, p.updated_at
+                  p.total_threads_count, p.recent_brew_snapshot
            FROM user_follows f
            INNER JOIN user_profile_projections p ON p.user_id = f.following_id
-           WHERE f.follower_id = $1 AND f.status = 'ACCEPTED'
+           WHERE f.follower_id = $1 AND f.status::text = 'ACCEPTED'
            ORDER BY f.created_at DESC
            LIMIT $2"#
     };
@@ -176,13 +135,18 @@ pub async fn fetch_viewer_followed_ids(
     if candidate_ids.is_empty() {
         return Ok(HashSet::new());
     }
-    let rows = sqlx::query_scalar::<_, Uuid>(
-        "SELECT following_id FROM user_follows WHERE follower_id = $1 AND status = 'ACCEPTED' AND following_id = ANY($2::uuid[])",
+    match sqlx::query_scalar::<_, Uuid>(
+        "SELECT following_id FROM user_follows WHERE follower_id = $1 AND status::text = 'ACCEPTED' AND following_id = ANY($2::uuid[])",
     )
     .bind(viewer_id)
     .bind(candidate_ids)
     .fetch_all(pool)
-    .await?;
-
-    Ok(rows.into_iter().collect())
+    .await
+    {
+        Ok(rows) => Ok(rows.into_iter().collect()),
+        Err(err) => {
+            warn!(viewer_id = %viewer_id, error = %err, "Gagal membaca followed_ids dari user_follows; fallback kosong");
+            Ok(HashSet::new())
+        }
+    }
 }

@@ -75,7 +75,7 @@ impl GraphQueryService {
         viewer_id: Option<Uuid>,
         target: &str,
     ) -> Result<RelationshipSnapshotDto, SocialGraphError> {
-        let target_row = follow_edge_repo::resolve_target_user(pool, target).await?;
+        let target_row = follow_edge_repo::resolve_target_user(pool, target, viewer_id).await?;
         let Some(vid) = viewer_id else {
             return Ok(Self::empty_snapshot(&target_row, RelationshipState::None));
         };

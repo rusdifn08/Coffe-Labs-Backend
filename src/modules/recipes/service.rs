@@ -1,8 +1,7 @@
 use sqlx::PgPool;
-use uuid::Uuid;
 
 use crate::{
-    core::{error::AppResult, security::Claims},
+    core::{error::AppResult, jwt::JwtClaims},
     modules::recipes::{
         dto::{FavoriteToggleResponse, RecipeSyncQuery},
         models::UserRecipeRow,
@@ -12,7 +11,7 @@ use crate::{
 
 pub async fn sync_recipes(
     pool: &PgPool,
-    auth: Option<Claims>,
+    auth: Option<JwtClaims>,
     q: RecipeSyncQuery,
 ) -> AppResult<Vec<serde_json::Value>> {
     let username = auth
@@ -25,10 +24,10 @@ pub async fn sync_recipes(
 
 pub async fn save_recipe(
     pool: &PgPool,
-    auth: Option<Claims>,
+    auth: Option<JwtClaims>,
     payload: serde_json::Value,
 ) -> AppResult<UserRecipeRow> {
-    let user_id = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok());
+    let user_id = auth.as_ref().map(|c| c.sub);
     let username = auth
         .map(|c| c.username)
         .or_else(|| {
@@ -72,7 +71,7 @@ pub async fn save_recipe(
     .await
 }
 
-pub async fn remove_recipe(pool: &PgPool, auth: Option<Claims>, local_id: i64) -> AppResult<()> {
+pub async fn remove_recipe(pool: &PgPool, auth: Option<JwtClaims>, local_id: i64) -> AppResult<()> {
     let username = auth.map(|c| c.username).unwrap_or_else(|| "guest".to_string());
     let _ = repository::delete_by_local_id(pool, &username, local_id).await?;
     Ok(())
@@ -80,7 +79,7 @@ pub async fn remove_recipe(pool: &PgPool, auth: Option<Claims>, local_id: i64) -
 
 pub async fn toggle_recipe_favorite(
     pool: &PgPool,
-    auth: Option<Claims>,
+    auth: Option<JwtClaims>,
     local_id: i64,
 ) -> AppResult<FavoriteToggleResponse> {
     let username = auth.map(|c| c.username).unwrap_or_else(|| "guest".to_string());

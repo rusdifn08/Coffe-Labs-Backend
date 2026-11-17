@@ -14,10 +14,10 @@ use crate::{
         config::AppConfig,
         database::init_db,
         fcm_oauth::FcmOAuthManager,
+        jwt::JwtManager,
         middleware::SecurityRateLimiter,
         rabbitmq::{spawn_rabbitmq_worker, RabbitMqClient},
         redis::RedisManager,
-        security::JwtKeyRing,
         storage::CloudinaryStorage,
         telemetry::TelemetryRegistry,
         AppState,
@@ -63,7 +63,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("☕ Memulai Coffee Labs Enterprise Rust Axum Backend v2.0.0 (mimalloc)...");
 
     let pool = init_db(&config.database_url).await?;
-    let jwt_keys = JwtKeyRing::from_seed(&config.jwt_seed)?;
+    let jwt = JwtManager::new(config.jwt_secret_str(), config.jwt_expiration_seconds);
     let initial_version = fetch_version_config(&pool).await;
     let version_cache = Arc::new(RwLock::new(initial_version));
     let telemetry = TelemetryRegistry::new();
@@ -147,6 +147,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             social_graph_cache,
         ),
     );
+    let monitoring = crate::modules::monitoring::MonitoringEngine::init_and_spawn(pool.clone(), redis.active_pool());
+    let live_brew_hub = Arc::new(
+        crate::modules::live_brew::services::live_telemetry_hub::LiveTelemetryHub::new(
+            redis.active_pool(),
+        ),
+    );
 
     let rabbitmq = RabbitMqClient::connect_or_lazy(
         config
@@ -159,7 +165,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let state = AppState {
         pool,
         config,
-        jwt_keys,
+        jwt,
         telemetry,
         rate_limiter,
         version_cache,
@@ -180,15 +186,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         club_cache,
         secret_join_service,
         taste_profiler,
+        monitoring,
+        live_brew_hub,
     };
 
     spawn_rabbitmq_worker(rabbitmq, state.clone());
+    crate::modules::brew_methods_audit::services::alarm_wakeup_worker::spawn_cold_brew_alarm_worker(
+        state.pool.clone(),
+        state.redis.active_pool(),
+        state.notifications.clone(),
+    );
     let router = app::build_app(state);
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
 
-    info!("🚀 Server berjalan di http://0.0.0.0:{}", port);
-    info!("📊 Real-Time APM Dashboard: http://localhost:{}/dashboard", port);
-    info!("📄 OpenAPI Specification:  http://localhost:{}/api/v1/openapi.json", port);
+    info!("🚀 Server berjalan di http://0.0.0.0:{} | APM: /dashboard | OpenAPI: /api/v1/openapi.json", port);
 
     let listener = tokio::net::TcpListener::bind(addr).await?;
     axum::serve(listener, router).await?;

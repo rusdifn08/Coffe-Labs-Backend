@@ -38,7 +38,7 @@ pub fn statements() -> &'static [&'static str] {
         )"#,
         r#"CREATE TABLE IF NOT EXISTS notification_inbox (
             id UUID PRIMARY KEY,
-            recipient_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
             coalesce_group_key VARCHAR(160),
             category VARCHAR(30) NOT NULL,
             event_type VARCHAR(40) NOT NULL,
@@ -53,8 +53,26 @@ pub fn statements() -> &'static [&'static str] {
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )"#,
-        "CREATE INDEX IF NOT EXISTS idx_notif_inbox_recipient_cursor ON notification_inbox (recipient_id, id DESC)",
-        "CREATE INDEX IF NOT EXISTS idx_notif_inbox_unread_recipient ON notification_inbox (recipient_id, id DESC) WHERE is_read = FALSE",
-        "CREATE UNIQUE INDEX IF NOT EXISTS idx_notif_inbox_unread_coalesce ON notification_inbox (recipient_id, coalesce_group_key) WHERE is_read = FALSE AND coalesce_group_key IS NOT NULL",
+        r#"DO $$
+        BEGIN
+            IF EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = 'notification_inbox'
+                  AND column_name = 'recipient_id'
+            ) AND NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = 'notification_inbox'
+                  AND column_name = 'user_id'
+            ) THEN
+                ALTER TABLE notification_inbox RENAME COLUMN recipient_id TO user_id;
+            END IF;
+        END
+        $$"#,
+        "DROP INDEX IF EXISTS idx_notif_inbox_unread_coalesce",
+        "CREATE INDEX IF NOT EXISTS idx_notif_inbox_user_cursor ON notification_inbox (user_id, updated_at DESC, id DESC)",
+        "CREATE INDEX IF NOT EXISTS idx_notif_inbox_unread_user ON notification_inbox (user_id, id DESC) WHERE is_read = FALSE",
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_notif_inbox_coalesce_upsert ON notification_inbox (user_id, coalesce_group_key) WHERE coalesce_group_key IS NOT NULL",
     ]
 }

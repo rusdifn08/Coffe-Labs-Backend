@@ -3,7 +3,7 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::{
-    core::{error::AppResult, security::Claims},
+    core::{error::AppResult, jwt::JwtClaims},
     modules::social::{
         dto::{
             CopyRecipeResponse, CreateCommentRequest, CreateSocialPostRequest, FollowStatsResponse,
@@ -18,10 +18,10 @@ use crate::{
 
 pub async fn create_post(
     pool: &PgPool,
-    auth: Option<Claims>,
+    auth: Option<JwtClaims>,
     req: CreateSocialPostRequest,
 ) -> AppResult<SocialPostResponse> {
-    let user_id = auth.as_ref().and_then(|u| Uuid::parse_str(&u.sub).ok());
+    let user_id = auth.as_ref().map(|u| u.sub);
     let author_name = if let Some(ref u) = auth {
         u.username.clone()
     } else if let Some(ref name) = req.author_name {
@@ -76,10 +76,10 @@ pub async fn get_comments(pool: &PgPool, post_id: Uuid) -> AppResult<Vec<SocialC
 pub async fn add_comment(
     pool: &PgPool,
     post_id: Uuid,
-    auth: Option<Claims>,
+    auth: Option<JwtClaims>,
     req: CreateCommentRequest,
 ) -> AppResult<SocialComment> {
-    let user_id = auth.as_ref().and_then(|u| Uuid::parse_str(&u.sub).ok());
+    let user_id = auth.as_ref().map(|u| u.sub);
     let author_name = if let Some(ref u) = auth {
         u.username.clone()
     } else if let Some(ref name) = req.author_name {

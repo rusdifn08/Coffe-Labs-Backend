@@ -1,10 +1,9 @@
 use axum::{extract::State, response::IntoResponse};
 use sqlx::PgPool;
-use uuid::Uuid;
 
 use crate::{
     core::{
-        error::{ApiResponse, AppError, AppResult},
+        error::{ApiResponse, AppResult},
         extractors::{AuthUser, ValidatedJson},
         rabbitmq::{RabbitMqEventEnvelope, DEFAULT_EXCHANGE},
         AppState,
@@ -28,9 +27,7 @@ pub async fn get_my_subscription(
     State(pool): State<PgPool>,
     AuthUser(claims): AuthUser,
 ) -> AppResult<impl IntoResponse> {
-    let user_id = Uuid::parse_str(&claims.sub)
-        .map_err(|_| AppError::BadRequest("ID user tidak valid.".to_string()))?;
-    let status = service::get_subscription_status(&pool, user_id).await?;
+    let status = service::get_subscription_status(&pool, claims.sub).await?;
     Ok(ApiResponse::ok("Status langganan & kuota berhasil diambil.", status))
 }
 
@@ -39,8 +36,7 @@ pub async fn upgrade_tier(
     AuthUser(claims): AuthUser,
     ValidatedJson(payload): ValidatedJson<UpgradeTierRequest>,
 ) -> AppResult<impl IntoResponse> {
-    let user_id = Uuid::parse_str(&claims.sub)
-        .map_err(|_| AppError::BadRequest("ID user tidak valid.".to_string()))?;
+    let user_id = claims.sub;
     let updated = service::upgrade_user_tier(&state.pool, user_id, payload).await?;
     let tier_label = format!("{:?}", updated.tier);
     state
@@ -68,9 +64,7 @@ pub async fn record_brew_quota(
     State(pool): State<PgPool>,
     AuthUser(claims): AuthUser,
 ) -> AppResult<impl IntoResponse> {
-    let user_id = Uuid::parse_str(&claims.sub)
-        .map_err(|_| AppError::BadRequest("ID user tidak valid.".to_string()))?;
-    let updated = service::record_brew_and_enforce_quota(&pool, user_id).await?;
+    let updated = service::record_brew_and_enforce_quota(&pool, claims.sub).await?;
     Ok(ApiResponse::ok("Kuota seduh berhasil dicatat.", updated))
 }
 

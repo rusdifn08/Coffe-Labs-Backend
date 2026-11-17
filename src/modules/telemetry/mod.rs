@@ -1,9 +1,13 @@
+pub mod admin_infra_script;
+pub mod apm_render_script;
 pub mod dashboard_script;
-pub mod dashboard_ui;
 pub mod dto;
 pub mod error;
 pub mod handlers;
 pub mod models;
+pub mod monitoring_render_script;
+pub mod monitoring_script;
 pub mod repository;
 pub mod routes;
 pub mod service;
+pub mod ui;

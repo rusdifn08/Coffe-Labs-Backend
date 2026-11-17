@@ -7,9 +7,10 @@ use uuid::Uuid;
 use crate::{
     core::{
         error::{AppError, AppResult},
+        jwt::JwtManager,
         security::{
             cache_verified_password, generate_refresh_token, hash_password, hash_refresh_token,
-            needs_fast_rehash, verify_password, JwtKeyRing,
+            needs_fast_rehash, verify_password,
         },
     },
     modules::auth::{
@@ -48,7 +49,7 @@ fn build_auth_response(
 
 pub async fn register_user(
     pool: &PgPool,
-    keyring: &JwtKeyRing,
+    jwt: &JwtManager,
     req: RegisterRequest,
 ) -> AppResult<(UserSummary, String, String)> {
     let username = req.username.trim().to_lowercase();
@@ -64,7 +65,7 @@ pub async fn register_user(
     let avatar = req.avatar_url.unwrap_or_else(|| "assets/images/characters/avatar_1.png".to_string());
 
     let user = repository::create_user(pool, &username, &pwd_hash, full_name, &avatar).await?;
-    let token = keyring.sign_access_token(&user.id.to_string(), &user.username, &user.role, &user.tier, &user.status)?;
+    let token = jwt.generate_user_token(user.id, &user.username, &user.role, &user.tier, &user.status)?;
 
     let raw_refresh = generate_refresh_token();
     let rt_hash = hash_refresh_token(&raw_refresh);
@@ -74,6 +75,7 @@ pub async fn register_user(
     let uid = user.id;
 
     tokio::spawn(async move {
+        let _ = crate::modules::social_feed::repositories::profile_projection_repo::ensure_projection_exists(&pool_bg, uid).await;
         let _ = repository::insert_refresh_token(&pool_bg, uid, Uuid::new_v4(), &rt_hash, &device_id, &device_name, None).await;
     });
     Ok((user.into(), token, raw_refresh))
@@ -81,7 +83,7 @@ pub async fn register_user(
 
 pub async fn login_user(
     pool: &PgPool,
-    keyring: &JwtKeyRing,
+    jwt: &JwtManager,
     req: LoginRequest,
 ) -> AppResult<UnifiedAuthResponse> {
     let username = req.username.trim().to_lowercase();
@@ -101,7 +103,7 @@ pub async fn login_user(
         });
     }
 
-    let token = keyring.sign_access_token(&user.id.to_string(), &user.username, &user.role, &user.tier, &user.status)?;
+    let token = jwt.generate_user_token(user.id, &user.username, &user.role, &user.tier, &user.status)?;
     let raw_refresh = generate_refresh_token();
     let rt_hash = hash_refresh_token(&raw_refresh);
     let device_id = req.device_id.unwrap_or_else(|| "mobile_default".to_string());
@@ -126,7 +128,7 @@ pub async fn login_user(
 
 pub async fn rotate_refresh_token(
     pool: &PgPool,
-    keyring: &JwtKeyRing,
+    jwt: &JwtManager,
     req: RefreshTokenRequest,
 ) -> AppResult<UnifiedAuthResponse> {
     let rt_hash = hash_refresh_token(req.refresh_token.trim());
@@ -150,7 +152,7 @@ pub async fn rotate_refresh_token(
         .await?
         .ok_or_else(|| AppError::NotFound("User tidak ditemukan.".to_string()))?;
 
-    let new_access = keyring.sign_access_token(&user.id.to_string(), &user.username, &user.role, &user.tier, &user.status)?;
+    let new_access = jwt.generate_user_token(user.id, &user.username, &user.role, &user.tier, &user.status)?;
     let new_refresh = generate_refresh_token();
     let new_hash = hash_refresh_token(&new_refresh);
     let device_id = req.device_id.as_deref().unwrap_or(&session.device_id);

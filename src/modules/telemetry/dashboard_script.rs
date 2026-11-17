@@ -1,4 +1,7 @@
 pub const DASHBOARD_JS: &str = r#"
+let apmEndpointsCache = [];
+let apmStatusFilter = 'ALL';
+
 async function fetchTelemetry() {
   try {
     const res = await fetch('/api/v1/telemetry/metrics');
@@ -22,12 +25,28 @@ async function fetchTelemetry() {
     document.getElementById('kpi-4xx').textContent = d.status_4xx;
     document.getElementById('kpi-5xx').textContent = d.status_5xx;
     document.getElementById('kpi-err-rate').textContent = d.error_rate_percent.toFixed(1) + '%';
-    document.getElementById('uptime-label').textContent = `Uptime: ${formatUptime(d.uptime_seconds)}`;
 
-    renderEndpoints(d.endpoints || []);
-    renderDomainCounts(d.domain_counts || {});
+    const up = formatUptime(d.uptime_seconds);
+    document.getElementById('uptime-label').textContent = 'Uptime: ' + up;
+    document.getElementById('nav-uptime-pill').textContent = '⏱️ ' + up;
+    document.getElementById('nav-badge-reqs').textContent = d.total_requests.toLocaleString();
+    const errTotal = (d.status_4xx || 0) + (d.status_5xx || 0);
+    const errPill = document.getElementById('nav-err-pill');
+    errPill.textContent = errTotal > 0 ? `Guard/Err: ${errTotal}` : '0 Errors';
+    errPill.className = errTotal > 0 ? 'badge warn' : 'badge ok';
+
+    apmEndpointsCache = d.endpoints || [];
+    window.__servicesCache = d.services || [];
+    document.getElementById('nav-badge-services').textContent = (window.__servicesCache.length || 0) + ' Modul';
+
+    renderWatchlist(apmEndpointsCache);
+    applyApmFilters();
+    renderDomainCounts(d.domain_counts || {}, d.monitoring_summary?.online_now ?? 0);
     renderTraces(d.recent_traces || []);
-    renderServices(d.services || []);
+    if (typeof applyServicesFilter === 'function') applyServicesFilter();
+    if (typeof renderPublicSummary === 'function' && d.monitoring_summary && !sessionStorage.getItem('coffeelabs_mon_jwt')) {
+      renderPublicSummary(d.monitoring_summary);
+    }
 
     const badge = document.getElementById('conn-badge');
     badge.className = 'badge ok';
@@ -46,88 +65,52 @@ function formatUptime(sec) {
   return `${h}h ${m}m ${s}s`;
 }
 
-function renderEndpoints(list) {
-  const tbody = document.getElementById('endpoints-tbody');
-  if (!list.length) {
-    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--muted)">Belum ada trafik API terekam. Klik "Benchmark 8 Mobile Endpoints" di atas.</td></tr>';
-    return;
-  }
-  const maxAvg = Math.max(...list.map(e => e.avg_ms), 10);
-  tbody.innerHTML = list.map(e => {
-    const pct = Math.min(100, Math.max(6, Math.round((e.avg_ms / maxAvg) * 100)));
-    const stClass = e.last_status >= 500 ? 'err' : (e.last_status >= 400 ? 'warn' : 'ok');
-    return `<tr>
-      <td><span class="badge-method ${e.method}">${e.method}</span></td>
-      <td style="font-weight:600;color:var(--text)">${e.path}</td>
-      <td>${e.hits}</td>
-      <td>${e.min_ms.toFixed(2)}ms</td>
-      <td style="color:var(--amber);font-weight:700">${e.avg_ms.toFixed(2)}ms</td>
-      <td>${e.p50_ms.toFixed(2)}ms</td>
-      <td>${e.p95_ms.toFixed(2)}ms</td>
-      <td>${e.p99_ms.toFixed(2)}ms</td>
-      <td>${e.max_ms.toFixed(2)}ms</td>
-      <td><div class="bar-wrap"><div class="bar-fill" style="width:${pct}%"></div></div></td>
-      <td><span class="badge ${stClass}">${e.last_status}</span></td>
-    </tr>`;
-  }).join('');
+function routeFeatureTag(path) {
+  if (path.includes('/monitoring/ingest')) return 'Telemetry Batch';
+  if (path.includes('/monitoring/heartbeat')) return 'User Online';
+  if (path.includes('/monitoring')) return 'Monitoring Hub';
+  if (path.includes('/admin/users')) return 'Admin Users';
+  if (path.includes('/auth/')) return 'Auth & Session';
+  if (path.includes('/toolkit/')) return 'Barista LMS';
+  if (path.includes('/chat/ws')) return 'Chat Socket';
+  if (path.includes('/chat/')) return 'Chat API';
+  if (path.includes('/social')) return 'Social Feed';
+  if (path.includes('/beans')) return 'Beans & AI';
+  return 'Mobile API';
 }
 
-function renderDomainCounts(c) {
-  const items = [
-    ['Users', c.users ?? 0],
-    ['Sessions', c.active_sessions ?? 0],
-    ['Social Posts', c.social_posts ?? 0],
-    ['Comments', c.social_comments ?? 0],
-    ['Cloud Recipes', c.synced_recipes ?? 0],
-    ['Brew Logs', c.brew_logs ?? 0],
-    ['Curated Beans', c.curated_beans ?? 0],
-    ['Orders', c.marketplace_orders ?? 0],
-    ['Feedbacks', c.feedbacks ?? 0],
-  ];
-  document.getElementById('domain-counts').innerHTML = items
-    .map(([label, val]) => `<div class="mini-stat"><b>${val}</b><span>${label}</span></div>`)
-    .join('');
+function setApmStatusFilter(mode, btn) {
+  apmStatusFilter = mode;
+  document.querySelectorAll('#apm-status-chips .chip-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  applyApmFilters();
 }
 
-function renderTraces(traces) {
-  const container = document.getElementById('trace-stream');
-  container.innerHTML = traces.slice(0, 15).map(t => {
-    const stClass = t.status >= 500 ? 'err' : (t.status >= 400 ? 'warn' : 'ok');
-    const timeStr = new Date(t.timestamp).toLocaleTimeString();
-    return `<div class="trace-item">
-      <div><span class="badge-method ${t.method}">${t.method}</span> <span style="margin-left:6px">${t.path}</span></div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <span style="color:var(--amber)">${t.duration_ms.toFixed(2)}ms</span>
-        <span class="badge ${stClass}">${t.status}</span>
-        <span style="color:var(--muted);font-size:10px">${timeStr}</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderServices(services) {
-  const tbody = document.getElementById('services-tbody');
-  tbody.innerHTML = services.map(s => `<tr>
-    <td style="color:var(--amber);font-weight:700">${s.module}</td>
-    <td style="font-family:sans-serif;font-weight:600">${s.name}</td>
-    <td>${s.base_path}</td>
-    <td style="font-family:sans-serif;color:var(--muted)">${s.mobile_feature}</td>
-    <td><span class="badge warn">${s.security_tier}</span></td>
-    <td><span class="badge ok">● ${s.status}</span></td>
-  </tr>`).join('');
+function applyApmFilters() {
+  const q = (document.getElementById('apm-search')?.value || '').trim().toLowerCase();
+  const methodF = document.getElementById('apm-method-filter')?.value || 'ALL';
+  const filtered = apmEndpointsCache.filter(e => {
+    if (q && !e.path.toLowerCase().includes(q) && !routeFeatureTag(e.path).toLowerCase().includes(q)) return false;
+    if (methodF !== 'ALL' && e.method !== methodF) return false;
+    if (apmStatusFilter === '2XX' && (e.last_status < 200 || e.last_status >= 300)) return false;
+    if (apmStatusFilter === 'ERR' && e.last_status < 400) return false;
+    if (apmStatusFilter === 'WS' && e.last_status !== 101 && !e.path.includes('/ws')) return false;
+    return true;
+  });
+  renderEndpoints(filtered);
 }
 
 async function runApiBenchmark() {
   const endpoints = [
-    ['/api/health', { method: 'GET' }],
-    ['/api/v1/app/version-check?platform=android&base_version=1.0.0&build_number=1&patch_number=0', { method: 'GET' }],
+    ['/api/v1/health/redis', { method: 'GET' }],
+    ['/api/v1/health/rabbitmq', { method: 'GET' }],
     ['/api/v1/rbac/plans', { method: 'GET' }],
+    ['/api/v1/toolkit/lms/courses', { method: 'GET' }],
     ['/api/v1/social/posts?sort=latest&limit=10', { method: 'GET' }],
     ['/api/v1/social/feed/cursor?limit=5', { method: 'GET' }],
     ['/api/beans', { method: 'GET' }],
     ['/api/beans/dial-in', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ bean_name: 'Bali Kintamani Anaerobic', process: 'Anaerobic Natural', coffee_grams: 15 })
     }],
     ['/api/brew-logs/analytics', { method: 'GET' }],
@@ -139,6 +122,13 @@ async function runApiBenchmark() {
 async function resetTelemetry() {
   await fetch('/api/v1/telemetry/reset', { method: 'POST' });
   await fetchTelemetry();
+}
+
+function refreshAllPanels() {
+  fetchTelemetry();
+  if (typeof refreshMonitoring === 'function') refreshMonitoring();
+  if (typeof loadAdminUsersPanel === 'function') loadAdminUsersPanel();
+  if (typeof loadInfraHealth === 'function') loadInfraHealth();
 }
 
 fetchTelemetry();

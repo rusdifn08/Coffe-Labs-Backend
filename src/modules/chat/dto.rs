@@ -42,6 +42,7 @@ pub struct PeerSearchQuery {
 
 #[derive(Debug, Deserialize)]
 pub struct WsConnectQuery {
+    #[allow(dead_code)] // Extracted in `AuthenticatedUser` FromRequestParts before WS upgrade
     pub token: Option<String>,
     pub format: Option<String>,
 }

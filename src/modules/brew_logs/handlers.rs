@@ -5,7 +5,6 @@ use axum::{
 };
 use serde_json::json;
 use sqlx::PgPool;
-use uuid::Uuid;
 
 use crate::{
     core::{
@@ -30,7 +29,7 @@ pub async fn save_brew_history(
     State(state): State<AppState>,
     Json(payload): Json<serde_json::Value>,
 ) -> AppResult<impl IntoResponse> {
-    if let Some(uid) = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok()) {
+    if let Some(uid) = auth.as_ref().map(|c| c.sub) {
         let profiler = state.taste_profiler.clone();
         let text = payload.to_string();
         tokio::spawn(async move {
@@ -55,7 +54,7 @@ pub async fn save_journal_entry(
     State(state): State<AppState>,
     Json(payload): Json<serde_json::Value>,
 ) -> AppResult<impl IntoResponse> {
-    if let Some(uid) = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok()) {
+    if let Some(uid) = auth.as_ref().map(|c| c.sub) {
         let profiler = state.taste_profiler.clone();
         let text = payload.to_string();
         tokio::spawn(async move {

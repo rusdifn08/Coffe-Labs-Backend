@@ -1,6 +1,8 @@
+pub mod directory_repo;
 pub mod follow_repo;
 pub mod interaction_repo;
 pub mod profile_projection_repo;
+pub mod profile_write_repo;
 pub mod thread_repo;
 pub mod thread_write_repo;
 pub mod timeline_repo;

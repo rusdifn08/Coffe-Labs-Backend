@@ -2,7 +2,7 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::{
-    core::{error::AppResult, security::Claims},
+    core::{error::AppResult, jwt::JwtClaims},
     modules::platform::{
         dto::{
             CreateFeedbackRequest, FeedbackQuery, UpdateFeedbackStatusRequest, VersionCheckQuery,
@@ -69,11 +69,11 @@ pub fn evaluate_version_check(
 
 pub async fn create_feedback(
     pool: &PgPool,
-    claims_opt: Option<Claims>,
+    claims_opt: Option<JwtClaims>,
     req: CreateFeedbackRequest,
 ) -> AppResult<Feedback> {
     let (user_id, username, user_role) = match claims_opt {
-        Some(c) => (Uuid::parse_str(&c.sub).ok(), c.username, c.role),
+        Some(c) => (Some(c.sub), c.username, c.role),
         None => (
             None,
             req.guest_name.unwrap_or_else(|| "Tamu / Trial".to_string()),

@@ -15,6 +15,10 @@ pub struct UserRow {
     pub status: String,
     pub tier: String,
     pub avatar_url: Option<String>,
+    #[sqlx(default)]
+    pub trial_full_until: Option<DateTime<Utc>>,
+    #[sqlx(default)]
+    pub trial_policy_override: Option<String>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
@@ -28,6 +32,8 @@ pub struct UserSummary {
     pub status: String,
     pub tier: String,
     pub avatar_url: Option<String>,
+    pub trial_full_until: Option<DateTime<Utc>>,
+    pub trial_policy_override: Option<String>,
     pub created_at: DateTime<Utc>,
 }
 
@@ -41,6 +47,8 @@ impl From<UserRow> for UserSummary {
             status: u.status,
             tier: u.tier,
             avatar_url: u.avatar_url,
+            trial_full_until: u.trial_full_until,
+            trial_policy_override: u.trial_policy_override,
             created_at: u.created_at,
         }
     }

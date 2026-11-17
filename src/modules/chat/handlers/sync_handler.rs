@@ -19,18 +19,13 @@ use crate::{
     },
 };
 
-fn parse_claim_user_id(sub: &str) -> AppResult<Uuid> {
-    Uuid::parse_str(sub)
-        .map_err(|_| AppError::Unauthorized("Format identitas pengguna tidak valid.".to_string()))
-}
-
 pub async fn get_conversation_history(
     AuthUser(claims): AuthUser,
     State(state): State<AppState>,
     Path(conversation_id): Path<Uuid>,
     Query(query): Query<HistoryQuery>,
 ) -> AppResult<Json<ApiResponse<ChatHistoryResponseDto>>> {
-    let user_id = parse_claim_user_id(&claims.sub)?;
+    let user_id = claims.sub;
     let members = state
         .chat_messages
         .get_room_members(&state.pool, conversation_id)
@@ -85,9 +80,8 @@ pub async fn sync_delta_http(
     State(state): State<AppState>,
     ValidatedJson(req): ValidatedJson<DeltaSyncHttpReq>,
 ) -> AppResult<Json<ApiResponse<serde_json::Value>>> {
-    let user_id = parse_claim_user_id(&claims.sub)?;
     let (messages, watermarks) =
-        ack_sync_service::compute_delta_sync(&state.pool, user_id, &req.cursors)
+        ack_sync_service::compute_delta_sync(&state.pool, claims.sub, &req.cursors)
             .await
             .map_err(AppError::from)?;
 

@@ -5,7 +5,9 @@ use axum::{
 
 use crate::{
     core::AppState,
-    modules::communities::handlers::{club_handler, invite_handler, vault_feed_handler},
+    modules::communities::handlers::{
+        club_handler, invite_handler, member_invite_handler, vault_feed_handler,
+    },
 };
 
 pub fn router() -> Router<AppState> {
@@ -17,6 +19,18 @@ pub fn router() -> Router<AppState> {
         .route(
             "/api/v1/communities",
             post(club_handler::create_community),
+        )
+        .route(
+            "/api/v1/communities/invitations/pending",
+            get(member_invite_handler::list_my_pending_invitations),
+        )
+        .route(
+            "/api/v1/communities/invitations/{invite_id}/accept",
+            post(member_invite_handler::accept_invitation),
+        )
+        .route(
+            "/api/v1/communities/invitations/{invite_id}/decline",
+            post(member_invite_handler::decline_invitation),
         )
         .route(
             "/api/v1/communities/join-by-secret",
@@ -45,6 +59,15 @@ pub fn router() -> Router<AppState> {
         .route(
             "/api/v1/communities/{id}/invites/{invite_id}",
             delete(invite_handler::revoke_invite),
+        )
+        .route(
+            "/api/v1/communities/{id}/member-invites",
+            get(member_invite_handler::list_club_sent_invitations)
+                .post(member_invite_handler::send_club_invitations),
+        )
+        .route(
+            "/api/v1/communities/{id}/member-invites/{invite_id}",
+            delete(member_invite_handler::cancel_club_invitation),
         )
         .route(
             "/api/v1/communities/{id}/feed",

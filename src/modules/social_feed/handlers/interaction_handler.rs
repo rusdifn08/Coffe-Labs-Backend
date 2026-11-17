@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 use crate::{
     core::{
-        error::{ApiResponse, AppError, AppResult},
+        error::{ApiResponse, AppResult},
         extractors::{AuthUser, OptionalAuthUser},
         AppState,
     },
@@ -24,16 +24,12 @@ use crate::{
     },
 };
 
-fn parse_uid(raw: &str) -> AppResult<Uuid> {
-    Uuid::parse_str(raw).map_err(|_| AppError::BadRequest("ID user tidak valid.".to_string()))
-}
-
 pub async fn create_thread(
     AuthUser(claims): AuthUser,
     State(state): State<AppState>,
     Json(req): Json<CreateThreadRequest>,
 ) -> AppResult<impl IntoResponse> {
-    let uid = parse_uid(&claims.sub)?;
+    let uid = claims.sub;
     let item = thread_create_service::create_thread(
         &state.pool,
         &state.social_profile_cqrs,
@@ -76,7 +72,7 @@ pub async fn toggle_like(
     Path(id): Path<Uuid>,
     State(state): State<AppState>,
 ) -> AppResult<impl IntoResponse> {
-    let uid = parse_uid(&claims.sub)?;
+    let uid = claims.sub;
     let data = thread_command_service::toggle_like(&state.pool, id, uid).await?;
     if data.is_liked_by_me {
         let pool = state.pool.clone();
@@ -103,8 +99,7 @@ pub async fn toggle_repost(
     Path(id): Path<Uuid>,
     State(state): State<AppState>,
 ) -> AppResult<impl IntoResponse> {
-    let uid = parse_uid(&claims.sub)?;
-    let data = thread_command_service::toggle_repost(&state.pool, id, uid).await?;
+    let data = thread_command_service::toggle_repost(&state.pool, id, claims.sub).await?;
     Ok(ApiResponse::ok("Status repost berhasil diperbarui.", data))
 }
 
@@ -113,7 +108,7 @@ pub async fn try_recipe(
     Path(id): Path<Uuid>,
     State(state): State<AppState>,
 ) -> AppResult<impl IntoResponse> {
-    let viewer_id = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok());
+    let viewer_id = auth.as_ref().map(|c| c.sub);
     let data = thread_command_service::record_recipe_try(
         &state.pool,
         &state.social_profile_cqrs,
@@ -132,8 +127,7 @@ pub async fn delete_thread(
     Path(id): Path<Uuid>,
     State(state): State<AppState>,
 ) -> AppResult<impl IntoResponse> {
-    let uid = parse_uid(&claims.sub)?;
-    thread_command_service::delete_thread(&state.pool, &state.social_profile_cqrs, id, uid)
+    thread_command_service::delete_thread(&state.pool, &state.social_profile_cqrs, id, claims.sub)
         .await?;
     Ok(ApiResponse::ok("Thread berhasil dihapus.", serde_json::json!({ "id": id })))
 }

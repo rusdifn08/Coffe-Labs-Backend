@@ -1,0 +1,1351 @@
+{
+  "CL-BOOK-01": [
+    {
+      "id": "f2ac62d2-85bb-5b88-82b0-428526019292",
+      "ebook_id": "b0010001-0000-4000-8000-000000000001",
+      "chapter_number": 1,
+      "title_id": "Botani Pohon Kopi, Genetika Varietas & Pengaruh Terroir",
+      "title_en": "Coffee Botany, Genetic Varieties & Terroir Influence",
+      "estimated_read_time_min": 14,
+      "start_pdf_page": 2,
+      "end_pdf_page": 3,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "1.1 Anatomi Pohon Kopi & Spesies Komersial",
+          "text_en_original": "1.1 Coffee Tree Anatomy & Commercial Species",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Dua spesies utama mendominasi perdagangan dunia: Coffea arabica (~60% produksi global, tetraploid 44 kromosom dengan kadar lipid dan sukrosa hampir dua kali lipat) dan Coffea canephora/Robusta (tahan hama, kafein hingga 2.7%, karakter bodi tebal dan cokelat gelap). Pada elevasi tinggi (Strictly High Grown / SHG >= 1.200 MDPL), penurunan suhu malam memperlambat metabolisme pematangan ceri sehingga biji berkembang jauh lebih padat.",
+          "text_en_original": "Two species dominate global trade: Coffea arabica (~60% of production, tetraploid 44 chromosomes with nearly double lipids and sucrose) and Coffea canephora/Robusta (resilient, up to 2.7% caffeine). At high elevation (>1,200 MASL), cool nights slow cherry maturation and dramatically raise bean density.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "figure",
+          "text_id": "",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": 1,
+          "figure_caption_id": "Gambar 1.1 — Peta Korelasi Ketinggian MDPL (Terroir) Terhadap Kepadatan Biji & Spektrum Asam Organik",
+          "cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-01/figures/ch01_fig01.webp",
+          "figure_secure_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-01/figures/ch01_fig01.webp"
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "formula_latex",
+          "text_id": "Akumulasi Sukrosa & Asam Malat Biji Kopi",
+          "text_en_original": "",
+          "latex_expression": "\\text{Akumulasi Sukrosa} \\propto \\Delta T_{\\text{diurnal}} = T_{\\text{siang}} - T_{\\text{malam}}",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_005",
+          "block_type": "interactive_widget",
+          "text_id": "Eksplorator Ketinggian Origin & Prediksi Profil Asam",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "ORIGIN_ALTITUDE_FLAVOR_MAP",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Coffea arabica tumbuh optimal pada elevasi 1.200–2.200 MDPL dengan rentang suhu diurnal tajam.",
+        "Mutasi genetik Bourbon -> SL28/SL34 & Ethiopian Heirloom -> Geisha melahirkan keasaman sitrus & bergamot."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Ketinggian >1.200 MDPL dengan perbedaan suhu siang-malam tinggi memperlambat pematangan ceri sehingga menghasilkan...",
+          "options": [
+            "Kepadatan biji (SHB) tinggi & kompleksitas asam buah + sukrosa",
+            "Biji kosong tanpa aroma",
+            "Kadar kafein 100% hilang"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    },
+    {
+      "id": "3ede9e78-d942-58dd-a06e-795539fee938",
+      "ebook_id": "b0010001-0000-4000-8000-000000000001",
+      "chapter_number": 2,
+      "title_id": "Sains Pascapanen: Washed, Natural, Honey & Fermentasi Anaerobik",
+      "title_en": "Post-Harvest Processing: Washed, Natural, Honey & Anaerobic Fermentation",
+      "estimated_read_time_min": 16,
+      "start_pdf_page": 3,
+      "end_pdf_page": 4,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "1.2 Transformasi Biokimia di Ruang Fermentasi",
+          "text_en_original": "1.2 Biochemical Transformation in Fermentation Tanks",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Lapisan mucilage kaya pektin dan gula sederhana menjadi substrat alami bagi khamir Saccharomyces serta bakteri asam laktat (LAB). Dalam proses Washed, pengupasan pulp dan pencucian bersih memfokuskan kejernihan terroir. Sebaliknya, pada Honey dan Natural, gula mucilage terus berdifusi ke dalam biji hijau selama pengeringan bertingkat di ranjang Afrika (African beds).",
+          "text_en_original": "The pectin-rich mucilage acts as natural substrate for Saccharomyces yeasts and lactic acid bacteria. Washed processing highlights origin clarity, while Honey and Natural processes allow sugars to infuse during controlled African bed drying.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Jalur Fermentasi Anaerobik Mucilage Kopi",
+          "text_en_original": "",
+          "latex_expression": "\\text{C}_6\\text{H}_{12}\\text{O}_6 \\xrightarrow{\\text{Yeast + LAB}} 2\\,\\text{C}_2\\text{H}_5\\text{OH} + 2\\,\\text{CO}_2 + \\text{Volatil Ester}",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "figure",
+          "text_id": "",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": 2,
+          "figure_caption_id": "Gambar 1.2 — Anatomi Ceri Kopi & Profil Aktivitas Ragi Selama 48 Jam Fermentasi",
+          "cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-01/figures/ch02_fig02.webp",
+          "figure_secure_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-01/figures/ch02_fig02.webp"
+        }
+      ],
+      "key_summary_points": [
+        "Full Washed menonjolkan kejernihan rasa (clarity) & kemurnian asam origin.",
+        "Carbonic Maceration / Anaerobic mengontrol ragi & bakteri asam laktat menghasilkan ester tropis kompleks."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Proses pascapanen mana yang mempertahankan 100% kulit ceri selama penjemuran untuk mendorong karakter fruit-forward dan body pekat?",
+          "options": [
+            "Natural Process (Dry Process)",
+            "Full Washed",
+            "Swiss Water Decaf"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    },
+    {
+      "id": "ba981db9-83b3-52a8-911c-c015068f489b",
+      "ebook_id": "b0010001-0000-4000-8000-000000000001",
+      "chapter_number": 3,
+      "title_id": "Atlas Origin Dunia & Nusantara: Ethiopia, Kolombia, Aceh Gayo & Malabar",
+      "title_en": "Global & Indonesian Origins Atlas: Ethiopia, Colombia, Gayo & Malabar",
+      "estimated_read_time_min": 15,
+      "start_pdf_page": 4,
+      "end_pdf_page": 4,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "1.3 Pemetaan Terroir Indonesia vs Afrika Timur",
+          "text_en_original": "1.3 Indonesian Nusantara vs East African Terroir Mapping",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Indonesia sebagai negara kepulauan vulkanik menyajikan ragam varietas unggul dari Ateng Super dan Abyssinia di dataran tinggi Gayo hingga Sigararutang dan Kartika di Priangan Barat serta Bali Kintamani. Sementara Ethiopia (Yirgacheffe, Guji, Sidamo) tetap menjadi pusat keanekaragaman genetik Heirloom yang bersinar cemerlang pada rasio V60 1:16 bersuhu 92–94°C.",
+          "text_en_original": "Volcanic Indonesian highlands yield renowned cultivars from Gayo Ateng Super to West Java Malabar and Bali Kintamani, while Ethiopian Heirloom cultivars remain the genetic cradle producing jasmine and bergamot aromatics.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "interactive_widget",
+          "text_id": "Kompas Terroir & Parameter Dial-In 35+ Negara",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "INDONESIA_TERROIR_COMPASS",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Nusantara: Aceh Gayo, Mandailing, Priangan Malabar/Halu, Bali Kintamani, Manggarai Flores & Toraja Sapan.",
+        "Afrika Timur (Ethiopia/Kenya) unggul pada asam sitrat-malat cerah dan aroma bunga bergamot."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Karakter rasa ikonik kopi Ethiopia Yirgacheffe proses Washed pada penyeduhan V60 adalah...",
+          "options": [
+            "Floral melati, teh hitam & bergamot sitrus bersih",
+            "Asap tajam & karet gosong",
+            "Asin air laut"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    }
+  ],
+  "CL-BOOK-02": [
+    {
+      "id": "363a80c2-7017-5668-b738-4e81d47196ca",
+      "ebook_id": "b0010001-0000-4000-8000-000000000002",
+      "chapter_number": 1,
+      "title_id": "Anatomi Grinder, Distribusi Partikel & Rasio Emas Penyeduhan",
+      "title_en": "Burr Grinders, Particle Size Distribution & Golden Brewing Ratios",
+      "estimated_read_time_min": 12,
+      "start_pdf_page": 2,
+      "end_pdf_page": 3,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "2.1 Mengapa Grinder Mengalahkan Mesin Mahal",
+          "text_en_original": "2.1 Why Your Grinder Matters Most",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Distribusi ukuran partikel yang sempit mencegah kondisi di mana partikel besar kurang terekstrak (sour) sekaligus bubuk halus over-extracted (bitter) pada saat bersamaan. Gunakan burr grinder bertingkat (Comandante, 1Zpresso, Ode, Niche) dan selalu timbang rasio dengan timbangan digital akurasi 0.1 gram.",
+          "text_en_original": "A narrow particle distribution prevents simultaneous sour boulders and bitter fines. Always dose by weight using 0.1 g scales around the 60 g/L baseline.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Rasio Filter Standar 1-Cangkir",
+          "text_en_original": "",
+          "latex_expression": "R_{\\text{brew}} = \\frac{250\\text{ ml}}{15\\text{ g}} = 16.67 : 1 \\quad (\\equiv 60\\text{ g/L})",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "interactive_widget",
+          "text_id": "Kalkulator Rasio Dosis & Volume Air Alat Seduh",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "BREWER_RATIO_SLIDER",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Conical & Flat Burr memotong biji seragam ketimbang Blade Grinder yang memecah acak.",
+        "Standar filter rumahan adalah 60 g kopi : 1.000 mL air (15 g : 250 mL)."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Berapakah rasio emas (Golden Ratio) klasik untuk filter kopi rumahan?",
+          "options": [
+            "1:16 hingga 1:16,67 (60 g kopi per 1 Liter air)",
+            "1:2",
+            "1:50"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    },
+    {
+      "id": "024e4fc5-a96e-529c-aab3-055c33f40a81",
+      "ebook_id": "b0010001-0000-4000-8000-000000000002",
+      "chapter_number": 2,
+      "title_id": "Protokol Master: 1-Cup V60, Ultimate French Press & AeroPress",
+      "title_en": "Master Protocols: 1-Cup V60, Ultimate French Press & AeroPress",
+      "estimated_read_time_min": 14,
+      "start_pdf_page": 3,
+      "end_pdf_page": 3,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "2.2 A Better 1-Cup V60 (5 Tuangan Terkalibrasi)",
+          "text_en_original": "2.2 A Better 1-Cup V60 Protocol",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Berbeda dengan seduhan porsi besar, dosis tunggal 15 g cepat kehilangan panas. Membagi 250 g air 95°C menjadi lima pulsa 50 g dengan jeda 10 detik mempertahankan tinggi slurry konsisten hingga drawdown tuntas di 3:00 menit.",
+          "text_en_original": "Splitting 250 g into five 50 g pulses with 10-second pauses keeps thermal mass consistent on small 15 g beds.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "figure",
+          "text_id": "",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": 1,
+          "figure_caption_id": "Gambar 2.1 — Garis Waktu 5 Pulsa Tuangan & Siklus Suhu 1-Cup V60",
+          "cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-02/figures/ch02_fig01.webp",
+          "figure_secure_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-02/figures/ch02_fig01.webp"
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "interactive_widget",
+          "text_id": "Simulasi Timer 5x 50g Hoffmann V60",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "HOFFMANN_V60_TIMELINE",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "1-Cup V60 membagi 250 g menjadi 5 pulsa @ 50 g @ 95°C demi menjaga suhu bed.",
+        "Ultimate French Press mendiamkan endapan 5+ menit setelah diaduk di menit ke-4 untuk cangkir bebas ampas."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Pada metode 1-Cup V60 James Hoffmann, jeda antar lima tuangan @ 50 g adalah...",
+          "options": [
+            "10 detik menunggu level air turun terkendali",
+            "5 menit",
+            "Tanpa jeda sama sekali"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    }
+  ],
+  "CL-BOOK-03": [
+    {
+      "id": "b5f67029-f475-589d-b086-325e3baa7a99",
+      "ebook_id": "b0010001-0000-4000-8000-000000000003",
+      "chapter_number": 1,
+      "title_id": "Dinamika Fluida Perkolasi & Hukum Darcy pada Coffee Bed",
+      "title_en": "Percolation Fluid Dynamics & Darcy's Law in Coffee Beds",
+      "estimated_read_time_min": 18,
+      "start_pdf_page": 2,
+      "end_pdf_page": 3,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "3.1 Mekanika Fluida Menembus Media Berpori",
+          "text_en_original": "3.1 Fluid Mechanics Through Porous Coffee Beds",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Di dalam dripper kerucut maupun datar, hamparan partikel kopi bertindak sebagai media berpori berlapis yang disokong oleh kertas filter selulosa. Air mengalir menembus pori antarpartikel mengikuti hukum aliran laminar media berpori yang dirumuskan Henry Darcy pada abad ke-19.",
+          "text_en_original": "Inside both conical and flat-bottom brewers, the coffee bed behaves as a saturated porous medium driven by hydrostatic head and capillary forces.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Persamaan Lengkap Hukum Darcy Perkolasi V60",
+          "text_en_original": "",
+          "latex_expression": "Q = \\frac{\\kappa \\cdot A}{\\mu(T) \\cdot L}\\left(\\rho g h_{\\text{water}} + \\Delta P_{\\text{cap}}\\right)",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "figure",
+          "text_id": "",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": 1,
+          "figure_caption_id": "Gambar 3.1 — Penampang Tekanan Hidrostatik Hukum Darcy vs Aliran Samping Bypass",
+          "cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-03/figures/ch01_fig01.webp",
+          "figure_secure_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-03/figures/ch01_fig01.webp"
+        },
+        {
+          "block_id": "blk_005",
+          "block_type": "interactive_widget",
+          "text_id": "Kalkulator Laju Darcy (Simulasi Gilingan, Kolom Air & Suhu)",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "DARCY_FLOW_CALCULATOR",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Hukum Darcy menghubungkan debit alir Q dengan permeabilitas bed κ, viskositas μ(T), dan kolom hidrostatik h.",
+        "Channeling dan bypass menjadi dua sumber penyimpangan terbesar perkolasi gravitasi."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Faktor apa yang turun drastis saat suhu air dinaikkan dari 80°C ke 96°C sehingga air mengalir lebih cepat?",
+          "options": [
+            "Viskositas dinamik air μ(T)",
+            "Gravitasi lokal",
+            "Ketebalan meja barista"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    },
+    {
+      "id": "8fcf273b-4bac-5df3-b87e-b98000a5cf42",
+      "ebook_id": "b0010001-0000-4000-8000-000000000003",
+      "chapter_number": 2,
+      "title_id": "Kinetika Difusi Hukum Fick, Migrasi Fines & Konveksi Kerucut",
+      "title_en": "Fickian Diffusion Kinetics, Fines Migration & Cone Convection",
+      "estimated_read_time_min": 16,
+      "start_pdf_page": 3,
+      "end_pdf_page": 4,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "3.2 Efek Kacang Brasil Terbalik & Penyumbatan Filter",
+          "text_en_original": "3.2 Reverse Brazil Nut Effect & Filter Clogging",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Berbeda dari wadah silinder di mana butiran besar naik ke atas akibat gesekan dinding, wadah kerucut membalik arah arus tepi ke atas dan arus pusat turun — menjebak partikel besar di apex bawah. Namun, putaran terlalu agresif melepaskan debu fines ke kertas sehingga menaikkan waktu drawdown mendadak.",
+          "text_en_original": "Unlike vertical cylinders, cones invert convective granular flow. Excessive swirling still drives sub-100 micron fines into paper pores, spiking draw-down time.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Difusi Ekstraksi Intrapartikel (Fick's Law)",
+          "text_en_original": "",
+          "latex_expression": "J_{\\text{diff}} = -D_{\\text{eff}}\\frac{\\partial C}{\\partial r}, \\quad D_{\\text{eff}}=\\frac{k_B T}{6\\pi\\mu(T)R_{\\text{mol}}}",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "figure",
+          "text_id": "",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": 2,
+          "figure_caption_id": "Gambar 3.2 — Konveksi Silinder vs Kerucut V60 (Knight et al., 1993)",
+          "cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-03/figures/ch02_fig02.webp",
+          "figure_secure_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-03/figures/ch02_fig02.webp"
+        }
+      ],
+      "key_summary_points": [
+        "Partikel debu mikro (<100 µm) yang terbawa ke dinding kertas memicu penyumbatan (clogging).",
+        "Gentle Rao Swirl meratakan puncak tanpa membangunkan migrasi fines berlebih."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Bagaimana efek konveksi pada wadah kerucut (V60) mengarahkan partikel besar saat agitasi lembut?",
+          "options": [
+            "Arah konveksi berbalik menuju dasar apex kerucut (Reverse Brazil Nut Effect)",
+            "Selalu terlempar ke atas ke luar dripper",
+            "Berubah menjadi es"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    },
+    {
+      "id": "f1f58f03-f1e9-5a24-998c-1c4168e520de",
+      "ebook_id": "b0010001-0000-4000-8000-000000000003",
+      "chapter_number": 3,
+      "title_id": "Hidrodinamika Ketel Leher Angsa & Geometri Dripper",
+      "title_en": "Gooseneck Stream Hydrodynamics & Brewer Geometry",
+      "estimated_read_time_min": 14,
+      "start_pdf_page": 4,
+      "end_pdf_page": 4,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "3.3 Menghindari Breakup Panjang Gelombang Rayleigh-Plateau",
+          "text_en_original": "3.3 Avoiding Rayleigh-Plateau Stream Breakup",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Saat aliran menipis terlalu jauh di udara, ketidakstabilan Rayleigh-Plateau memecah kolom air kontinyu menjadi rantai tetesan liar. Gunakan sudut moncong stabil pada ~4.5–6.5 ml/s di jarak 3–4 inci dari permukaan air untuk penetrasi optimal.",
+          "text_en_original": "Pouring from too high causes Rayleigh-Plateau instability to fracture the jet into droplets. Keep pouring 3–4 inches above the bed for cohesive penetration.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Kriteria Bilangan Reynolds Aliran Moncong",
+          "text_en_original": "",
+          "latex_expression": "Re = \\frac{\\rho v_{\\text{stream}} D_{\\text{spout}}}{\\mu(T)} < 2300 \\implies \\text{Aliran Laminar Murni}",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Pertahankan ketel pada ketinggian breakup-threshold (~7-10 cm) agar agitasi dalam merata tanpa splashing.",
+        "Alat shower seperti Melodrip menurunkan energi tumbukan untuk gilingan super halus."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Kondisi jet air dari moncong gooseneck yang ideal sebelum menumbuk permukaan slurry adalah...",
+          "options": [
+            "Aliran laminar utuh (Re < 2300) yang tidak pecah menjadi percikan tetesan",
+            "Jet bertekanan 100 bar yang melubangi bed",
+            "Tetesan putus-putus dari jarak 1 meter"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    }
+  ],
+  "CL-BOOK-04": [
+    {
+      "id": "cc77e0bc-0bb9-5ff2-8ae4-b29c6926e402",
+      "ebook_id": "b0010001-0000-4000-8000-000000000004",
+      "chapter_number": 1,
+      "title_id": "Energi Pengikatan Kation: Magnesium (Mg²⁺) vs Kalsium (Ca²⁺)",
+      "title_en": "Cation Binding Energetics: Mg2+ vs Ca2+",
+      "estimated_read_time_min": 14,
+      "start_pdf_page": 2,
+      "end_pdf_page": 3,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "4.1 Kimia Koordinasi Sticky Ions dalam Slurry",
+          "text_en_original": "4.1 Coordination Chemistry of Sticky Ions",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Perhitungan mekanika kuantum DFT (Hendon & Colonna-Dashwood) membuktikan ion Mg²⁺ memiliki energi pengikatan terkuat terhadap gugus oksigen pada asam sitrat, laktat, eugenol, dan kafein. Air yang terlalu lunak (<20 ppm GH) gagal menarik kekayaan rasa kompleks ini.",
+          "text_en_original": "DFT calculations demonstrate Mg2+ binds strongly to oxygenated flavor compounds such as citrates and eugenol, elevating fruity vibrancy.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Konversi Konsentrasi Ion ke GH (ppm CaCO3)",
+          "text_en_original": "",
+          "latex_expression": "\\text{GH (ppm CaCO}_3\\text{)} = 2.497\\,[\\text{Ca}^{2+}] + 4.118\\,[\\text{Mg}^{2+}]",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "figure",
+          "text_id": "",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": 1,
+          "figure_caption_id": "Gambar 4.1 — Kuadran Peta Kekerasan Mineral GH vs Penyangga Bikarbonat KH",
+          "cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-04/figures/ch01_fig01.webp",
+          "figure_secure_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-04/figures/ch01_fig01.webp"
+        },
+        {
+          "block_id": "blk_005",
+          "block_type": "interactive_widget",
+          "text_id": "Simulator Keseimbangan Ion Ca²⁺ / Mg²⁺ & Buffer KH",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "WATER_ION_SIMULATOR",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Mg2+ kecil berikatan kuat dengan senyawa volatil buah/bunga; Ca2+ membangun creamy mouthfeel.",
+        "Keduanya dijumlahkan dalam ukuran General Hardness (GH) ppm CaCO3."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Ion divalen manakah yang lebih unggul menarik senyawa buah cerah dan floral?",
+          "options": [
+            "Magnesium (Mg2+)",
+            "Bikarbonat (HCO3-)",
+            "Sulfida"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    },
+    {
+      "id": "f2523f3c-6632-56cf-a393-5d8785e27e68",
+      "ebook_id": "b0010001-0000-4000-8000-000000000004",
+      "chapter_number": 2,
+      "title_id": "Alkalinitas Bikarbonat (HCO₃⁻) & Resep Racik Air Barista",
+      "title_en": "Bicarbonate Alkalinity Buffer & DIY Water Recipes",
+      "estimated_read_time_min": 12,
+      "start_pdf_page": 3,
+      "end_pdf_page": 3,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "4.2 Mengendalikan Keasaman Lewat Buffer KH 30–40 ppm",
+          "text_en_original": "4.2 Controlling Acidity with 30–40 ppm KH Buffer",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Bikarbonat mengonsumsi proton bebas (H⁺) hasil disosiasi asam sitrat, malat, dan fosforat di dalam ekstrak kopi. Untuk biji light roast asal Kenya atau Ethiopia, menjaga KH tetap 30–40 ppm membiarkan kilau keasaman tetap hidup namun halus tidak menusuk.",
+          "text_en_original": "Bicarbonate neutralizes free H+ protons from coffee acids. Keeping KH around 30–40 ppm preserves bright fruit without sharp sourness.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Persamaan Penyangga Henderson-Hasselbalch",
+          "text_en_original": "",
+          "latex_expression": "\\text{pH}_{\\text{cup}} = \\text{p}K_{a1} + \\log_{10}\\left(\\frac{[\\text{HCO}_3^-]}{[\\text{H}_2\\text{CO}_3^*]}\\right)",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Buffer bikarbonat >80 ppm menetralkan asam organik menjadikan cangkir terasa datar (chalky).",
+        "Racikan RO memakai CaCl2 + MgSO4·7H2O + NaHCO3 dalam konsentrasi terkalibrasi."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Rentang sweet spot Alkalinitas (KH) menurut standar SCA & Scott Rao adalah...",
+          "options": [
+            "30 – 40 ppm CaCO3",
+            "250 – 300 ppm CaCO3",
+            "0 ppm mutlak"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    }
+  ],
+  "CL-BOOK-05": [
+    {
+      "id": "b1eece8d-47af-52d9-ba77-589fe72359d3",
+      "ebook_id": "b0010001-0000-4000-8000-000000000005",
+      "chapter_number": 1,
+      "title_id": "Kimia Kafein, Asam Klorogenat, Maillard & Karamelisasi",
+      "title_en": "Molecular Chemistry of Caffeine, Chlorogenic Acids & Maillard",
+      "estimated_read_time_min": 14,
+      "start_pdf_page": 2,
+      "end_pdf_page": 3,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "5.1 Urutan Pelarutan Senyawa Kopi Selama Seduhan",
+          "text_en_original": "5.1 Sequence of Coffee Solubles Dissolution",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Ekstraksi tidak terjadi serentak! Asam sitrat, asam malat, serta molekul kafein terlepas cepat dalam hitungan detik awal kontak air, disusul disakarida dan produk Maillard manis, lalu paling akhir senyawa fenolik berat dan lakton pahit bila kontak diperpanjang berlebih.",
+          "text_en_original": "Soluble compounds extract sequentially: fruit acids and caffeine first, caramelized sugars second, and heavy astringent lactones last.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Struktur Kafein & Lonjakan Kelarutan Termal",
+          "text_en_original": "",
+          "latex_expression": "\\text{C}_8\\text{H}_{10}\\text{N}_4\\text{O}_2 \\quad (\\text{Kelarutan } \\uparrow 30\\times \\text{ dari } 20^\\circ\\text{C} \\to 95^\\circ\\text{C})",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "figure",
+          "text_id": "",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": 1,
+          "figure_caption_id": "Gambar 5.1 — Linimasa Pelarutan Asam -> Gula -> Pahit Dalam Cangkir Filter",
+          "cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-05/figures/ch01_fig01.webp",
+          "figure_secure_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-05/figures/ch01_fig01.webp"
+        },
+        {
+          "block_id": "blk_005",
+          "block_type": "interactive_widget",
+          "text_id": "Timeline Ekstraksi Bertingkat & Urutan Senyawa",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "EXTRACTION_PHASE_TIMELINE",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Asam organik & ester volatil larut di 30 detik awal; gula di menit pertengahan; alkaloid pahit di fase akhir.",
+        "Suhu tinggi menaikkan koefisien difusi kelarutan kafein 30 kali lipat dibanding air dingin."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Berapa kali kelipatan peningkatan kelarutan kafein ketika suhu air naik dari 20°C menuju 95°C?",
+          "options": [
+            "Hampir 30× lebih larut",
+            "Sama persis 1×",
+            "Menurun menjadi 0"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    },
+    {
+      "id": "6a40c7bf-81f7-5cff-bb61-f8e5300f5e7e",
+      "ebook_id": "b0010001-0000-4000-8000-000000000005",
+      "chapter_number": 2,
+      "title_id": "Arsitektur Dual-Temp (93°C -> 70°C) & Metode Switch Juara Dunia",
+      "title_en": "Dual-Temperature Thermal Drop & Hybrid Switch Champions",
+      "estimated_read_time_min": 14,
+      "start_pdf_page": 3,
+      "end_pdf_page": 3,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "5.2 Mengendalikan Ekstraksi dengan Suhu Ganda",
+          "text_en_original": "5.2 Controlling Selective Extraction via Dual Temperature",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Dengan menjaga panas tinggi (92–96°C) pada 60% air awal lalu menjatuhkan suhu ke 70–80°C pada sisa volume air, barista berhasil menurunkan laju pelarutan fenol sepat di akhir perkolasi sembari menyempurnakan kesetimbangan manis pada tubuh minuman.",
+          "text_en_original": "Starting hot at 92–96°C and dropping final pours to 70–80°C suppresses astringent compounds late in extraction.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "interactive_widget",
+          "text_id": "Simulasi Dual-Temp & Katup Switch Hibrida",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "THERMAL_DROP_SIMULATOR",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Dual-temp memanfaatkan kelarutan selektif berbasis energi aktivasi termal.",
+        "Emi Fukahori (Closed-Open) vs Tetsu Kasuya Devil (Open-Closed) memisahkan fase clarity & sweetness."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Tujuan utama menjatuhkan suhu pada tuangan akhir metode Sherry Hsu / Thermal Drop adalah...",
+          "options": [
+            "Meningkatkan sweetness/body tanpa menarik tanin sepat akhir",
+            "Mempercepat mendidihnya server",
+            "Membuat es beku"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    }
+  ],
+  "CL-BOOK-06": [
+    {
+      "id": "215e31e0-6fd3-589c-aa5c-c5105ef726e3",
+      "ebook_id": "b0010001-0000-4000-8000-000000000006",
+      "chapter_number": 1,
+      "title_id": "5 Variabel Kunci & Protokol Lengkap 10 Alat Manual Brew",
+      "title_en": "5 Extraction Variables & Complete 10 Manual Brewers Protocols",
+      "estimated_read_time_min": 16,
+      "start_pdf_page": 2,
+      "end_pdf_page": 2,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "6.1 Penguasaan 10 Alat Seduh Saring & Imersi",
+          "text_en_original": "6.1 Mastering 10 Manual Pour-Over & Immersion Brewers",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Setiap alat seduh membentuk geometri hamparan kopi yang khas: Hario V60 dan Solo menghasilkan profil jernih dan cerah beraksen buah; Kalita Wave, April, dan Orea V4 membangun rasa manis bulat merata; Chemex menyaring hampir semua minyak diterpene dengan kertas tebal menghasilkan tekstur kristal seperti teh putih; sedangkan Clever & Switch menggabungkan perendaman tuntas bebas channeling.",
+          "text_en_original": "Each brewer imposes distinct bed geometry: conicals enhance bright clarity, flat-bottoms promote balanced sweetness, Chemex filters lipids for tea-like crispness, and immersion hybrids ensure high uniformity.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Target Zona Klasik Extraction Yield SCA",
+          "text_en_original": "",
+          "latex_expression": "\\text{EY\\%} = \\frac{\\text{TDS\\%} \\times M_{\\text{beverage}}}{M_{\\text{dose}}} \\in [18.0\\%, \\; 22.0\\%]",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "figure",
+          "text_id": "",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": 1,
+          "figure_caption_id": "Gambar 6.1 — Skema Perbandingan 10 Alat Manual Brew (Geometri, Filter & Rasio)",
+          "cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-06/figures/ch01_fig01.webp",
+          "figure_secure_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-06/figures/ch01_fig01.webp"
+        },
+        {
+          "block_id": "blk_005",
+          "block_type": "interactive_widget",
+          "text_id": "Selector Resep Interaktif 10 Alat Manual Brew",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "TEN_BREWERS_PROTOCOL_SELECTOR",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Kelima tuas kontrol: Rasio, Ukuran Gilingan, Suhu Air, Waktu Kontak, dan Agitasi.",
+        "Ubah hanya 1 variabel tiap seduhan uji coba untuk diagnosa ilmiah presisi."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Manakah urutan kalibrasi saat kopi berasa terlalu asin & asam tajam serta habis dalam 1:35 menit?",
+          "options": [
+            "Haluskan gilingan secara bertahap (-2 hingga -3 klik)",
+            "Kasarkan gilingan",
+            "Kurangi suhu jadi 75°C"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    }
+  ],
+  "CL-BOOK-07": [
+    {
+      "id": "1d64e7d8-b013-5f89-93a4-982c07c13764",
+      "ebook_id": "b0010001-0000-4000-8000-000000000007",
+      "chapter_number": 1,
+      "title_id": "Gelombang Kopi Dunia, 850+ Senyawa Volatil & Milk Science",
+      "title_en": "Coffee Waves History, 850+ Volatile Compounds & Milk Science",
+      "estimated_read_time_min": 15,
+      "start_pdf_page": 2,
+      "end_pdf_page": 2,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "7.1 Kimia Aroma & Pengaruh Suhu Steaming Susu",
+          "text_en_original": "7.1 Flavour Volatiles Chemistry & Milk Steaming Physics",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Biji kopi mentah nyaris tidak berbau. Penyangraian di atas 150°C memicu pemecahan gula reduksi dan asam amino menjadi pirazin (nutty), furan (karamel), serta ester floral-buah. Dalam penyajian berbasis susu, menjaga suhu steam 58–65°C menghindari bau telur rebus akibat pemutusan ikatan sulfhidril protein.",
+          "text_en_original": "Green beans hold faint odor until roasting above 150°C unleashes pyrazines, furans, and floral esters. Keep milk steaming within 58–65°C to maximize sweetness and glossy microfoam.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Zona Optimal Denaturasi Protein Susu Microfoam",
+          "text_en_original": "",
+          "latex_expression": "T_{\\text{milk}} \\in [58^\\circ\\text{C}, \\; 65^\\circ\\text{C}] \\implies \\text{Stabilisasi }\\beta\\text{-Laktoglobulin}",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "interactive_widget",
+          "text_id": "Roda Asam Organik & Senyawa Volatil Kopi",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "ORGANIC_ACIDS_WHEEL",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Lebih dari 850 senyawa volatil terbentuk lewat reaksi Maillard & degradasi Strecker saat sangrai.",
+        "Pemanasan susu 58–65°C mendistribusikan lemak & menonjolkan persepsi laktosa manis."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Rentang suhu steaming susu sapi optimal agar rasa manis laktosa memuncak tanpa protein terbakar adalah...",
+          "options": [
+            "58°C – 65°C",
+            "98°C – 100°C",
+            "20°C"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    }
+  ],
+  "CL-BOOK-08": [
+    {
+      "id": "a24e8ed8-0e71-57af-a396-8d1c1914f3a5",
+      "ebook_id": "b0010001-0000-4000-8000-000000000008",
+      "chapter_number": 1,
+      "title_id": "Ensiklopedia Istilah Kopi Spesialti A sampai Z (120+ Entri)",
+      "title_en": "A-to-Z Specialty Coffee Lexicon (120+ Terms)",
+      "estimated_read_time_min": 18,
+      "start_pdf_page": 2,
+      "end_pdf_page": 2,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "8.1 Menguasai Kosakata Presisi Dunia Kopi",
+          "text_en_original": "8.1 Mastering Precision Coffee Vocabulary",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Membedakan secara tegas antara 'Acidity' (keasaman cerah menyenangkan yang memicu air liur seperti apel & sitrus) dengan 'Sourness' (rasa asam mentah akibat under-extraction), maupun antara 'Bitterness' (pahit kafein) dan 'Astringency' (sensasi kesat kering akibat tanin menyatu dengan protein air liur) adalah fondasi setiap penyeduh profesional.",
+          "text_en_original": "Distinguishing bright pleasant Acidity from under-extracted Sourness, and clean Bitterness from drying tannic Astringency, forms the bedrock of sensory calibration.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Kalibrasi Indeks Bias Refraktometer Optik",
+          "text_en_original": "",
+          "latex_expression": "\\text{TDS\\%} = f\\!\\left(n_D^{20}\\right) - \\Delta n_{\\text{suhu}}",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "interactive_widget",
+          "text_id": "Cari 120+ Istilah Kamus Kopi Spesialti A–Z",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "INTERACTIVE_A_Z_DICTIONARY",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Istilah konsisten menyatukan komunikasi roaster, Q-Grader, peneliti, dan barista lapangan.",
+        "Dilengkapi 1-tap lookup dari pembaca E-Book dan layar khusus Kamus Kopi A-Z."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Prinsip optik yang dipakai Digital Coffee Refractometer untuk membaca persentase TDS adalah...",
+          "options": [
+            "Indeks bias pembelokan cahaya larutan kopi pada suhu terkalibrasi",
+            "Massa jenis logam magnet",
+            "Frekuensi suara mendidih"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    }
+  ],
+  "CL-BOOK-09": [
+    {
+      "id": "f70f3a45-e2a5-579e-b58d-d976c154c933",
+      "ebook_id": "b0010001-0000-4000-8000-000000000009",
+      "chapter_number": 1,
+      "title_id": "Anatomi Visual Alat Seduh, Flash Brew & Katalog Minuman Dunia",
+      "title_en": "Visual Brewer Cutaways, Flash Brew & Global Drink Recipes",
+      "estimated_read_time_min": 14,
+      "start_pdf_page": 2,
+      "end_pdf_page": 2,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "9.1 Atlas Visual Anatomi Minuman & Ekstraksi",
+          "text_en_original": "9.1 Visual Anatomy of Specialty Coffee Beverages",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Dari ekstraksi imersi penuh French Press hingga tekanan uap ~1.5 bar Moka Pot dan perkolasi jernih V60 maupun Japanese Flash Brew, setiap proporsi bahan mengubah kesetimbangan kepekatan TDS serta struktur tekstur di langit-langit mulut.",
+          "text_en_original": "From full immersion to ~1.5 bar Moka Pot vapor pressure and crystal-clear V60 or Flash Brew, beverage geometry dictates viscosity and clarity.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Rasio Struktur Minuman Espresso-Susu",
+          "text_en_original": "",
+          "latex_expression": "\\text{Flat White} = 1\\text{ Espresso} : 3\\text{ Steamed Milk} : 0.5\\text{ Microfoam}",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "figure",
+          "text_id": "",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": 1,
+          "figure_caption_id": "Gambar 9.1 — Skema Perbandingan Rasio & Struktur Minuman Kopi Dunia",
+          "cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-09/figures/ch01_fig01.webp",
+          "figure_secure_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-09/figures/ch01_fig01.webp"
+        },
+        {
+          "block_id": "blk_005",
+          "block_type": "interactive_widget",
+          "text_id": "Interactive Drink Ratio & Flash Brew Builder",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "GLOBAL_COFFEE_DRINK_BUILDER",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "Visualisasi cutaway menunjukkan dinamika aliran uap, tekanan, dan gravitasi tiap alat.",
+        "Japanese Flash Brew mengekstrak keasaman cerah dengan air panas lalu membekukan VOC lewat es seketika."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Berapa proporsi espresso, steamed milk, dan microfoam untuk sajian Flat White klasik?",
+          "options": [
+            "1 : 3 : 0.5 dengan tekstur mikrohalus tipis",
+            "1 : 10 : 5 busa tebal kaku",
+            "1 : 0 : 0"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    }
+  ],
+  "CL-BOOK-10": [
+    {
+      "id": "9c67b266-34df-5351-8d19-d656abfe01ea",
+      "ebook_id": "b0010001-0000-4000-8000-000000000010",
+      "chapter_number": 1,
+      "title_id": "Fisiologi Coffea, Protokol Cupping SCA & Evaluasi Cooling Curve",
+      "title_en": "Coffea Physiology, SCA Cupping Protocol & Cooling Evaluation",
+      "estimated_read_time_min": 18,
+      "start_pdf_page": 2,
+      "end_pdf_page": 2,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "10.1 Protokol Cupping Terstandar SCA & Evaluasi Industri",
+          "text_en_original": "10.1 Standardized SCA Cupping & Sensory Evaluation",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Standar SCA menetapkan rasio cupping 8.25 g kopi per 150 mL air suhu 93°C (55 g/L), memecah kerak (*crust breaking*) pada menit ke-4, membersihkan busa permukaan, dan mulai menyeruput (*slurping*) lintas suhu ketika cairan mendingin ke 70°C lalu 55°C hingga 35°C.",
+          "text_en_original": "SCA cupping standardizes 8.25 g per 150 mL @ 93°C, crust-breaking at 4:00, skimming, and evaluating Fragrance, Flavor, Aftertaste, Acidity, Body, Balance, Clean Cup, Sweetness & Uniformity as it cools.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "formula_latex",
+          "text_id": "Persamaan Skor Total Cupping SCA",
+          "text_en_original": "",
+          "latex_expression": "S_{\\text{SCA}} = \\sum_{i=1}^{10} A_i - \\left(2 D_{\\text{taint}} + 4 D_{\\text{fault}}\\right) \\ge 80.00",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "figure",
+          "text_id": "",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": 1,
+          "figure_caption_id": "Gambar 10.1 — Diagram Jaring Laba-Laba 10 Atribut Cupping SCA & Cooling Curve",
+          "cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-10/figures/ch01_fig01.webp",
+          "figure_secure_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-10/figures/ch01_fig01.webp"
+        },
+        {
+          "block_id": "blk_005",
+          "block_type": "interactive_widget",
+          "text_id": "Kalkulator Skor Resmi SCA Cupping Form (10 Atribut)",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "SCA_CUPPING_FORM_CALCULATOR",
+          "figure_index": null,
+          "figure_caption_id": ""
+        }
+      ],
+      "key_summary_points": [
+        "10 atribut lembar cupping SCA dinilai dari 6.00 hingga 10.00 dikurangi penalti taint (-2) & fault (-4).",
+        "Suhu cicip penjurian optimal berada di 50–55°C (Warm/Mild) guna menghindari Thermal Masking."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Berapakah batas skor minimum lembar cupping resmi SCA agar lot biji berhak menyandang status Specialty Grade?",
+          "options": [
+            "80.00 poin atau lebih tanpa cacat primer",
+            "40.00 poin",
+            "99.50 poin"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    }
+  ],
+  "CL-BOOK-11": [
+    {
+      "id": "1a08b55b-bc1e-5975-8db3-4bca5eac8883",
+      "ebook_id": "b0010001-0000-4000-8000-000000000011",
+      "chapter_number": 1,
+      "title_id": "Warisan Klasik Perdagangan & Agronomi Kopi Dunia (Ukers 1922)",
+      "title_en": "Classic Heritage of World Coffee Agronomy (Excerpt)",
+      "estimated_read_time_min": 12,
+      "start_pdf_page": 2,
+      "end_pdf_page": 2,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "11.1 Eksplorasi Teks Asli William H. Ukers",
+          "text_en_original": "11.1 Original Text Excerpt (Archive.org)",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "E-Book ini diproses otomatis oleh pipeline Python Coffee Labs dari repositori publik domain serta dikonversi ke PDF terilustrasi, EPUB3, dan container terenkripsi DRM agar ringan di APK.",
+          "text_en_original": "All About Coffee (1922) karya William H. Ukers adalah karya historis terlengkap sejarah dan botani kopi.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "figure",
+          "text_id": "",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": 1,
+          "figure_caption_id": "Gambar 11.1 — Diagram Perbandingan Ekstraksi Klasik vs Modern",
+          "cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-11/figures/ch01_fig01.webp",
+          "figure_secure_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-11/figures/ch01_fig01.webp"
+        }
+      ],
+      "key_summary_points": [
+        "Edisi Domain Publik terunduh otomatis oleh Python dan dikemas ulang ramah mobile."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Sumber asli buku klasik All About Coffee (1922) berasal dari...",
+          "options": [
+            "Domain publik Internet Archive oleh William H. Ukers",
+            "Majalah otomotif modern",
+            "Laporan cuaca"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    }
+  ],
+  "CL-BOOK-12": [
+    {
+      "id": "5df05c5e-ae1e-5b04-8169-6eef90c7c04d",
+      "ebook_id": "b0010001-0000-4000-8000-000000000012",
+      "chapter_number": 1,
+      "title_id": "Ekstraksi Recursive XY-Cut Jurnal Ilmiah Open-Access (PDF)",
+      "title_en": "Recursive XY-Cut Multi-Column Extraction (Open-Access PDF)",
+      "estimated_read_time_min": 10,
+      "start_pdf_page": 2,
+      "end_pdf_page": 2,
+      "mobile_blocks_ast": [
+        {
+          "block_id": "blk_001",
+          "block_type": "heading_1",
+          "text_id": "12.1 Hasil Penguraian Kolom X-Projection Valley (PDF)",
+          "text_en_original": "12.1 X-Projection Valley Column Extraction",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_002",
+          "block_type": "paragraph",
+          "text_id": "Paragraf berikut diuraikan otomatis dari file PDF open-access menggunakan pemisahan lembah proyeksi horizontal X agar urutan baca kolom kiri-kanan terjaga presisi.",
+          "text_en_original": "Open-access scientific findings on coffee chemistry, roasting antioxidants, and sensory extraction parameters extracted with Recursive XY-Cut.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_003",
+          "block_type": "heading_1",
+          "text_id": "12.2 Hasil Parsing EPUB Domain Publik (ebooklib)",
+          "text_en_original": "12.2 Parsed Public Domain EPUB Excerpt",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_004",
+          "block_type": "paragraph",
+          "text_id": "Kutipan bab berikut dibaca langsung dari file EPUB terunduh memakai ebooklib dan dikonversi menjadi blok reflowable siap-offline.",
+          "text_en_original": "Historical botanical cultivation and brewing guidelines extracted from public-domain EPUB via ebooklib.",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": null,
+          "figure_caption_id": ""
+        },
+        {
+          "block_id": "blk_005",
+          "block_type": "figure",
+          "text_id": "",
+          "text_en_original": "",
+          "latex_expression": "",
+          "widget_kind": "",
+          "figure_index": 1,
+          "figure_caption_id": "Gambar 12.1 — Skema Ekstraksi Kolom & Pengolahan Data Ilmiah Kopi",
+          "cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-12/figures/ch01_fig01.webp",
+          "figure_secure_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-12/figures/ch01_fig01.webp"
+        }
+      ],
+      "key_summary_points": [
+        "Berhasil mengurai 0 paragraf terurut kolom dari PDF open-access & 0 bab dari EPUB."
+      ],
+      "chapter_quiz_json": [
+        {
+          "q": "Algoritma apa yang memisahkan kolom kiri dan kanan pada halaman jurnal PDF 2-kolom tanpa mencampur kalimatnya?",
+          "options": [
+            "Recursive XY-Cut X-Projection Valley",
+            "Bubble Sort warna piksel",
+            "Audio Spectrogram"
+          ],
+          "answer_idx": 0
+        }
+      ]
+    }
+  ]
+}

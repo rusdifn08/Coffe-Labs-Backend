@@ -3,11 +3,10 @@ use axum::{
     response::IntoResponse,
 };
 use sqlx::PgPool;
-use uuid::Uuid;
 
 use crate::{
     core::{
-        error::{ApiResponse, AppError, AppResult},
+        error::{ApiResponse, AppResult},
         extractors::{AuthUser, ValidatedJson},
         rabbitmq::{RabbitMqEventEnvelope, DEFAULT_EXCHANGE},
         AppState,
@@ -26,15 +25,11 @@ use crate::{
     },
 };
 
-fn parse_uid(sub: &str) -> AppResult<Uuid> {
-    Uuid::parse_str(sub).map_err(|_| AppError::BadRequest("ID user tidak valid.".to_string()))
-}
-
 pub async fn get_my_profile(
     State(pool): State<PgPool>,
     AuthUser(claims): AuthUser,
 ) -> AppResult<impl IntoResponse> {
-    let uid = parse_uid(&claims.sub)?;
+    let uid = claims.sub;
     let tier = AccountTier::from_str_lossy(&claims.tier);
     let data = leaderboard_service::get_full_profile(
         &pool,
@@ -52,8 +47,7 @@ pub async fn start_brew_session_handler(
     AuthUser(claims): AuthUser,
     ValidatedJson(req): ValidatedJson<StartBrewSessionRequest>,
 ) -> AppResult<impl IntoResponse> {
-    let uid = parse_uid(&claims.sub)?;
-    let data = anti_cheat_service::start_brew_session(&pool, uid, req).await?;
+    let data = anti_cheat_service::start_brew_session(&pool, claims.sub, req).await?;
     Ok(ApiResponse::created(
         "Sesi verifikasi seduhan dimulai. Timer anti-cheat aktif.",
         data,
@@ -65,7 +59,7 @@ pub async fn complete_brew_session_handler(
     AuthUser(claims): AuthUser,
     ValidatedJson(req): ValidatedJson<CompleteBrewSessionRequest>,
 ) -> AppResult<impl IntoResponse> {
-    let uid = parse_uid(&claims.sub)?;
+    let uid = claims.sub;
     let tier = AccountTier::from_str_lossy(&claims.tier);
     let data = anti_cheat_service::complete_brew_session(&state.pool, uid, tier, req).await?;
     if data.xp_gained > 0 && (data.streak_updated || data.leveled_up) {
@@ -99,9 +93,8 @@ pub async fn claim_domain_action_handler(
     AuthUser(claims): AuthUser,
     ValidatedJson(req): ValidatedJson<ClaimDomainActionRequest>,
 ) -> AppResult<impl IntoResponse> {
-    let uid = parse_uid(&claims.sub)?;
     let tier = AccountTier::from_str_lossy(&claims.tier);
-    let data = anti_cheat_service::claim_domain_action(&pool, uid, tier, req).await?;
+    let data = anti_cheat_service::claim_domain_action(&pool, claims.sub, tier, req).await?;
     Ok(ApiResponse::ok("Reward aktivitas berhasil diklaim!", data))
 }
 

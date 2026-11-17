@@ -1,6 +1,6 @@
 [package]
 name = "coffe-labs-backend"
-version = "2.0.0"
+version = "2.4.0"
 edition = "2021"
 authors = ["Coffee Labs Principal Systems Architecture Team"]
 description = "Enterprise High-Performance Rust Axum Backend for Coffee Labs Mobile & Observability Dashboard"
@@ -29,6 +29,7 @@ compact_str = { version = "0.8", features = ["serde"] }
 dashmap = "6.1"
 moka = { version = "0.12", features = ["future"] }
 roaring = "0.10"
+flate2 = "1.1"
 ulid = { version = "1.1", features = ["serde"] }
 tokio-cron-scheduler = "0.13"
 image = { version = "0.25", default-features = false, features = ["png", "webp"] }
@@ -53,6 +54,8 @@ rand = "0.8"
 sha1 = "0.10"
 sha2 = "0.10"
 hmac = "0.12"
+hkdf = "0.12"
+aes-gcm = "0.10"
 data-encoding = "2.11"
 hex = "0.4"
 base64 = "0.22"

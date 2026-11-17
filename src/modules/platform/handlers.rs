@@ -18,7 +18,7 @@ use crate::{
     modules::platform::{
         dto::{
             CreateFeedbackRequest, FeedbackQuery, UpdateAppVersionConfigRequest,
-            UpdateFeedbackStatusRequest, VersionCheckQuery,
+            UpdateFeedbackStatusRequest, UpdateTrialPolicyRequest, VersionCheckQuery,
         },
         models::AppVersionConfig,
         repository, service,
@@ -113,4 +113,37 @@ pub async fn admin_get_feedback_stats(
 ) -> AppResult<impl IntoResponse> {
     let stats = service::fetch_stats(&pool).await?;
     Ok(ApiResponse::ok("Statistik feedback berhasil dimuat.", stats))
+}
+
+pub async fn get_public_trial_policy(
+    State(pool): State<PgPool>,
+) -> AppResult<impl IntoResponse> {
+    let policy = repository::fetch_trial_policy(&pool).await;
+    Ok(ApiResponse::ok(
+        "Kebijakan akses Trial Coffee Labs berhasil dimuat.",
+        policy,
+    ))
+}
+
+pub async fn admin_get_trial_policy(
+    State(pool): State<PgPool>,
+    _admin: AdminUser,
+) -> AppResult<impl IntoResponse> {
+    let policy = repository::fetch_trial_policy(&pool).await;
+    Ok(ApiResponse::ok(
+        "Konfigurasi kebijakan Trial Admin berhasil dimuat.",
+        policy,
+    ))
+}
+
+pub async fn admin_update_trial_policy(
+    State(pool): State<PgPool>,
+    _admin: AdminUser,
+    ValidatedJson(payload): ValidatedJson<UpdateTrialPolicyRequest>,
+) -> AppResult<impl IntoResponse> {
+    let updated = repository::update_trial_policy(&pool, &payload).await?;
+    Ok(ApiResponse::ok(
+        "Kebijakan akses akun Trial berhasil diperbarui & diterapkan secara live.",
+        updated,
+    ))
 }

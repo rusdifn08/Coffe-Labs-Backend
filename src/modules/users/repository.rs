@@ -9,7 +9,7 @@ use crate::{
     },
 };
 
-const USER_COLS: &str = "id, username, password_hash, full_name, role, status, tier, avatar_url, created_at, updated_at";
+const USER_COLS: &str = "id, username, password_hash, full_name, role, status, tier, avatar_url, trial_full_until, trial_policy_override, created_at, updated_at";
 
 pub async fn list_all_users(pool: &PgPool) -> AppResult<Vec<UserSummary>> {
     let q = format!("SELECT {} FROM users ORDER BY created_at DESC", USER_COLS);
@@ -70,8 +70,11 @@ pub async fn update_user_tier(
     pool: &PgPool,
     user_id: Uuid,
     tier: &str,
+    trial_days: Option<i32>,
 ) -> AppResult<Option<UserSummary>> {
-    let clean_tier = match tier.to_lowercase().as_str() {
+    let normalized = tier.trim().to_lowercase();
+    let is_trial_7d = normalized == "trial_7d" || normalized == "full_trial_7d";
+    let clean_tier = match normalized.as_str() {
         "business" => "business",
         "pro" => "pro",
         _ => "trial",
@@ -81,16 +84,61 @@ pub async fn update_user_tier(
         "pro" => "plan_pro",
         _ => "plan_trial",
     };
-    let q = format!(
-        "UPDATE users SET tier = $1, subscription_plan_id = $2, updated_at = NOW() WHERE id = $3 RETURNING {}",
-        USER_COLS
-    );
-    let row = sqlx::query_as::<_, UserRow>(&q)
-        .bind(clean_tier)
-        .bind(plan_id)
-        .bind(user_id)
-        .fetch_optional(pool)
-        .await?;
+    let days = trial_days.unwrap_or(7).clamp(1, 365);
+
+    let row = if is_trial_7d {
+        let q = format!(
+            "UPDATE users
+             SET tier = 'trial',
+                 subscription_plan_id = 'plan_trial',
+                 trial_full_until = NOW() + make_interval(days => $1),
+                 trial_policy_override = 'full_trial_7d_non_business',
+                 updated_at = NOW()
+             WHERE id = $2
+             RETURNING {}",
+            USER_COLS
+        );
+        sqlx::query_as::<_, UserRow>(&q)
+            .bind(days)
+            .bind(user_id)
+            .fetch_optional(pool)
+            .await?
+    } else if clean_tier == "trial" {
+        let q = format!(
+            "UPDATE users
+             SET tier = 'trial',
+                 subscription_plan_id = 'plan_trial',
+                 trial_full_until = NULL,
+                 trial_policy_override = 'strict_limited',
+                 updated_at = NOW()
+             WHERE id = $1
+             RETURNING {}",
+            USER_COLS
+        );
+        sqlx::query_as::<_, UserRow>(&q)
+            .bind(user_id)
+            .fetch_optional(pool)
+            .await?
+    } else {
+        let q = format!(
+            "UPDATE users
+             SET tier = $1,
+                 subscription_plan_id = $2,
+                 trial_full_until = NULL,
+                 trial_policy_override = NULL,
+                 updated_at = NOW()
+             WHERE id = $3
+             RETURNING {}",
+            USER_COLS
+        );
+        sqlx::query_as::<_, UserRow>(&q)
+            .bind(clean_tier)
+            .bind(plan_id)
+            .bind(user_id)
+            .fetch_optional(pool)
+            .await?
+    };
+
     Ok(row.map(Into::into))
 }
 

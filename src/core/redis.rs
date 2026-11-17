@@ -2,8 +2,8 @@ use std::time::Duration;
 
 use fred::{
     clients::{RedisClient, RedisPool, SubscriberClient},
-    interfaces::ClientLike,
-    types::{Builder, ReconnectPolicy, RedisConfig},
+    interfaces::{ClientLike, KeysInterface},
+    types::{Builder, Expiration, ReconnectPolicy, RedisConfig},
 };
 use tracing::{info, warn};
 
@@ -165,4 +165,31 @@ impl RedisManager {
     pub fn active_client(&self) -> Option<RedisClient> {
         self.configured.then(|| self.pool.next().clone())
     }
+}
+
+/// Membaca nilai cache L2 Redis dengan batas timeout 200ms agar latency request tidak pernah tersandera.
+pub async fn redis_get_bounded(pool: &RedisPool, key: &str) -> Option<String> {
+    if !pool.is_connected() {
+        return None;
+    }
+    tokio::time::timeout(
+        Duration::from_millis(200),
+        pool.get::<Option<String>, _>(key),
+    )
+    .await
+    .ok()
+    .and_then(|res| res.ok())
+    .flatten()
+}
+
+/// Menulis nilai cache L2 Redis dengan batas timeout 200ms.
+pub async fn redis_set_ex_bounded(pool: &RedisPool, key: &str, value: String, ttl_secs: i64) {
+    if !pool.is_connected() {
+        return;
+    }
+    let _ = tokio::time::timeout(
+        Duration::from_millis(200),
+        pool.set::<(), _, _>(key, value, Some(Expiration::EX(ttl_secs)), None, false),
+    )
+    .await;
 }

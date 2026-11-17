@@ -6,7 +6,7 @@ use serde::Deserialize;
 use uuid::Uuid;
 
 use crate::core::{
-    error::{ApiResponse, AppError, AppResult},
+    error::{ApiResponse, AppResult},
     extractors::{RequireTier, TierBusiness, ValidatedJson},
     AppState,
 };
@@ -21,17 +21,12 @@ pub struct InventoryFilterQuery {
     pub category: Option<String>,
 }
 
-fn parse_user_id(sub: &str) -> AppResult<Uuid> {
-    Uuid::parse_str(sub).map_err(|_| AppError::Unauthorized("ID Pengguna tidak valid.".to_string()))
-}
-
 pub async fn list_inventory(
     State(state): State<AppState>,
     RequireTier(claims, _): RequireTier<TierBusiness>,
     Query(query): Query<InventoryFilterQuery>,
 ) -> AppResult<Json<ApiResponse<Vec<InventoryItemResponse>>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let tenant = TenantContext::resolve(&state.pool, user_id).await?;
+    let tenant = TenantContext::resolve(&state.pool, claims.sub).await?;
 
     let items = BusinessInventoryRepository::list_by_store(
         &state.pool,
@@ -49,8 +44,7 @@ pub async fn create_inventory_item(
     RequireTier(claims, _): RequireTier<TierBusiness>,
     ValidatedJson(dto): ValidatedJson<CreateInventoryItemDto>,
 ) -> AppResult<Json<ApiResponse<InventoryItemResponse>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let tenant = TenantContext::resolve(&state.pool, user_id).await?;
+    let tenant = TenantContext::resolve(&state.pool, claims.sub).await?;
 
     let item = BusinessInventoryRepository::create(&state.pool, tenant.store_id, &dto).await?;
     Ok(ApiResponse::ok("Item inventori berhasil didaftarkan.", item.into()))
@@ -62,8 +56,7 @@ pub async fn adjust_stock(
     Path(item_id): Path<Uuid>,
     ValidatedJson(dto): ValidatedJson<AdjustStockDto>,
 ) -> AppResult<Json<ApiResponse<InventoryItemResponse>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let tenant = TenantContext::resolve(&state.pool, user_id).await?;
+    let tenant = TenantContext::resolve(&state.pool, claims.sub).await?;
 
     let updated = BusinessInventoryRepository::adjust_stock(
         &state.pool,
@@ -81,8 +74,7 @@ pub async fn delete_inventory_item(
     RequireTier(claims, _): RequireTier<TierBusiness>,
     Path(item_id): Path<Uuid>,
 ) -> AppResult<Json<ApiResponse<bool>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let tenant = TenantContext::resolve(&state.pool, user_id).await?;
+    let tenant = TenantContext::resolve(&state.pool, claims.sub).await?;
 
     let success = BusinessInventoryRepository::delete(&state.pool, tenant.store_id, item_id).await?;
     Ok(ApiResponse::ok("Item inventori berhasil dihapus.", success))

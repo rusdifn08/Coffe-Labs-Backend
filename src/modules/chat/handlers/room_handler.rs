@@ -4,7 +4,6 @@ use axum::{
     Json,
 };
 use serde_json::json;
-use uuid::Uuid;
 
 use crate::{
     core::{
@@ -21,17 +20,11 @@ use crate::{
     },
 };
 
-fn parse_claim_user_id(sub: &str) -> AppResult<Uuid> {
-    Uuid::parse_str(sub)
-        .map_err(|_| AppError::Unauthorized("Format identitas pengguna tidak valid.".to_string()))
-}
-
 pub async fn list_conversations(
     AuthUser(claims): AuthUser,
     State(state): State<AppState>,
 ) -> AppResult<Json<ApiResponse<Vec<ConversationListItemDto>>>> {
-    let user_id = parse_claim_user_id(&claims.sub)?;
-    let rows = conversation_repo::list_user_conversations(&state.pool, user_id)
+    let rows = conversation_repo::list_user_conversations(&state.pool, claims.sub)
         .await
         .map_err(AppError::from)?;
 
@@ -93,8 +86,7 @@ pub async fn create_direct_room(
     State(state): State<AppState>,
     ValidatedJson(req): ValidatedJson<CreateDirectRoomReq>,
 ) -> AppResult<(StatusCode, Json<ApiResponse<serde_json::Value>>)> {
-    let user_id = parse_claim_user_id(&claims.sub)?;
-    let conv_id = conversation_repo::find_or_create_direct_room(&state.pool, user_id, req.target_user_id)
+    let conv_id = conversation_repo::find_or_create_direct_room(&state.pool, claims.sub, req.target_user_id)
         .await
         .map_err(AppError::from)?;
     state.chat_messages.invalidate_room(conv_id).await;
@@ -110,10 +102,9 @@ pub async fn create_group_room(
     State(state): State<AppState>,
     ValidatedJson(req): ValidatedJson<CreateGroupRoomReq>,
 ) -> AppResult<(StatusCode, Json<ApiResponse<serde_json::Value>>)> {
-    let user_id = parse_claim_user_id(&claims.sub)?;
     let conv_id = conversation_repo::create_group_room(
         &state.pool,
-        user_id,
+        claims.sub,
         &req.title,
         req.avatar_url.as_deref(),
         &req.member_ids,
@@ -133,10 +124,9 @@ pub async fn list_peers(
     State(state): State<AppState>,
     Query(query): Query<PeerSearchQuery>,
 ) -> AppResult<Json<ApiResponse<Vec<ChatPeerDto>>>> {
-    let user_id = parse_claim_user_id(&claims.sub)?;
     let rows = peer_repo::search_peers(
         &state.pool,
-        user_id,
+        claims.sub,
         query.q.as_deref(),
         query.limit.unwrap_or(25),
     )

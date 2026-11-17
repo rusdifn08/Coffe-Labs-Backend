@@ -9,7 +9,7 @@ use uuid::Uuid;
 
 use crate::{
     core::{
-        error::{ApiResponse, AppError, AppResult},
+        error::{ApiResponse, AppResult},
         extractors::{AdminUser, AuthUser, ValidatedJson},
         AppState,
     },
@@ -80,12 +80,18 @@ pub async fn admin_update_user_tier(
     Path(user_id): Path<Uuid>,
     ValidatedJson(req): ValidatedJson<UpdateUserTierRequest>,
 ) -> AppResult<impl IntoResponse> {
-    let summary = service::update_user_tier(&state.pool, user_id, &req.tier).await?;
+    let summary = service::update_user_tier(&state.pool, user_id, &req.tier, req.trial_days).await?;
     state
         .notifications
         .publish(build_tier_upgrade_event(user_id, &summary.tier));
+    let label = summary
+        .trial_policy_override
+        .as_deref()
+        .filter(|s| *s == "full_trial_7d_non_business")
+        .map(|_| "Trial 7 Hari Full Non-Bisnis".to_string())
+        .unwrap_or_else(|| summary.tier.clone());
     Ok(ApiResponse::ok(
-        format!("Tier akun '{}' berhasil diperbarui menjadi '{}'.", summary.username, summary.tier),
+        format!("Akses akun '{}' berhasil diperbarui menjadi '{}'.", summary.username, label),
         summary,
     ))
 }
@@ -94,9 +100,7 @@ pub async fn get_my_profile(
     State(pool): State<PgPool>,
     AuthUser(claims): AuthUser,
 ) -> AppResult<impl IntoResponse> {
-    let user_id = Uuid::parse_str(&claims.sub)
-        .map_err(|_| AppError::BadRequest("ID user tidak valid.".to_string()))?;
-    let profile = service::get_barista_profile(&pool, user_id).await?;
+    let profile = service::get_barista_profile(&pool, claims.sub).await?;
     Ok(ApiResponse::ok("Profil barista berhasil dimuat.", profile))
 }
 
@@ -105,8 +109,6 @@ pub async fn update_my_profile(
     AuthUser(claims): AuthUser,
     ValidatedJson(payload): ValidatedJson<UpdateProfileRequest>,
 ) -> AppResult<impl IntoResponse> {
-    let user_id = Uuid::parse_str(&claims.sub)
-        .map_err(|_| AppError::BadRequest("ID user tidak valid.".to_string()))?;
-    let profile = service::update_barista_profile(&pool, user_id, payload).await?;
+    let profile = service::update_barista_profile(&pool, claims.sub, payload).await?;
     Ok(ApiResponse::ok("Profil barista berhasil diperbarui.", profile))
 }

@@ -27,14 +27,14 @@ impl AppVersionConfig {
             id: "default".to_string(),
             platform: "all".to_string(),
             min_base_version: "2.0.0".to_string(),
-            latest_base_version: "2.0.0".to_string(),
+            latest_base_version: "2.4.0".to_string(),
             min_build_number: 2,
-            latest_build_number: 2,
+            latest_build_number: 7,
             latest_patch_number: 0,
             is_force_update: false,
             is_patch_required: false,
-            release_notes: "Pembaruan stabilitas sistem dan optimasi performa Coffee Labs.".to_string(),
-            download_url: Some("https://github.com/rusdi-labs/coffee-hub-mobile/releases/latest".to_string()),
+            release_notes: "Pembaruan stabilitas sistem dan optimasi performa Coffee Labs v2.4.0.".to_string(),
+            download_url: Some("https://github.com/rusdifn08/coffe-labs-mobile/releases/download/v2.4.0/CoffeeLabs-arm64-v8a.apk".to_string()),
             checksum_sha256: None,
             updated_at: Utc::now(),
         }
@@ -79,4 +79,53 @@ pub struct FeedbackStats {
     pub bug_reports: i64,
     pub feature_requests: i64,
     pub average_rating: f64,
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow, Clone, ToSchema)]
+pub struct TrialAccessPolicy {
+    pub id: String,
+    pub policy_mode: String,
+    pub trial_duration_days: i32,
+    pub unlock_all_recipes: bool,
+    pub unlock_smart_brew_dial_in: bool,
+    pub unlock_ai_scanner: bool,
+    pub unlock_toolkit_pro: bool,
+    pub unlock_learning_academy: bool,
+    pub unlock_brew_doctor: bool,
+    pub unlimited_brews: bool,
+    pub max_free_recipes: i32,
+    pub max_trial_brews: i32,
+    pub allow_business_suite: bool,
+    pub apply_to_guests: bool,
+    pub apply_to_registered_trial: bool,
+    pub policy_note: String,
+    pub activated_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+impl TrialAccessPolicy {
+    pub fn fallback_default() -> Self {
+        let now = Utc::now();
+        Self {
+            id: "default".to_string(),
+            policy_mode: "strict_limited".to_string(),
+            trial_duration_days: 7,
+            unlock_all_recipes: false,
+            unlock_smart_brew_dial_in: false,
+            unlock_ai_scanner: false,
+            unlock_toolkit_pro: false,
+            unlock_learning_academy: false,
+            unlock_brew_doctor: false,
+            unlimited_brews: false,
+            max_free_recipes: 10,
+            max_trial_brews: 10,
+            allow_business_suite: false,
+            apply_to_guests: true,
+            apply_to_registered_trial: true,
+            policy_note: "Kebijakan standar akun Trial Coffee Labs (10 resep & fitur terbatas)."
+                .to_string(),
+            activated_at: now,
+            updated_at: now,
+        }
+    }
 }

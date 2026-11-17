@@ -39,8 +39,7 @@ pub async fn post_send_message(
     Path(conversation_id): Path<Uuid>,
     Json(req): Json<SendHttpMessageReq>,
 ) -> AppResult<(StatusCode, Json<ApiResponse<ChatMessageDto>>)> {
-    let user_id = Uuid::parse_str(&claims.sub)
-        .map_err(|_| AppError::Unauthorized("Format identitas pengguna tidak valid.".to_string()))?;
+    let user_id = claims.sub;
 
     let input = SendMessageInput {
         sender_id: user_id,

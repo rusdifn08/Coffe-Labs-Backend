@@ -1,52 +1,43 @@
+pub mod barista_toolkit_schema;
+pub mod brew_methods_audit_schema;
 pub mod business_schema;
 pub mod catalog_schema;
 pub mod chat_schema;
 pub mod communities_schema;
 pub mod core_schema;
+pub mod live_brew_schema;
+pub mod monitoring_schema;
 pub mod notifications_schema;
 pub mod profile_feed_schema;
 pub mod social_graph_schema;
 pub mod transfer_learning_schema;
 
 use sqlx::PgPool;
+use tracing::warn;
+
 use crate::core::error::AppResult;
 
+async fn exec_batch(pool: &PgPool, module_name: &str, stmts: &[&str]) {
+    for (idx, sql) in stmts.iter().enumerate() {
+        if let Err(err) = sqlx::query(sql).execute(pool).await {
+            warn!(module = module_name, stmt_index = idx, error = %err, "Migration statement warning");
+        }
+    }
+}
+
 pub async fn run_migrations(pool: &PgPool) -> AppResult<()> {
-    for sql in core_schema::statements() {
-        let _ = sqlx::query(sql).execute(pool).await;
-    }
-
-    for sql in business_schema::statements() {
-        let _ = sqlx::query(sql).execute(pool).await;
-    }
-
-    for sql in catalog_schema::statements() {
-        let _ = sqlx::query(sql).execute(pool).await;
-    }
-
-    for sql in transfer_learning_schema::statements() {
-        let _ = sqlx::query(sql).execute(pool).await;
-    }
-
-    for sql in chat_schema::statements() {
-        let _ = sqlx::query(sql).execute(pool).await;
-    }
-
-    for sql in profile_feed_schema::statements() {
-        let _ = sqlx::query(sql).execute(pool).await;
-    }
-
-    for sql in social_graph_schema::statements() {
-        let _ = sqlx::query(sql).execute(pool).await;
-    }
-
-    for sql in notifications_schema::statements() {
-        let _ = sqlx::query(sql).execute(pool).await;
-    }
-
-    for sql in communities_schema::statements() {
-        let _ = sqlx::query(sql).execute(pool).await;
-    }
-
+    exec_batch(pool, "core_schema", core_schema::statements()).await;
+    exec_batch(pool, "business_schema", business_schema::statements()).await;
+    exec_batch(pool, "catalog_schema", catalog_schema::statements()).await;
+    exec_batch(pool, "transfer_learning_schema", transfer_learning_schema::statements()).await;
+    exec_batch(pool, "chat_schema", chat_schema::statements()).await;
+    exec_batch(pool, "profile_feed_schema", profile_feed_schema::statements()).await;
+    exec_batch(pool, "social_graph_schema", social_graph_schema::statements()).await;
+    exec_batch(pool, "notifications_schema", notifications_schema::statements()).await;
+    exec_batch(pool, "communities_schema", communities_schema::statements()).await;
+    exec_batch(pool, "monitoring_schema", monitoring_schema::statements()).await;
+    exec_batch(pool, "barista_toolkit_schema", barista_toolkit_schema::statements()).await;
+    exec_batch(pool, "live_brew_schema", live_brew_schema::statements()).await;
+    exec_batch(pool, "brew_methods_audit_schema", brew_methods_audit_schema::statements()).await;
     Ok(())
 }

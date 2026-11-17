@@ -7,7 +7,7 @@ use uuid::Uuid;
 
 use crate::{
     core::{
-        error::{ApiResponse, AppError, AppResult},
+        error::{ApiResponse, AppResult},
         extractors::{AuthUser, OptionalAuthUser},
         AppState,
     },
@@ -17,17 +17,13 @@ use crate::{
     },
 };
 
-fn parse_uid(raw: &str) -> AppResult<Uuid> {
-    Uuid::parse_str(raw).map_err(|_| AppError::BadRequest("User ID tidak valid.".into()))
-}
-
 pub async fn get_club_feed(
     OptionalAuthUser(auth): OptionalAuthUser,
     Path(community_id): Path<Uuid>,
     Query(query): Query<ClubFeedQuery>,
     State(state): State<AppState>,
 ) -> AppResult<impl IntoResponse> {
-    let viewer_id = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok());
+    let viewer_id = auth.as_ref().map(|c| c.sub);
     let data = club_vault_service::get_club_feed(
         &state.pool,
         &state.club_cache,
@@ -44,7 +40,7 @@ pub async fn get_club_recipe_vault(
     Path(community_id): Path<Uuid>,
     State(state): State<AppState>,
 ) -> AppResult<impl IntoResponse> {
-    let viewer_id = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok());
+    let viewer_id = auth.as_ref().map(|c| c.sub);
     let data = club_vault_service::get_club_recipe_vault(
         &state.pool,
         &state.club_cache,
@@ -61,14 +57,13 @@ pub async fn create_club_post(
     State(state): State<AppState>,
     Json(req): Json<CreateClubThreadRequest>,
 ) -> AppResult<impl IntoResponse> {
-    let author_id = parse_uid(&claims.sub)?;
     let data = club_vault_service::create_club_post(
         &state.pool,
         &state.club_cache,
         &state.social_profile_cqrs,
         &state.chat_moderation,
         &state.taste_profiler,
-        author_id,
+        claims.sub,
         community_id,
         req,
     )

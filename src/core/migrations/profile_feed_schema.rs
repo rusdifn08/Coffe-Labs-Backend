@@ -38,7 +38,11 @@ pub fn statements() -> &'static [&'static str] {
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )"#,
         "CREATE INDEX IF NOT EXISTS idx_profile_proj_username ON user_profile_projections (username)",
-        "CREATE INDEX IF NOT EXISTS idx_profile_proj_xp_rank ON user_profile_projections (total_xp DESC, user_id)",
+        "CREATE INDEX IF NOT EXISTS idx_profile_proj_xp_rank ON user_profile_projections (total_xp DESC, user_id DESC)",
+        "CREATE EXTENSION IF NOT EXISTS pg_trgm",
+        "CREATE INDEX IF NOT EXISTS idx_profile_proj_lower_username ON user_profile_projections (LOWER(username) text_pattern_ops)",
+        "CREATE INDEX IF NOT EXISTS idx_profile_proj_lower_display ON user_profile_projections (LOWER(display_name) text_pattern_ops)",
+        "CREATE INDEX IF NOT EXISTS idx_profile_proj_trgm_search ON user_profile_projections USING gin (username gin_trgm_ops, display_name gin_trgm_ops)",
         r#"CREATE TABLE IF NOT EXISTS social_follows (
             follower_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
             following_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,

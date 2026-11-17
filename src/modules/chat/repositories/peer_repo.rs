@@ -74,7 +74,7 @@ pub async fn search_peers(
         r#"SELECT id, username, full_name, avatar_url, role
            FROM users
            WHERE id <> $1
-             AND (status = 'approved' OR status = 'active')
+             AND LOWER(COALESCE(status, 'approved')) IN ('approved', 'active')
              AND ($2 = '%%' OR username ILIKE $2 OR full_name ILIKE $2)
            ORDER BY updated_at DESC
            LIMIT $3"#,

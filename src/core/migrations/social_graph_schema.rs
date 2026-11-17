@@ -19,15 +19,29 @@ pub fn statements() -> &'static [&'static str] {
             PRIMARY KEY (follower_id, following_id),
             CONSTRAINT chk_user_follows_no_self CHECK (follower_id <> following_id)
         )"#,
+        r#"ALTER TABLE user_follows
+            ADD COLUMN IF NOT EXISTS status follow_edge_status NOT NULL DEFAULT 'ACCEPTED',
+            ADD COLUMN IF NOT EXISTS accepted_at TIMESTAMPTZ DEFAULT NOW()"#,
         r#"DO $$
         BEGIN
             IF EXISTS (
-                SELECT 1 FROM information_schema.tables
-                WHERE table_schema = 'public' AND table_name = 'social_follows'
+                SELECT 1 FROM information_schema.columns
+                WHERE table_schema = 'public' AND table_name = 'social_follows' AND column_name = 'follower_id'
             ) THEN
                 INSERT INTO user_follows (follower_id, following_id, status, created_at, accepted_at)
                 SELECT follower_id, following_id, 'ACCEPTED'::follow_edge_status, created_at, created_at
                 FROM social_follows
+                ON CONFLICT (follower_id, following_id) DO NOTHING;
+            ELSIF EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_schema = 'public' AND table_name = 'social_follows' AND column_name = 'follower_username'
+            ) THEN
+                INSERT INTO user_follows (follower_id, following_id, status, created_at, accepted_at)
+                SELECT f.id, t.id, 'ACCEPTED'::follow_edge_status, sf.created_at, sf.created_at
+                FROM social_follows sf
+                INNER JOIN users f ON LOWER(f.username) = LOWER(sf.follower_username)
+                INNER JOIN users t ON LOWER(t.username) = LOWER(sf.following_username)
+                WHERE f.id <> t.id
                 ON CONFLICT (follower_id, following_id) DO NOTHING;
             END IF;
         END

@@ -22,7 +22,7 @@ pub async fn get_profile_tab_threads(
     Query(query): Query<ProfileTabFeedQuery>,
     State(state): State<AppState>,
 ) -> AppResult<impl IntoResponse> {
-    let viewer_id = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok());
+    let viewer_id = auth.as_ref().map(|c| c.sub);
     let tab = ProfileFeedTab::from_query(query.tab.as_deref());
     let page = timeline_query_service::get_profile_tab_feed(
         &state.pool,
@@ -41,7 +41,7 @@ pub async fn get_global_timeline(
     Query(query): Query<TimelineFeedQuery>,
     State(state): State<AppState>,
 ) -> AppResult<impl IntoResponse> {
-    let viewer_id = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok());
+    let viewer_id = auth.as_ref().map(|c| c.sub);
     let page = timeline_query_service::get_global_timeline(
         &state.pool,
         viewer_id,
@@ -58,7 +58,7 @@ pub async fn get_thread_detail(
     Path(id): Path<Uuid>,
     State(state): State<AppState>,
 ) -> AppResult<impl IntoResponse> {
-    let viewer_id = auth.as_ref().and_then(|c| Uuid::parse_str(&c.sub).ok());
+    let viewer_id = auth.as_ref().map(|c| c.sub);
     let detail =
         timeline_query_service::get_thread_with_nested_replies(&state.pool, viewer_id, id).await?;
     Ok(ApiResponse::ok("Detail diskusi & balasan berhasil dimuat.", detail))

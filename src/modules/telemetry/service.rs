@@ -1,10 +1,10 @@
 use chrono::Utc;
-use sqlx::PgPool;
 
 use crate::{
-    core::telemetry::TelemetryRegistry,
-    modules::telemetry::{
-        dto::DashboardTelemetrySnapshot, models::ServiceModuleInfo, repository,
+    core::AppState,
+    modules::{
+        monitoring::services::overview_service,
+        telemetry::{dto::DashboardTelemetrySnapshot, models::ServiceModuleInfo, repository},
     },
 };
 
@@ -20,7 +20,19 @@ pub fn get_service_catalog() -> Vec<ServiceModuleInfo> {
         ("marketplace", "Roastery Marketplace & Vouchers", "/api/v1/marketplace", "Specialty Coffee Cart, Vouchers (COFFEEFIRST/BARISTA20), Thermal Orders", "Zero-Trust Checkout"),
         ("platform", "Hybrid 3-Tier Version Gatekeeper", "/api/v1/app/version-check", "Shorebird OTA Patch, Store Update & User Feedback System", "RwLock In-Memory Cache"),
         ("gamification", "Barista Mastery Gamification & Anti-Cheat", "/api/v1/gamification", "XP Curve, Daily Streak Shield, 20 Rive Badges (RoaringBitmap), Moka Leaderboard", "Anti-Cheat + ULID Ledger"),
-        ("telemetry", "Real-Time APM & Latency Dashboard", "/dashboard", "Per-API P50/P95/P99 Response Time, RPS, Trace Stream", "Lock-Free DashMap"),
+        ("monitoring", "Live Presence & User Monitoring", "/api/v1/monitoring", "User Online Live, Batch Telemetry, DAU/WAU/MAU, 360 Dossier", "MonitoringViewer + MPSC Guard"),
+        ("barista_toolkit", "Barista LMS, eBooks & 3D Game", "/api/v1/toolkit", "LMS Courses, Lesson Streaming, Encrypted eBooks, Brew Doctor AI", "RequireTier + AuthUser"),
+        ("chat", "Real-Time Chat & WebSocket Hub", "/api/v1/chat", "WebSocket 101 Live Rooms, Direct/Group Messages, Delta Sync", "WS Auth + Redis PubSub"),
+        ("communities", "Coffee Clubs & Secret Vault", "/api/v1/clubs", "Specialty Coffee Clubs, Vault Feed, Secret ID Join, Invites", "AuthUser + Club RBAC"),
+        ("business_pos", "Business POS, Inventory & Kiosk AOD", "/api/v1/business", "POS Cashier, Shifts, Tables, Staff, AMOLED Kiosk Direct-Boot", "RequireTier<Business> + Tenant"),
+        ("bean_scanner", "Cognitive Sommelier AI Scanner", "/api/v1/beans/scan-resolve", "OCR Bean Resolver, Terroir Graph, Transfer Learning Weights", "Rate-Limited + AI Guard"),
+        ("live_brew", "Live Brew QR & Tracker Stream", "/api/v1/live-brew", "QR Customer Brew Progress & Telemetry 2Hz", "OptionalAuth + Stream"),
+        ("social_feed", "Social Threads & Profile Feed", "/api/v1/social", "Threads, Replies, Bookmarks, Barista Directory", "Cursor + CQRS Profile"),
+        ("social_graph", "Follows & Mutual Connections", "/api/v1/social/graph", "Follower Graph, Mutuals, Account Privacy Controls", "Redis Graph Cache"),
+        ("notifications", "FCM Push & Inbox Event Bus", "/api/v1/notifications", "Club Invites, Tier Upgrades, Reply Alerts", "FCM OAuth2 + AMQP"),
+        ("recommendation", "For-You & Trending Feed Engine", "/api/v1/feed", "Personalized Recipe Discovery & Recommended Clubs", "AuthUser + Seen Filter"),
+        ("vision_dataset", "Global Packaging Vision Dataset", "/api/v1/vision", "Vision Classes & Crowd Roastery Sync", "AuthUser"),
+        ("telemetry", "Command, APM & User Hub", "/dashboard", "API P50/P95/P99 Latency, User Online Monitor, Admin Users, Infra", "Lock-Free DashMap"),
     ];
 
     entries
@@ -36,14 +48,12 @@ pub fn get_service_catalog() -> Vec<ServiceModuleInfo> {
         .collect()
 }
 
-pub async fn build_snapshot(
-    pool: &PgPool,
-    telemetry: &TelemetryRegistry,
-) -> DashboardTelemetrySnapshot {
-    let (started_at, total, in_flight, s2xx, s3xx, s4xx, s5xx) = telemetry.snapshot_counts();
-    let endpoints = telemetry.snapshot_endpoints();
-    let recent_traces = telemetry.snapshot_traces();
-    let (database, domain_counts) = repository::probe_database(pool).await;
+pub async fn build_snapshot(state: &AppState) -> DashboardTelemetrySnapshot {
+    let (started_at, total, in_flight, s2xx, s3xx, s4xx, s5xx) = state.telemetry.snapshot_counts();
+    let endpoints = state.telemetry.snapshot_endpoints();
+    let recent_traces = state.telemetry.snapshot_traces();
+    let (database, domain_counts) = repository::probe_database(&state.pool).await;
+    let monitoring_summary = Some(overview_service::get_public_summary(state).await);
 
     let uptime_seconds = (Utc::now() - started_at).num_seconds().max(1);
     let rps = ((total as f64 / uptime_seconds as f64) * 100.0).round() / 100.0;
@@ -94,5 +104,6 @@ pub async fn build_snapshot(
         services: get_service_catalog(),
         endpoints,
         recent_traces,
+        monitoring_summary,
     }
 }

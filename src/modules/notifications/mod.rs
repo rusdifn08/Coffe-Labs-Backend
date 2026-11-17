@@ -1,4 +1,5 @@
 pub mod builders;
+pub mod club_builders;
 pub mod dto;
 pub mod error;
 pub mod events;

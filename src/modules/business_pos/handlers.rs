@@ -15,16 +15,11 @@ use crate::modules::business_pos::{
     services::{AssetTransparencyValidator, BusinessPosService},
 };
 
-fn parse_user_id(sub: &str) -> AppResult<Uuid> {
-    Uuid::parse_str(sub).map_err(|_| AppError::Unauthorized("ID Pengguna pada token tidak valid.".to_string()))
-}
-
 pub async fn get_config(
     State(state): State<AppState>,
     RequireTier(claims, _): RequireTier<TierBusiness>,
 ) -> AppResult<Json<ApiResponse<BusinessStoreConfig>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let config = BusinessPosService::get_config(&state.pool, user_id).await?;
+    let config = BusinessPosService::get_config(&state.pool, claims.sub).await?;
     Ok(ApiResponse::ok("Konfigurasi Business Store berhasil diambil.", config))
 }
 
@@ -33,8 +28,7 @@ pub async fn update_config(
     RequireTier(claims, _): RequireTier<TierBusiness>,
     ValidatedJson(dto): ValidatedJson<UpdateBusinessConfigDto>,
 ) -> AppResult<Json<ApiResponse<BusinessStoreConfig>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let config = BusinessPosService::update_config(&state.pool, user_id, dto).await?;
+    let config = BusinessPosService::update_config(&state.pool, claims.sub, dto).await?;
     Ok(ApiResponse::ok("Pengaturan Mode Kasir & AOD Display berhasil disimpan.", config))
 }
 
@@ -42,8 +36,7 @@ pub async fn list_menu(
     State(state): State<AppState>,
     RequireTier(claims, _): RequireTier<TierBusiness>,
 ) -> AppResult<Json<ApiResponse<Vec<BusinessMenuItem>>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let items = BusinessPosService::list_menu(&state.pool, user_id).await?;
+    let items = BusinessPosService::list_menu(&state.pool, claims.sub).await?;
     Ok(ApiResponse::ok("Katalog menu berhasil dimuat.", items))
 }
 
@@ -52,8 +45,7 @@ pub async fn create_menu_item(
     RequireTier(claims, _): RequireTier<TierBusiness>,
     ValidatedJson(dto): ValidatedJson<CreateMenuItemDto>,
 ) -> AppResult<Json<ApiResponse<BusinessMenuItem>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let item = BusinessPosService::add_menu_item(&state.pool, user_id, dto).await?;
+    let item = BusinessPosService::add_menu_item(&state.pool, claims.sub, dto).await?;
     Ok(ApiResponse::ok("Menu baru berhasil ditambahkan.", item))
 }
 
@@ -63,8 +55,7 @@ pub async fn update_menu_item(
     Path(item_id): Path<Uuid>,
     ValidatedJson(dto): ValidatedJson<UpdateMenuItemDto>,
 ) -> AppResult<Json<ApiResponse<Option<BusinessMenuItem>>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let item = BusinessPosService::update_menu_item(&state.pool, user_id, item_id, dto).await?;
+    let item = BusinessPosService::update_menu_item(&state.pool, claims.sub, item_id, dto).await?;
     Ok(ApiResponse::ok("Menu berhasil diperbarui.", item))
 }
 
@@ -73,8 +64,7 @@ pub async fn delete_menu_item(
     RequireTier(claims, _): RequireTier<TierBusiness>,
     Path(item_id): Path<Uuid>,
 ) -> AppResult<Json<ApiResponse<bool>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let success = BusinessPosService::delete_menu_item(&state.pool, user_id, item_id).await?;
+    let success = BusinessPosService::delete_menu_item(&state.pool, claims.sub, item_id).await?;
     Ok(ApiResponse::ok("Menu berhasil dihapus.", success))
 }
 
@@ -83,8 +73,7 @@ pub async fn create_pos_order(
     RequireTier(claims, _): RequireTier<TierBusiness>,
     ValidatedJson(dto): ValidatedJson<CreatePosOrderDto>,
 ) -> AppResult<Json<ApiResponse<PosOrder>>> {
-    let user_id = parse_user_id(&claims.sub)?;
-    let order = BusinessPosService::create_pos_order(&state.pool, user_id, dto).await?;
+    let order = BusinessPosService::create_pos_order(&state.pool, claims.sub, dto).await?;
     Ok(ApiResponse::ok("Transaksi kasir berhasil dicatat.", order))
 }
 
@@ -93,7 +82,7 @@ pub async fn verify_pin(
     RequireTier(claims, _): RequireTier<TierBusiness>,
     ValidatedJson(dto): ValidatedJson<VerifyPinDto>,
 ) -> AppResult<Json<ApiResponse<VerifyPinResponse>>> {
-    let user_id = parse_user_id(&claims.sub)?;
+    let user_id = claims.sub;
     let _ = BusinessPosService::verify_pin(&state.pool, user_id, &dto.pin).await?;
     let config = BusinessPosService::get_config(&state.pool, user_id).await?;
     Ok(ApiResponse::ok(

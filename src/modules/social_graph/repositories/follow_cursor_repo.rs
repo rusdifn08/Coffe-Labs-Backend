@@ -53,11 +53,17 @@ async fn list_by_edge_direction(
     };
     let limit_param = if cursor.is_some() { "$5" } else { "$3" };
     let sql = format!(
-        "SELECT p.user_id, p.username, p.display_name, p.avatar_url,
-                p.barista_level, p.account_tier, p.is_private_account,
+        "SELECT u.id AS user_id,
+                COALESCE(NULLIF(p.username, ''), u.username) AS username,
+                COALESCE(NULLIF(p.display_name, ''), NULLIF(u.full_name, ''), u.username) AS display_name,
+                COALESCE(p.avatar_url, u.avatar_url) AS avatar_url,
+                COALESCE(p.barista_level, 1) AS barista_level,
+                COALESCE(NULLIF(p.account_tier, ''), INITCAP(COALESCE(u.tier, 'trial'))) AS account_tier,
+                COALESCE(p.is_private_account, FALSE) AS is_private_account,
                 f.created_at AS edge_created_at
          FROM user_follows f
-         INNER JOIN user_profile_projections p ON p.user_id = f.{join_col}
+         INNER JOIN users u ON u.id = f.{join_col}
+         LEFT JOIN user_profile_projections p ON p.user_id = f.{join_col}
          WHERE f.{filter_col} = $1 AND f.status::text = $2
          {cursor_clause}
          ORDER BY f.created_at DESC, f.{join_col} DESC
@@ -86,14 +92,20 @@ pub async fn list_mutual_connections_keyset(
     };
     let limit_param = if cursor.is_some() { "$5" } else { "$3" };
     let sql = format!(
-        "SELECT p.user_id, p.username, p.display_name, p.avatar_url,
-                p.barista_level, p.account_tier, p.is_private_account,
+        "SELECT u.id AS user_id,
+                COALESCE(NULLIF(p.username, ''), u.username) AS username,
+                COALESCE(NULLIF(p.display_name, ''), NULLIF(u.full_name, ''), u.username) AS display_name,
+                COALESCE(p.avatar_url, u.avatar_url) AS avatar_url,
+                COALESCE(p.barista_level, 1) AS barista_level,
+                COALESCE(NULLIF(p.account_tier, ''), INITCAP(COALESCE(u.tier, 'trial'))) AS account_tier,
+                COALESCE(p.is_private_account, FALSE) AS is_private_account,
                 b.created_at AS edge_created_at
          FROM user_follows a
          INNER JOIN user_follows b
-           ON b.follower_id = a.following_id AND b.following_id = $2 AND b.status = 'ACCEPTED'
-         INNER JOIN user_profile_projections p ON p.user_id = a.following_id
-         WHERE a.follower_id = $1 AND a.status = 'ACCEPTED'
+           ON b.follower_id = a.following_id AND b.following_id = $2 AND b.status::text = 'ACCEPTED'
+         INNER JOIN users u ON u.id = a.following_id
+         LEFT JOIN user_profile_projections p ON p.user_id = a.following_id
+         WHERE a.follower_id = $1 AND a.status::text = 'ACCEPTED'
          {cursor_clause}
          ORDER BY b.created_at DESC, a.following_id DESC
          LIMIT {limit_param}"

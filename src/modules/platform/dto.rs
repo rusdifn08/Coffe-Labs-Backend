@@ -68,3 +68,23 @@ pub struct FeedbackQuery {
     pub status: Option<String>,
     pub category: Option<String>,
 }
+
+#[derive(Debug, Deserialize, Validate, ToSchema)]
+pub struct UpdateTrialPolicyRequest {
+    pub policy_mode: Option<String>,
+    pub trial_duration_days: Option<i32>,
+    pub unlock_all_recipes: Option<bool>,
+    pub unlock_smart_brew_dial_in: Option<bool>,
+    pub unlock_ai_scanner: Option<bool>,
+    pub unlock_toolkit_pro: Option<bool>,
+    pub unlock_learning_academy: Option<bool>,
+    pub unlock_brew_doctor: Option<bool>,
+    pub unlimited_brews: Option<bool>,
+    pub max_free_recipes: Option<i32>,
+    pub max_trial_brews: Option<i32>,
+    pub allow_business_suite: Option<bool>,
+    pub apply_to_guests: Option<bool>,
+    pub apply_to_registered_trial: Option<bool>,
+    pub policy_note: Option<String>,
+    pub reset_activated_at: Option<bool>,
+}

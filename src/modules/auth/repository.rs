@@ -13,7 +13,7 @@ use crate::{
     modules::auth::models::{RefreshTokenSession, UserRow},
 };
 
-const USER_COLS: &str = "id, username, password_hash, full_name, role, status, tier, avatar_url, created_at, updated_at";
+const USER_COLS: &str = "id, username, password_hash, full_name, role, status, tier, avatar_url, trial_full_until, trial_policy_override, created_at, updated_at";
 static USER_ROW_CACHE: OnceLock<DashMap<String, (UserRow, Instant)>> = OnceLock::new();
 
 fn user_cache() -> &'static DashMap<String, (UserRow, Instant)> {

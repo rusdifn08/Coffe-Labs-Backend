@@ -1,8 +1,9 @@
-use secrecy::SecretString;
+use secrecy::{ExposeSecret, SecretString};
 use std::{env, fmt, path::Path};
+use tracing::{error, warn};
 
-const DEFAULT_JWT_SEED: &str = "coffee_labs_ed25519_enterprise_seed_key_2026_v2";
 const DEFAULT_FCM_PROJECT_ID: &str = "coffe-labs";
+const DEFAULT_JWT_EXPIRATION_SECONDS: u64 = 86_400;
 
 #[derive(Clone)]
 pub struct CloudinaryConfig {
@@ -73,7 +74,8 @@ pub struct AppConfig {
     pub google_application_credentials: Option<String>,
     pub fcm_project_id: String,
     pub cloudinary_url: Option<String>,
-    pub jwt_seed: SecretString,
+    pub jwt_secret: SecretString,
+    pub jwt_expiration_seconds: u64,
     pub port: u16,
     pub environment: String,
     pub rate_limit_per_second: u64,
@@ -89,6 +91,8 @@ impl fmt::Debug for AppConfig {
             .field("google_application_credentials", &self.google_application_credentials)
             .field("fcm_project_id", &self.fcm_project_id)
             .field("cloudinary_url", &self.cloudinary_url.as_ref().map(|_| "[REDACTED]"))
+            .field("jwt_secret", &"[REDACTED]")
+            .field("jwt_expiration_seconds", &self.jwt_expiration_seconds)
             .field("port", &self.port)
             .field("environment", &self.environment)
             .finish()
@@ -102,41 +106,54 @@ fn read_optional_env(key: &str) -> Option<String> {
         .filter(|v| !v.is_empty())
 }
 
+pub fn parse_jwt_secret(raw: Option<String>) -> Result<SecretString, String> {
+    let secret = raw.map(|v| v.trim().to_string()).filter(|v| !v.is_empty()).ok_or_else(|| {
+        "JWT_SECRET environment variable must be set (min 32 bytes recommended).".to_string()
+    })?;
+    if secret.len() < 32 {
+        warn!(secret_bytes = secret.len(), "JWT_SECRET < 32 bytes; use >= 32 bytes in production.");
+    }
+    Ok(SecretString::from(secret))
+}
+
+pub fn parse_jwt_expiration(raw: Option<String>) -> u64 {
+    match raw {
+        None => DEFAULT_JWT_EXPIRATION_SECONDS,
+        Some(v) => match v.trim().parse::<u64>() {
+            Ok(secs) if secs > 0 => secs,
+            _ => {
+                warn!("Invalid JWT_EXPIRATION_SECONDS; defaulting to 86400 seconds.");
+                DEFAULT_JWT_EXPIRATION_SECONDS
+            }
+        },
+    }
+}
+
+fn read_u64_env(key: &str, default: u64) -> u64 {
+    env::var(key).ok().and_then(|v| v.parse::<u64>().ok()).unwrap_or(default)
+}
+
 impl AppConfig {
     pub fn from_env() -> Self {
         dotenvy::dotenv().ok();
 
-        let database_url = std::env::var("DATABASE_URL")
-            .ok()
-            .map(|v| v.trim().to_string())
-            .filter(|v| !v.is_empty())
-            .expect("DATABASE_URL must be set");
+        let database_url = read_optional_env("DATABASE_URL").expect("DATABASE_URL must be set");
         let redis_url = read_optional_env("REDIS_URL").unwrap_or_default();
         let rabbitmq_url = read_optional_env("RABBITMQ_URL");
         let google_application_credentials = read_optional_env("GOOGLE_APPLICATION_CREDENTIALS")
-            .or_else(|| {
-                Path::new("./firebase-service-account.json")
-                    .exists()
-                    .then(|| "./firebase-service-account.json".to_string())
-            });
-        let fcm_project_id =
-            read_optional_env("FCM_PROJECT_ID").unwrap_or_else(|| DEFAULT_FCM_PROJECT_ID.to_string());
+            .or_else(|| Path::new("./firebase-service-account.json").exists().then(|| "./firebase-service-account.json".to_string()));
+        let fcm_project_id = read_optional_env("FCM_PROJECT_ID").unwrap_or_else(|| DEFAULT_FCM_PROJECT_ID.to_string());
         let cloudinary_url = read_optional_env("CLOUDINARY_URL");
-        let raw_seed =
-            env::var("JWT_SECRET_SEED").unwrap_or_else(|_| DEFAULT_JWT_SEED.to_string());
-        let port = env::var("PORT")
-            .ok()
-            .and_then(|v| v.parse::<u16>().ok())
-            .unwrap_or(3000);
+        let jwt_secret = parse_jwt_secret(read_optional_env("JWT_SECRET")).unwrap_or_else(|msg| {
+            error!("{msg}");
+            eprintln!("{msg}");
+            panic!("{msg}");
+        });
+        let jwt_expiration_seconds = parse_jwt_expiration(read_optional_env("JWT_EXPIRATION_SECONDS"));
+        let port = read_u64_env("PORT", 3000) as u16;
         let environment = env::var("APP_ENV").unwrap_or_else(|_| "production".to_string());
-        let rate_limit_per_second = env::var("RATE_LIMIT_PER_SEC")
-            .ok()
-            .and_then(|v| v.parse::<u64>().ok())
-            .unwrap_or(500);
-        let rate_limit_burst = env::var("RATE_LIMIT_BURST")
-            .ok()
-            .and_then(|v| v.parse::<u32>().ok())
-            .unwrap_or(5000);
+        let rate_limit_per_second = read_u64_env("RATE_LIMIT_PER_SEC", 500);
+        let rate_limit_burst = read_u64_env("RATE_LIMIT_BURST", 5000) as u32;
 
         Self {
             database_url,
@@ -145,7 +162,8 @@ impl AppConfig {
             google_application_credentials,
             fcm_project_id,
             cloudinary_url,
-            jwt_seed: SecretString::from(raw_seed),
+            jwt_secret,
+            jwt_expiration_seconds,
             port,
             environment,
             rate_limit_per_second,
@@ -153,10 +171,11 @@ impl AppConfig {
         }
     }
 
+    pub fn jwt_secret_str(&self) -> &str {
+        self.jwt_secret.expose_secret()
+    }
+
     pub fn cloudinary_config(&self) -> Result<Option<CloudinaryConfig>, String> {
-        self.cloudinary_url
-            .as_deref()
-            .map(parse_cloudinary_url)
-            .transpose()
+        self.cloudinary_url.as_deref().map(parse_cloudinary_url).transpose()
     }
 }
