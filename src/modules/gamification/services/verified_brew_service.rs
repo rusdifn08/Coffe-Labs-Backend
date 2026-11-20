@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use chrono::{DateTime, Utc};
 use sqlx::{PgPool, Row};
 use uuid::Uuid;
@@ -9,8 +8,8 @@ use crate::{
         level_curve_math::compute_level_snapshot,
         proof_of_brew_validator::{min_valid_duration_sec, validate_proof_of_brew, ProofOfBrewVerdict},
         verified_brew_dto::{
-            CompleteVerifiedBrewDto, GamificationRewardDeltaDto, GamificationSummaryDto,
-            StartVerifiedBrewDto, StartVerifiedBrewResponseDto, TriedRecipeDto, XpBreakdownItemDto,
+            CompleteVerifiedBrewDto, GamificationRewardDeltaDto, StartVerifiedBrewDto,
+            StartVerifiedBrewResponseDto, XpBreakdownItemDto,
         },
     },
 };

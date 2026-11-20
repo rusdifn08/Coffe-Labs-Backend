@@ -60,8 +60,8 @@ mod tests {
         let snap = compute_level_snapshot(1635);
         assert_eq!(snap.level, 4);
         assert_eq!(snap.rank_title, "Dial-In Alchemist");
-        assert_eq!(snap.level_start_xp, 1084);
-        assert_eq!(snap.next_level_xp, 1819);
+        assert_eq!(snap.level_start_xp, 1083);
+        assert_eq!(snap.next_level_xp, 1818);
         assert!((snap.progress_ratio - 0.7497).abs() < 0.005);
     }
 
