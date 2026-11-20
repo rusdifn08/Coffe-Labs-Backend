@@ -27,7 +27,8 @@ pub async fn fetch_program_config(pool: &PgPool) -> AppResult<AffiliateConfigRow
         r#"SELECT is_program_active, buyer_discount_bps, affiliate_commission_bps,
                   commission_basis, round_commission_to_nearest_idr,
                   min_withdrawal_idr, max_withdrawal_per_day_idr,
-                  withdrawal_admin_fee_idr, first_purchase_only
+                  withdrawal_admin_fee_idr, first_purchase_only,
+                  COALESCE(allow_free_tier_affiliates, FALSE) AS allow_free_tier_affiliates
            FROM affiliate_program_config WHERE config_id = 1"#,
     )
     .fetch_one(pool)

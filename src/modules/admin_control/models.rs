@@ -57,3 +57,12 @@ pub struct AuditLogRow {
     pub config_version_after: i64,
     pub created_at: DateTime<Utc>,
 }
+
+#[derive(Debug, Clone, FromRow)]
+pub struct AffiliateControlRow {
+    pub is_program_active: bool,
+    pub buyer_discount_bps: i32,
+    pub affiliate_commission_bps: i32,
+    pub allow_free_tier_affiliates: bool,
+    pub min_withdrawal_idr: i64,
+}

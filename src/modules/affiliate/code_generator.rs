@@ -94,3 +94,10 @@ pub fn is_pro_eligible_tier(tier: &str, role: &str) -> bool {
         || tier.eq_ignore_ascii_case("pro")
         || tier.eq_ignore_ascii_case("business")
 }
+
+pub fn is_tier_eligible_for_affiliate(tier: &str, role: &str, allow_free_tier: bool) -> bool {
+    if allow_free_tier {
+        return true;
+    }
+    is_pro_eligible_tier(tier, role)
+}

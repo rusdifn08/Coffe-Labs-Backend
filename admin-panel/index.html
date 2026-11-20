@@ -86,6 +86,9 @@
         <button id="tab-btn-pricing" onclick="switchTab('pricing')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-stone-100 text-stone-700 hover:bg-stone-200 transition">
           💰 Harga Pro &amp; Business
         </button>
+        <button id="tab-btn-affiliate" onclick="switchTab('affiliate')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-stone-100 text-stone-700 hover:bg-stone-200 transition">
+          🤝 Kontrol Afiliasi (<span id="aff-nav-badge">20% • Pro</span>)
+        </button>
         <button id="tab-btn-audit" onclick="switchTab('audit')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-stone-100 text-stone-700 hover:bg-stone-200 transition">
           📜 Audit Log Admin
         </button>
@@ -137,9 +140,88 @@
     <!-- TAB 2: PRO & BUSINESS DYNAMIC PRICING -->
     <section id="tab-pricing" class="hidden space-y-4">
       <div class="bg-amber-50 border border-amber-300 rounded-2xl p-4 text-xs sm:text-sm text-amber-950">
-        <strong>💡 In-Flight Invoice Protection:</strong> Perubahan harga di bawah langsung aktif real-time pada layar <em>Upgrade Plan</em> semua pengguna, checkout <strong>QRIS Dinamis</strong> baru, dan <strong>Komisi Afiliasi 20%</strong>. Transaksi QRIS yang masih <em>PENDING</em> tetap aman di nominal awal.
+        <strong>💡 In-Flight Invoice Protection:</strong> Perubahan harga di bawah langsung aktif real-time pada layar <em>Upgrade Plan</em> semua pengguna, checkout <strong>QRIS Dinamis</strong> baru, dan kalkulasi <strong>Komisi Afiliasi</strong>. Transaksi QRIS yang masih <em>PENDING</em> tetap aman di nominal awal.
       </div>
       <div id="pricing-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- TAB 3: AFFILIATE PROGRAM CONTROL (COMMISSION % & PRO/FREE TIER ELIGIBILITY) -->
+    <section id="tab-affiliate" class="hidden space-y-4">
+      <div class="bg-white rounded-2xl border-2 border-espresso/30 p-5 sm:p-6 space-y-5 card-shadow">
+        <div class="flex flex-wrap items-start justify-between gap-3 border-b border-stone-200 pb-4">
+          <div>
+            <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-emerald-100 text-emerald-800 border border-emerald-300">REAL-TIME AFFILIATE ENGINE</span>
+            <h3 class="text-base sm:text-lg font-extrabold text-roast mt-1.5">🤝 Pengaturan Komisi Afiliasi &amp; Hak Akses Peserta (Pro / Free)</h3>
+            <p class="text-xs text-stone-500 mt-0.5">Tentukan persentase komisi afiliator (mis. 10% atau 20%) serta buka akses program afiliasi khusus untuk akun <strong>Pro &amp; Business</strong> atau terbuka untuk <strong>Pro &amp; Free (Semua Akun)</strong>.</p>
+          </div>
+          <label class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-stone-50 border border-stone-200 text-xs font-extrabold text-roast cursor-pointer">
+            <input id="aff-active" type="checkbox" checked class="w-4 h-4 accent-emerald-600" onchange="updateAffiliatePreview()" />
+            Program Afiliasi Aktif
+          </label>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <!-- KOLOM KIRI: PERSENTASE KOMISI & DISKON -->
+          <div class="space-y-4 bg-cream/60 p-4 rounded-2xl border border-amber-900/15">
+            <div>
+              <label class="block text-xs font-extrabold text-roast mb-2">1. Persentase Komisi Afiliator (Dapatnya Berapa %)</label>
+              <div class="grid grid-cols-4 gap-2 mb-2.5">
+                <button type="button" onclick="setAffiliateCommissionPreset(10)" id="aff-preset-10" class="py-2 px-3 rounded-xl border text-xs font-extrabold transition">10%</button>
+                <button type="button" onclick="setAffiliateCommissionPreset(15)" id="aff-preset-15" class="py-2 px-3 rounded-xl border text-xs font-extrabold transition">15%</button>
+                <button type="button" onclick="setAffiliateCommissionPreset(20)" id="aff-preset-20" class="py-2 px-3 rounded-xl border text-xs font-extrabold transition">20%</button>
+                <button type="button" onclick="setAffiliateCommissionPreset(25)" id="aff-preset-25" class="py-2 px-3 rounded-xl border text-xs font-extrabold transition">25%</button>
+              </div>
+              <div class="flex items-center gap-2">
+                <input id="aff-comm-pct" type="number" min="1" max="50" value="20" oninput="updateAffiliatePreview()" class="w-28 px-3 py-2 rounded-xl border border-stone-300 text-sm font-extrabold text-roast bg-white" />
+                <span class="text-xs font-bold text-stone-600">% Komisi per Transaksi Referral Berhasil (1% – 50%)</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-amber-900/10">
+              <div>
+                <label class="block text-[11px] font-bold text-stone-600 mb-1">Diskon Pembeli Kode Referral (%)</label>
+                <input id="aff-disc-pct" type="number" min="0" max="50" value="10" oninput="updateAffiliatePreview()" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm font-bold text-roast bg-white" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-stone-600 mb-1">Minimal Penarikan Saldo (Rp)</label>
+                <input id="aff-min-wd" type="number" min="10000" step="10000" value="100000" oninput="updateAffiliatePreview()" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm font-bold text-roast bg-white" />
+              </div>
+            </div>
+          </div>
+
+          <!-- KOLOM KANAN: KONTROL HAK AKSES PESERTA (PRO ONLY vs PRO + FREE) -->
+          <div class="space-y-4 bg-cream/60 p-4 rounded-2xl border border-amber-900/15">
+            <div>
+              <label class="block text-xs font-extrabold text-roast mb-2">2. Siapa yang Bisa Ikut Program Afiliasi &amp; Punya Kode Referral?</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <button type="button" onclick="setAffiliateTierAccess(false)" id="aff-tier-pro-only" class="p-3.5 rounded-xl border-2 text-left transition">
+                  <div class="text-xs font-extrabold flex items-center justify-between">
+                    <span>🔒 Khusus Pro &amp; Business</span>
+                    <span id="aff-check-pro" class="text-emerald-700">●</span>
+                  </div>
+                  <p class="text-[11px] text-stone-500 mt-1">Hanya akun yang sudah berlangganan <strong>Pro</strong> atau <strong>Business</strong> yang dapat membuka kode referral &amp; memperoleh komisi.</p>
+                </button>
+                <button type="button" onclick="setAffiliateTierAccess(true)" id="aff-tier-all-free" class="p-3.5 rounded-xl border-2 text-left transition">
+                  <div class="text-xs font-extrabold flex items-center justify-between">
+                    <span>🌍 Buka untuk Pro &amp; Free</span>
+                    <span id="aff-check-free" class="text-emerald-700">○</span>
+                  </div>
+                  <p class="text-[11px] text-stone-500 mt-1">Semua akun terdaftar termasuk pengguna <strong>Free / Trial</strong> maupun <strong>Pro</strong> langsung mendapat kode referral &amp; komisi.</p>
+                </button>
+              </div>
+            </div>
+
+            <div id="aff-live-sim" class="p-3.5 rounded-xl bg-white border border-amber-900/20 text-xs space-y-1"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-stone-200">
+          <span class="text-xs text-stone-500">Perubahan langsung berlaku real-time ke seluruh aplikasi mobile &amp; halaman profil pengguna tanpa perlu update APK.</span>
+          <button onclick="saveAffiliateConfig()" class="px-5 py-2.5 rounded-xl bg-roast hover:bg-espresso text-white font-extrabold text-xs sm:text-sm transition">
+            ⚡ Simpan &amp; Broadcast Aturan Afiliasi Real-Time
+          </button>
+        </div>
+      </div>
     </section>
 
     <!-- TAB 3: AUDIT LOGS -->
@@ -230,9 +312,22 @@
   <script>
     let jwtToken = sessionStorage.getItem('cl_admin_ctrl_jwt') || '';
     let adminName = sessionStorage.getItem('cl_admin_ctrl_name') || '@admin';
-    let currentSnapshot = { config_version: 1, connected_clients: 0, features: [], plans: [] };
+    let currentSnapshot = {
+      config_version: 1,
+      connected_clients: 0,
+      features: [],
+      plans: [],
+      affiliate_config: {
+        is_program_active: true,
+        affiliate_commission_percent: 20,
+        buyer_discount_percent: 10,
+        allow_free_tier_affiliates: false,
+        min_withdrawal_idr: 100000,
+      }
+    };
     let editingFeatureKey = null;
     let selectedModalStatus = 'MAINTENANCE';
+    let allowFreeTierAffiliates = false;
     let ws = null;
 
     const STATUS_META = {
@@ -342,6 +437,7 @@
       document.getElementById('ver-pill').textContent = `Versi #${snap.config_version} • ${snap.connected_clients || 0} Perangkat`;
       const lockedCount = (snap.features || []).filter(f => f.is_locked).length;
       document.getElementById('locked-count-badge').textContent = `${lockedCount}/${(snap.features || []).length} Terkunci`;
+      renderAffiliateConfig();
       renderFeatures();
       renderPricing();
     }
@@ -358,7 +454,7 @@
     }
 
     function switchTab(name) {
-      ['locks', 'pricing', 'audit'].forEach(t => {
+      ['locks', 'pricing', 'affiliate', 'audit'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== name);
         const btn = document.getElementById(`tab-btn-${t}`);
         btn.className = t === name
@@ -399,9 +495,12 @@
               <button onclick="quickToggleLock('${f.feature_key}', ${!f.is_locked})" class="px-3 py-1.5 rounded-lg text-xs font-extrabold ${f.is_locked ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-red-600 text-white hover:bg-red-700'} transition">
                 ${f.is_locked ? '🔓 Unlock Cepat' : '🔒 Lock Cepat'}
               </button>
-              <button onclick="openLockModal('${f.feature_key}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white/90 hover:bg-white border border-stone-300 text-roast">
-                ⚙️ Atur Status &amp; Pesan
-              </button>
+              <div class="flex items-center gap-1.5">
+                ${f.feature_key === 'AFFILIATE_PROGRAM' ? `<button onclick="switchTab('affiliate')" class="px-2.5 py-1.5 rounded-lg text-xs font-extrabold bg-amber-100 hover:bg-amber-200 border border-amber-300 text-roast">🤝 % &amp; Pro/Free</button>` : ''}
+                <button onclick="openLockModal('${f.feature_key}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white/90 hover:bg-white border border-stone-300 text-roast">
+                  ⚙️ Atur Status &amp; Pesan
+                </button>
+              </div>
             </div>
           </div>`;
       }).join('');
@@ -507,12 +606,110 @@
       } catch (e) { showToast(e.message, true); }
     }
 
+    function getActiveAffiliateCfg() {
+      return currentSnapshot.affiliate_config || {
+        is_program_active: true,
+        affiliate_commission_percent: 20,
+        buyer_discount_percent: 10,
+        allow_free_tier_affiliates: false,
+        min_withdrawal_idr: 100000,
+      };
+    }
+
+    function renderAffiliateConfig() {
+      const cfg = getActiveAffiliateCfg();
+      const commPct = Number(cfg.affiliate_commission_percent || 20);
+      const discPct = Number(cfg.buyer_discount_percent ?? 10);
+      const minWd = Number(cfg.min_withdrawal_idr || 100000);
+      allowFreeTierAffiliates = !!cfg.allow_free_tier_affiliates;
+
+      document.getElementById('aff-active').checked = cfg.is_program_active !== false;
+      document.getElementById('aff-comm-pct').value = commPct;
+      document.getElementById('aff-disc-pct').value = discPct;
+      document.getElementById('aff-min-wd').value = minWd;
+      document.getElementById('aff-nav-badge').textContent =
+        `${commPct}% • ${allowFreeTierAffiliates ? 'Pro & Free' : 'Pro Only'}`;
+
+      updateAffiliatePreview();
+    }
+
+    function setAffiliateCommissionPreset(pct) {
+      document.getElementById('aff-comm-pct').value = pct;
+      updateAffiliatePreview();
+    }
+
+    function setAffiliateTierAccess(allowFree) {
+      allowFreeTierAffiliates = !!allowFree;
+      updateAffiliatePreview();
+    }
+
+    function updateAffiliatePreview() {
+      const commPct = Math.max(1, Math.min(50, Number(document.getElementById('aff-comm-pct').value || 20)));
+      const discPct = Math.max(0, Math.min(50, Number(document.getElementById('aff-disc-pct').value || 0)));
+
+      [10, 15, 20, 25].forEach(p => {
+        const btn = document.getElementById(`aff-preset-${p}`);
+        if (!btn) return;
+        btn.className = p === commPct
+          ? 'py-2 px-3 rounded-xl border-2 border-roast bg-roast text-white text-xs font-extrabold transition'
+          : 'py-2 px-3 rounded-xl border border-stone-300 bg-white text-roast hover:bg-stone-100 text-xs font-extrabold transition';
+      });
+
+      const proBtn = document.getElementById('aff-tier-pro-only');
+      const freeBtn = document.getElementById('aff-tier-all-free');
+      proBtn.className = !allowFreeTierAffiliates
+        ? 'p-3.5 rounded-xl border-2 border-roast bg-white text-left shadow-sm transition'
+        : 'p-3.5 rounded-xl border border-stone-300 bg-white/60 text-left opacity-75 hover:opacity-100 transition';
+      freeBtn.className = allowFreeTierAffiliates
+        ? 'p-3.5 rounded-xl border-2 border-emerald-700 bg-emerald-50/70 text-left shadow-sm transition'
+        : 'p-3.5 rounded-xl border border-stone-300 bg-white/60 text-left opacity-75 hover:opacity-100 transition';
+      document.getElementById('aff-check-pro').textContent = !allowFreeTierAffiliates ? '● Aktif' : '○';
+      document.getElementById('aff-check-free').textContent = allowFreeTierAffiliates ? '● Aktif' : '○';
+
+      const plans = currentSnapshot.plans || [];
+      const proPlan = plans.find(p => p.target_tier === 'pro') || { base_price_idr: 99000 };
+      const bizPlan = plans.find(p => p.target_tier === 'business') || { base_price_idr: 249000 };
+      const proComm = Math.round((proPlan.base_price_idr * commPct) / 100);
+      const bizComm = Math.round((bizPlan.base_price_idr * commPct) / 100);
+      const proAfterDisc = Math.round(proPlan.base_price_idr * (100 - discPct) / 100);
+
+      document.getElementById('aff-live-sim').innerHTML = `
+        <div class="font-extrabold text-roast">📊 Simulasi Real-Time (${commPct}% Komisi • ${allowFreeTierAffiliates ? 'Terbuka untuk Akun Pro &amp; Free' : 'Khusus Akun Pro &amp; Business'}):</div>
+        <div class="text-stone-700">• Referral Paket Pro (${fmtRp(proPlan.base_price_idr)}) → Pembeli bayar <strong>${fmtRp(proAfterDisc)}</strong> (Diskon ${discPct}%) • Afiliator dapat <strong>${fmtRp(proComm)}</strong> (${commPct}%)</div>
+        <div class="text-stone-700">• Referral Paket Business (${fmtRp(bizPlan.base_price_idr)}) → Afiliator dapat <strong>${fmtRp(bizComm)}</strong> (${commPct}%)</div>
+      `;
+    }
+
+    async function saveAffiliateConfig() {
+      const affiliate_commission_percent = Math.max(1, Math.min(50, Number(document.getElementById('aff-comm-pct').value || 20)));
+      const buyer_discount_percent = Math.max(0, Math.min(50, Number(document.getElementById('aff-disc-pct').value || 0)));
+      const min_withdrawal_idr = Math.max(10000, Number(document.getElementById('aff-min-wd').value || 100000));
+      const is_program_active = document.getElementById('aff-active').checked;
+      try {
+        const res = await apiFetch('/api/v1/admin/control/affiliate', {
+          method: 'PUT',
+          body: JSON.stringify({
+            is_program_active,
+            affiliate_commission_percent,
+            buyer_discount_percent,
+            allow_free_tier_affiliates: allowFreeTierAffiliates,
+            min_withdrawal_idr,
+          }),
+        });
+        if (res.data) applySnapshot(res.data);
+        showToast(`Aturan Afiliasi (${affiliate_commission_percent}% • ${allowFreeTierAffiliates ? 'Pro & Free' : 'Khusus Pro'}) berhasil disiarkan real-time!`);
+      } catch (e) { showToast(e.message, true); }
+    }
+
     function renderPricing() {
       const grid = document.getElementById('pricing-grid');
+      const aff = getActiveAffiliateCfg();
+      const commPct = Number(aff.affiliate_commission_percent || 20);
+      const discPct = Number(aff.buyer_discount_percent ?? 10);
       grid.innerHTML = (currentSnapshot.plans || []).map(p => {
         const isBiz = p.target_tier === 'business';
-        const disc10 = Math.round(p.base_price_idr * 0.9);
-        const comm20 = Math.round(p.base_price_idr * 0.2);
+        const discPrice = Math.round(p.base_price_idr * (100 - discPct) / 100);
+        const commAmt = Math.round(p.base_price_idr * commPct / 100);
         return `
           <div class="bg-white rounded-2xl border-2 ${p.is_active ? 'border-espresso/40' : 'border-stone-200 opacity-85'} p-5 space-y-3 card-shadow">
             <div class="flex items-start justify-between gap-2">
@@ -546,7 +743,7 @@
             </div>
 
             <div id="p-preview-${p.plan_code}" class="p-3 rounded-xl bg-cream border border-amber-900/15 text-[11.5px] font-semibold text-espresso">
-              QRIS: <strong>${fmtRp(p.base_price_idr)}</strong> • Setelah Referral 10%: <strong>${fmtRp(disc10)}</strong> • Komisi Afiliasi 20%: <strong>${fmtRp(comm20)}</strong>
+              QRIS: <strong>${fmtRp(p.base_price_idr)}</strong> • Setelah Referral ${discPct}%: <strong>${fmtRp(discPrice)}</strong> • Komisi Afiliasi ${commPct}%: <strong>${fmtRp(commAmt)}</strong>
             </div>
 
             <button onclick="savePlanPrice('${p.plan_code}')" class="w-full py-2.5 rounded-xl bg-roast hover:bg-espresso text-white font-extrabold text-xs transition">
@@ -557,11 +754,14 @@
     }
 
     function updatePricePreview(code) {
+      const aff = getActiveAffiliateCfg();
+      const commPct = Number(aff.affiliate_commission_percent || 20);
+      const discPct = Number(aff.buyer_discount_percent ?? 10);
       const val = Number(document.getElementById(`p-price-${code}`).value || 0);
-      const disc10 = Math.round(val * 0.9);
-      const comm20 = Math.round(val * 0.2);
+      const discPrice = Math.round(val * (100 - discPct) / 100);
+      const commAmt = Math.round(val * commPct / 100);
       document.getElementById(`p-preview-${code}`).innerHTML =
-        `QRIS: <strong>${fmtRp(val)}</strong> • Setelah Referral 10%: <strong>${fmtRp(disc10)}</strong> • Komisi Afiliasi 20%: <strong>${fmtRp(comm20)}</strong>`;
+        `QRIS: <strong>${fmtRp(val)}</strong> • Setelah Referral ${discPct}%: <strong>${fmtRp(discPrice)}</strong> • Komisi Afiliasi ${commPct}%: <strong>${fmtRp(commAmt)}</strong>`;
     }
 
     async function savePlanPrice(code) {

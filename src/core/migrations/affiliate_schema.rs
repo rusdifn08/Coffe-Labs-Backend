@@ -45,6 +45,7 @@ pub fn statements() -> &'static [&'static str] {
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )"#,
         "INSERT INTO affiliate_program_config (config_id) VALUES (1) ON CONFLICT (config_id) DO NOTHING",
+        "ALTER TABLE affiliate_program_config ADD COLUMN IF NOT EXISTS allow_free_tier_affiliates BOOLEAN NOT NULL DEFAULT FALSE",
         r#"CREATE TABLE IF NOT EXISTS affiliate_wallets (
             user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
             affiliate_code VARCHAR(24) NOT NULL,

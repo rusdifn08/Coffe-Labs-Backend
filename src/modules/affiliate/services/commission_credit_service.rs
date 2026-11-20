@@ -48,8 +48,9 @@ pub async fn credit_affiliate_commission_tx(
         .applied_referral_code
         .clone()
         .unwrap_or_else(|| wallet.affiliate_code.clone());
+    let comm_pct = (invoice.affiliate_commission_bps / 100).max(1);
     let desc = format!(
-        "Komisi afiliasi 20% dari paket {} (Invoice {})",
+        "Komisi afiliasi {comm_pct}% dari paket {} (Invoice {})",
         invoice.plan_code, invoice.invoice_number
     );
 

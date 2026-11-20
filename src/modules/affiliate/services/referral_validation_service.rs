@@ -5,7 +5,7 @@ use crate::{
     core::{error::AppResult, AppState},
     modules::{
         affiliate::{
-            code_generator::is_pro_eligible_tier,
+            code_generator::is_tier_eligible_for_affiliate,
             dto::ValidatedReferralPreviewDto,
             error::AffiliateError,
             math_and_sla::{compute_checkout_affiliate_pricing, AffiliatePricingBreakdown},
@@ -76,8 +76,10 @@ pub async fn validate_referral_for_checkout(
         .await?
         .ok_or(AffiliateError::CodeNotFound)?;
 
-    // Hanya pemilik akun Pro / Business / Admin aktif yang berhak menjadi afiliator!
-    if !referrer.is_affiliate_active || !is_pro_eligible_tier(&referrer.tier, &referrer.role) {
+    // Cek kelayakan afiliator berdasarkan tier & kebijakan allow_free_tier_affiliates dari Admin!
+    if !referrer.is_affiliate_active
+        || !is_tier_eligible_for_affiliate(&referrer.tier, &referrer.role, cfg.allow_free_tier_affiliates)
+    {
         return Err(AffiliateError::CodeNotFound.into());
     }
 

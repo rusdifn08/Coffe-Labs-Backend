@@ -17,7 +17,10 @@ use tracing::{info, warn};
 use crate::{
     core::error::AppResult,
     modules::admin_control::{
-        dto::{ControlSnapshotDto, ControlWsFrame, DynamicPlanPricingDto, FeatureControlDto},
+        dto::{
+            AffiliateProgramControlDto, ControlSnapshotDto, ControlWsFrame, DynamicPlanPricingDto,
+            FeatureControlDto,
+        },
         repositories::{feature_control_repo, pricing_control_repo},
         services::redis_control_subscriber::spawn_redis_control_subscriber,
     },
@@ -38,19 +41,13 @@ impl RuntimeSnapshotStore {
     pub fn empty(redis_pool: Option<RedisPool>) -> Arc<Self> {
         let (ws_tx, _) = broadcast::channel(128);
         let initial = ControlSnapshotDto {
-            config_version: 1,
-            global_maintenance_mode: false,
-            global_maintenance_message: None,
-            connected_clients: 0,
-            features: Vec::new(),
-            plans: Vec::new(),
-            updated_at: Utc::now(),
+            config_version: 1, global_maintenance_mode: false, global_maintenance_message: None,
+            connected_clients: 0, features: Vec::new(), plans: Vec::new(),
+            affiliate_config: AffiliateProgramControlDto::default(), updated_at: Utc::now(),
         };
         Arc::new(Self {
             snapshot: ArcSwap::from_pointee(initial),
-            ws_tx,
-            connected_clients: AtomicUsize::new(0),
-            redis_pool,
+            ws_tx, connected_clients: AtomicUsize::new(0), redis_pool,
         })
     }
 
@@ -124,6 +121,10 @@ impl RuntimeSnapshotStore {
             .into_iter()
             .map(DynamicPlanPricingDto::from)
             .collect();
+        let affiliate_config = pricing_control_repo::fetch_affiliate_control(pool)
+            .await
+            .map(AffiliateProgramControlDto::from)
+            .unwrap_or_default();
 
         let snap = ControlSnapshotDto {
             config_version: meta.config_version,
@@ -132,6 +133,7 @@ impl RuntimeSnapshotStore {
             connected_clients: self.connected_clients(),
             features,
             plans,
+            affiliate_config,
             updated_at: meta.updated_at,
         };
         self.snapshot.store(Arc::new(snap.clone()));

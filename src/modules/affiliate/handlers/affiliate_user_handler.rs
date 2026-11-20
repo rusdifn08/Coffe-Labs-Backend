@@ -7,7 +7,7 @@ use crate::{
         AppState,
     },
     modules::affiliate::{
-        code_generator::{is_pro_eligible_tier, validate_and_normalize_custom_code},
+        code_generator::{is_tier_eligible_for_affiliate, validate_and_normalize_custom_code},
         dto::{
             AffiliateConversionDto, AffiliateDashboardDto, AffiliateLedgerRowDto,
             AffiliateWalletDto, AffiliateWithdrawalDto, CustomizeCodeDto,
@@ -31,10 +31,14 @@ pub async fn get_my_affiliate_dashboard(
         .await?
         .unwrap_or_else(|| (auth.claims.tier.clone(), auth.claims.role.clone(), auth.claims.username.clone()));
 
-    let eligible = is_pro_eligible_tier(&tier, &role);
+    let eligible = cfg.is_program_active
+        && is_tier_eligible_for_affiliate(&tier, &role, cfg.allow_free_tier_affiliates);
     if !eligible {
+        let comm_pct = (cfg.affiliate_commission_bps / 100).max(1);
         return Ok(ApiResponse::ok(
-            "Program Afiliasi 20% tersedia eksklusif untuk akun Coffee Labs Pro & Business.",
+            format!(
+                "Program Afiliasi {comm_pct}% saat ini tersedia untuk akun Coffee Labs Pro & Business."
+            ),
             AffiliateDashboardDto {
                 is_eligible_pro: false,
                 current_tier: tier,
@@ -72,10 +76,11 @@ pub async fn customize_my_affiliate_code(
     State(state): State<AppState>,
     Json(req): Json<CustomizeCodeDto>,
 ) -> AppResult<Json<ApiResponse<AffiliateWalletDto>>> {
+    let cfg = wallet_ledger_repo::fetch_program_config(&state.pool).await?;
     let (tier, role, username) = wallet_ledger_repo::fetch_user_tier_and_name(&state.pool, auth.user_id)
         .await?
         .ok_or(AffiliateError::ProAccountRequired)?;
-    if !is_pro_eligible_tier(&tier, &role) {
+    if !is_tier_eligible_for_affiliate(&tier, &role, cfg.allow_free_tier_affiliates) {
         return Err(AffiliateError::ProAccountRequired.into());
     }
 

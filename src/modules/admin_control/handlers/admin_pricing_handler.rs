@@ -10,7 +10,10 @@ use crate::{
         AppState,
     },
     modules::admin_control::{
-        dto::{AuditLogDto, ControlSnapshotDto, DynamicPlanPricingDto, UpdatePlanPriceDto},
+        dto::{
+            AuditLogDto, ControlSnapshotDto, DynamicPlanPricingDto, UpdateAffiliateConfigDto,
+            UpdatePlanPriceDto,
+        },
         middleware::admin_role_guard::RequireAdminUser,
         repositories::pricing_control_repo,
         services::pricing_mutation_service,
@@ -71,5 +74,31 @@ pub async fn list_audit_logs(
     Ok(ApiResponse::ok(
         "Riwayat audit perubahan Control Panel Admin diperoleh.",
         logs,
+    ))
+}
+
+pub async fn update_affiliate_config(
+    admin: RequireAdminUser,
+    State(state): State<AppState>,
+    Json(req): Json<UpdateAffiliateConfigDto>,
+) -> AppResult<Json<ApiResponse<ControlSnapshotDto>>> {
+    let snap = pricing_mutation_service::update_affiliate_config(
+        &state,
+        admin.user_id,
+        &admin.admin_label,
+        req,
+    )
+    .await?;
+    Ok(ApiResponse::ok(
+        format!(
+            "Konfigurasi Afiliasi ({}% • {}) berhasil disiarkan real-time ke semua akun.",
+            snap.affiliate_config.affiliate_commission_percent,
+            if snap.affiliate_config.allow_free_tier_affiliates {
+                "Terbuka Pro & Free"
+            } else {
+                "Khusus Pro & Business"
+            }
+        ),
+        snap,
     ))
 }

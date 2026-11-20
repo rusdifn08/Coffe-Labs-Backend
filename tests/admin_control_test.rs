@@ -119,6 +119,8 @@ async fn web_control_panel_and_snapshot_etag_work() {
     let body_bytes = to_bytes(html_res.into_body(), usize::MAX).await.expect("body");
     let html = String::from_utf8_lossy(&body_bytes);
     assert!(html.contains("Real-Time Admin Control Panel"));
+    assert!(html.contains("Kontrol Afiliasi"));
+    assert!(html.contains("/api/v1/admin/control/affiliate"));
 
     let snap_res = app
         .clone()
@@ -160,6 +162,7 @@ async fn feature_gate_middleware_blocks_non_admin_with_423_and_allows_admin_qa_b
                 updated_at: Utc::now(),
             }],
             plans: vec![],
+            affiliate_config: Default::default(),
             updated_at: Utc::now(),
         });
 
@@ -241,6 +244,7 @@ async fn snapshot_store_enforces_monotonic_version_and_supports_all_lock_statuse
         connected_clients: 0,
         features: vec![],
         plans: vec![],
+        affiliate_config: Default::default(),
         updated_at: Utc::now(),
     });
     assert_eq!(store.load_snapshot().config_version, 5);
@@ -253,8 +257,15 @@ async fn snapshot_store_enforces_monotonic_version_and_supports_all_lock_statuse
         connected_clients: 0,
         features: vec![],
         plans: vec![],
+        affiliate_config: Default::default(),
         updated_at: Utc::now(),
     });
     assert_eq!(store.load_snapshot().config_version, 5);
     assert!(!store.load_snapshot().global_maintenance_mode);
+
+    use coffe_labs_backend::modules::affiliate::code_generator::is_tier_eligible_for_affiliate;
+    assert!(!is_tier_eligible_for_affiliate("trial", "user", false));
+    assert!(is_tier_eligible_for_affiliate("pro", "user", false));
+    assert!(is_tier_eligible_for_affiliate("trial", "user", true));
+    assert!(is_tier_eligible_for_affiliate("free", "user", true));
 }

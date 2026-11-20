@@ -47,6 +47,10 @@ pub fn router() -> Router<AppState> {
             put(admin_pricing_handler::update_plan_pricing),
         )
         .route(
+            "/api/v1/admin/control/affiliate",
+            put(admin_pricing_handler::update_affiliate_config),
+        )
+        .route(
             "/api/v1/admin/control/audit-logs",
             get(admin_pricing_handler::list_audit_logs),
         )

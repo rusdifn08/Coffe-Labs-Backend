@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use crate::{
     core::error::AppResult,
-    modules::admin_control::models::{AuditLogRow, DynamicPlanRow},
+    modules::admin_control::models::{AffiliateControlRow, AuditLogRow, DynamicPlanRow},
 };
 
 const PLAN_COLS: &str = r#"
@@ -37,15 +37,9 @@ pub async fn find_plan_by_code_tx(
 }
 
 pub struct UpdatePlanParams<'a> {
-    pub plan_code: &'a str,
-    pub display_name: &'a str,
-    pub base_price_idr: i64,
-    pub original_price_idr: Option<i64>,
-    pub promo_badge_text: Option<&'a str>,
-    pub duration_days: i32,
-    pub is_active: bool,
-    pub is_highlighted: bool,
-    pub admin_user_id: Uuid,
+    pub plan_code: &'a str, pub display_name: &'a str, pub base_price_idr: i64,
+    pub original_price_idr: Option<i64>, pub promo_badge_text: Option<&'a str>,
+    pub duration_days: i32, pub is_active: bool, pub is_highlighted: bool, pub admin_user_id: Uuid,
 }
 
 pub async fn update_plan_pricing_tx(
@@ -54,41 +48,22 @@ pub async fn update_plan_pricing_tx(
 ) -> AppResult<DynamicPlanRow> {
     let sql = format!(
         "UPDATE subscription_plan_catalog
-         SET display_name = $2,
-             base_price_idr = $3,
-             original_price_idr = $4,
-             promo_badge_text = $5,
-             duration_days = $6,
-             is_active = $7,
-             is_highlighted = $8,
-             updated_by_admin_id = $9,
-             updated_at = NOW()
-         WHERE plan_code::text = $1
-         RETURNING {PLAN_COLS}"
+         SET display_name = $2, base_price_idr = $3, original_price_idr = $4,
+             promo_badge_text = $5, duration_days = $6, is_active = $7,
+             is_highlighted = $8, updated_by_admin_id = $9, updated_at = NOW()
+         WHERE plan_code::text = $1 RETURNING {PLAN_COLS}"
     );
     Ok(sqlx::query_as::<_, DynamicPlanRow>(&sql)
-        .bind(p.plan_code)
-        .bind(p.display_name)
-        .bind(p.base_price_idr)
-        .bind(p.original_price_idr)
-        .bind(p.promo_badge_text)
-        .bind(p.duration_days)
-        .bind(p.is_active)
-        .bind(p.is_highlighted)
-        .bind(p.admin_user_id)
-        .fetch_one(&mut **tx)
-        .await?)
+        .bind(p.plan_code).bind(p.display_name).bind(p.base_price_idr)
+        .bind(p.original_price_idr).bind(p.promo_badge_text).bind(p.duration_days)
+        .bind(p.is_active).bind(p.is_highlighted).bind(p.admin_user_id)
+        .fetch_one(&mut **tx).await?)
 }
 
 pub struct NewAuditLogParams<'a> {
-    pub admin_user_id: Uuid,
-    pub admin_email: &'a str,
-    pub action_category: &'a str,
-    pub target_key: &'a str,
-    pub previous_state: Value,
-    pub new_state: Value,
-    pub reason_note: Option<&'a str>,
-    pub config_version_after: i64,
+    pub admin_user_id: Uuid, pub admin_email: &'a str, pub action_category: &'a str,
+    pub target_key: &'a str, pub previous_state: Value, pub new_state: Value,
+    pub reason_note: Option<&'a str>, pub config_version_after: i64,
 }
 
 pub async fn insert_audit_log_tx(
@@ -141,4 +116,61 @@ pub async fn resolve_admin_email(pool: &PgPool, admin_user_id: Uuid, fallback: &
     .flatten()
     .filter(|s| !s.trim().is_empty())
     .unwrap_or_else(|| fallback.to_string())
+}
+
+const AFF_CTRL_COLS: &str = r#"
+    is_program_active, buyer_discount_bps, affiliate_commission_bps,
+    COALESCE(allow_free_tier_affiliates, FALSE) AS allow_free_tier_affiliates,
+    min_withdrawal_idr
+"#;
+
+pub async fn fetch_affiliate_control(pool: &PgPool) -> AppResult<AffiliateControlRow> {
+    let sql = format!("SELECT {AFF_CTRL_COLS} FROM affiliate_program_config WHERE config_id = 1");
+    Ok(sqlx::query_as::<_, AffiliateControlRow>(&sql).fetch_one(pool).await?)
+}
+
+pub async fn fetch_affiliate_control_tx(
+    tx: &mut Transaction<'_, Postgres>,
+) -> AppResult<AffiliateControlRow> {
+    let sql = format!("SELECT {AFF_CTRL_COLS} FROM affiliate_program_config WHERE config_id = 1 FOR UPDATE");
+    Ok(sqlx::query_as::<_, AffiliateControlRow>(&sql).fetch_one(&mut **tx).await?)
+}
+
+pub async fn update_affiliate_control_tx(
+    tx: &mut Transaction<'_, Postgres>,
+    is_active: bool,
+    buyer_discount_bps: i32,
+    commission_bps: i32,
+    allow_free_tier: bool,
+    min_withdrawal_idr: i64,
+) -> AppResult<AffiliateControlRow> {
+    let sql = format!(
+        "UPDATE affiliate_program_config
+         SET is_program_active = $1,
+             buyer_discount_bps = $2,
+             affiliate_commission_bps = $3,
+             allow_free_tier_affiliates = $4,
+             min_withdrawal_idr = $5,
+             updated_at = NOW()
+         WHERE config_id = 1
+         RETURNING {AFF_CTRL_COLS}"
+    );
+    let updated = sqlx::query_as::<_, AffiliateControlRow>(&sql)
+        .bind(is_active)
+        .bind(buyer_discount_bps)
+        .bind(commission_bps)
+        .bind(allow_free_tier)
+        .bind(min_withdrawal_idr)
+        .fetch_one(&mut **tx)
+        .await?;
+
+    let display_name = format!("Program Afiliasi {}%", (commission_bps / 100).max(1));
+    let _ = sqlx::query(
+        "UPDATE system_feature_controls SET display_name = $1, updated_at = NOW() WHERE feature_key = 'AFFILIATE_PROGRAM'",
+    )
+    .bind(display_name)
+    .execute(&mut **tx)
+    .await;
+
+    Ok(updated)
 }

@@ -15,6 +15,7 @@ pub struct AffiliateConfigRow {
     pub max_withdrawal_per_day_idr: i64,
     pub withdrawal_admin_fee_idr: i64,
     pub first_purchase_only: bool,
+    pub allow_free_tier_affiliates: bool,
 }
 
 #[derive(Debug, Clone, FromRow)]

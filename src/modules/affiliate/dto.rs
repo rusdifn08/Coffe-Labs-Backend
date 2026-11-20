@@ -62,6 +62,8 @@ pub struct PayoutProofSignatureReqDto {
 
 #[derive(Debug, Serialize)]
 pub struct AffiliateProgramTermsDto {
+    pub is_program_active: bool,
+    pub allow_free_tier_affiliates: bool,
     pub buyer_discount_bps: i32,
     pub affiliate_commission_bps: i32,
     pub min_withdrawal_idr: i64,

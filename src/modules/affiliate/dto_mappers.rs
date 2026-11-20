@@ -112,6 +112,8 @@ pub fn build_terms_dto(cfg: &AffiliateConfigRow) -> AffiliateProgramTermsDto {
     let pro = compute_checkout_affiliate_pricing(99_000, cfg);
     let biz = compute_checkout_affiliate_pricing(249_000, cfg);
     AffiliateProgramTermsDto {
+        is_program_active: cfg.is_program_active,
+        allow_free_tier_affiliates: cfg.allow_free_tier_affiliates,
         buyer_discount_bps: cfg.buyer_discount_bps,
         affiliate_commission_bps: cfg.affiliate_commission_bps,
         min_withdrawal_idr: cfg.min_withdrawal_idr,
