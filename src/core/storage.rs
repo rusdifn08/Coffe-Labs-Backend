@@ -83,6 +83,7 @@ impl CloudinaryStorage {
     pub fn unconfigured() -> Self { Self { credentials: None } }
     pub fn is_configured(&self) -> bool { self.credentials.is_some() }
     pub fn cloud_name(&self) -> Option<&str> { self.credentials.as_ref().map(|c| c.cloud_name.as_str()) }
+    pub fn credentials(&self) -> Option<&CloudinaryConfig> { self.credentials.as_ref() }
 
     pub fn generate_upload_signature(
         &self,

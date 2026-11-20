@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coffee Labs — Real-Time Admin Control Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            roast: '#2A1E17',
+            espresso: '#4A2C1D',
+            cream: '#FAF6F0',
+            gold: '#D4A373',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { background: #FAF6F0; color: #2A1E17; font-family: Inter, system-ui, -apple-system, sans-serif; }
+    .card-shadow { box-shadow: 0 6px 24px rgba(42, 30, 23, 0.06); }
+    .status-maintenance { background: #FEF2F2; border-color: #FCA5A5; color: #DC2626; }
+    .status-coming-soon { background: #EEF2FF; border-color: #C7D2FE; color: #4F46E5; }
+    .status-updated { background: #ECFDF5; border-color: #6EE7B7; color: #047857; }
+    .status-unlocked { background: #FFFFFF; border-color: #E7DDD0; color: #2A1E17; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- TOP HEADER -->
+  <header class="bg-roast text-white border-b border-amber-900/40 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-400/30 flex items-center justify-center text-xl">☕</div>
+        <div>
+          <h1 class="text-base sm:text-lg font-extrabold tracking-tight">Coffee Labs — Real-Time Admin Control Panel</h1>
+          <p class="text-xs text-amber-200/80">Lock/Unlock Barista Toolkit (`Maintenance` / `Coming Soon` / `Updated`) &amp; Dynamic Pricing Pro/Business</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <span id="ws-pill" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-950 text-amber-300 border border-amber-700/60">● Menghubungkan WS...</span>
+        <span id="ver-pill" class="px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-amber-200">Versi #1 • 0 Perangkat</span>
+        <a href="/dashboard" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white/10 hover:bg-white/20 transition">📊 Telemetry Hub</a>
+        <button id="logout-btn" onclick="logoutAdmin()" class="hidden px-3 py-1.5 rounded-lg text-xs font-bold bg-red-600/80 hover:bg-red-600 transition">Keluar</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- LOGIN GATE -->
+  <main id="login-view" class="max-w-md mx-auto mt-14 px-4">
+    <div class="bg-white rounded-2xl border border-amber-900/15 p-6 card-shadow">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-11 h-11 rounded-xl bg-roast text-gold flex items-center justify-center text-xl">🔐</div>
+        <div>
+          <h2 class="text-lg font-extrabold text-roast">Masuk Superadmin</h2>
+          <p class="text-xs text-stone-500">Hanya akun ber-role <strong>ADMIN</strong> yang dapat mengubah lock &amp; harga.</p>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1">Username / Email Admin</label>
+          <input id="login-user" type="text" placeholder="rusdifn08" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-espresso" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1">Password</label>
+          <input id="login-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')loginAdmin()" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-espresso" />
+        </div>
+        <div id="login-err" class="hidden text-xs font-semibold text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"></div>
+        <button id="login-submit" onclick="loginAdmin()" class="w-full py-2.5 rounded-xl bg-roast hover:bg-espresso text-white font-bold text-sm transition">
+          🔓 Masuk ke Control Panel
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- MAIN CONTROL WORKSPACE -->
+  <main id="app-view" class="hidden max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
+    <!-- TAB NAVIGATION -->
+    <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-2.5 rounded-2xl border border-stone-200 card-shadow">
+      <div class="flex flex-wrap gap-2">
+        <button id="tab-btn-locks" onclick="switchTab('locks')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-roast text-white transition">
+          🔐 Lock &amp; Status Kartu Toolkit (<span id="locked-count-badge">0</span>)
+        </button>
+        <button id="tab-btn-pricing" onclick="switchTab('pricing')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-stone-100 text-stone-700 hover:bg-stone-200 transition">
+          💰 Harga Pro &amp; Business
+        </button>
+        <button id="tab-btn-audit" onclick="switchTab('audit')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-stone-100 text-stone-700 hover:bg-stone-200 transition">
+          📜 Audit Log Admin
+        </button>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="admin-badge" class="text-xs font-bold text-espresso bg-amber-100 px-3 py-1 rounded-lg">@admin</span>
+        <button onclick="refreshAll()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 hover:bg-stone-200">🔄 Refresh</button>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="hidden fixed bottom-5 right-5 z-50 px-4 py-3 rounded-xl text-sm font-bold text-white bg-roast shadow-2xl border border-gold/40"></div>
+
+    <!-- TAB 1: FEATURE CARD LOCK MANAGER -->
+    <section id="tab-locks" class="space-y-4">
+      <div class="bg-white rounded-2xl border border-stone-200 p-4 flex flex-wrap items-center justify-between gap-3 card-shadow">
+        <div class="flex flex-wrap items-center gap-2 flex-1 min-w-[240px]">
+          <input id="feature-search" oninput="renderFeatures()" placeholder="Cari kartu Barista Toolkit..." class="px-3.5 py-2 rounded-xl border border-stone-300 text-xs sm:text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-espresso" />
+          <select id="section-filter" onchange="renderFeatures()" class="px-3 py-2 rounded-xl border border-stone-300 text-xs sm:text-sm bg-white font-semibold">
+            <option value="ALL">Semua Seksi</option>
+            <option value="LEARNING_BREW">Learning Brew</option>
+            <option value="EKOSISTEM_KOMUNITAS">Ekosistem &amp; Komunitas</option>
+            <option value="LAB_EKSTRAKSI_AI">Lab Ekstraksi &amp; AI</option>
+            <option value="SAINS_KOPI">Sains Kopi</option>
+            <option value="MONETISASI_BISNIS">Monetisasi &amp; Bisnis</option>
+          </select>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="bulkLockAction(true)" class="px-3.5 py-2 rounded-xl text-xs font-extrabold bg-red-600 hover:bg-red-700 text-white transition">
+            ⚠️ Lock Semua (Maintenance)
+          </button>
+          <button onclick="bulkLockAction(false)" class="px-3.5 py-2 rounded-xl text-xs font-extrabold bg-emerald-600 hover:bg-emerald-700 text-white transition">
+            🔓 Unlock Semua Kartu
+          </button>
+        </div>
+      </div>
+
+      <!-- Legend warna -->
+      <div class="flex flex-wrap gap-2 text-xs font-bold">
+        <span class="px-3 py-1 rounded-full bg-white border border-stone-300 text-stone-700">✅ ACTIVE (Normal)</span>
+        <span class="px-3 py-1 rounded-full status-maintenance border">🔧 MAINTENANCE (#DC2626)</span>
+        <span class="px-3 py-1 rounded-full status-coming-soon border">🚀 COMING SOON (#4F46E5)</span>
+        <span class="px-3 py-1 rounded-full status-updated border">✨ UPDATED (#047857)</span>
+      </div>
+
+      <div id="features-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- TAB 2: PRO & BUSINESS DYNAMIC PRICING -->
+    <section id="tab-pricing" class="hidden space-y-4">
+      <div class="bg-amber-50 border border-amber-300 rounded-2xl p-4 text-xs sm:text-sm text-amber-950">
+        <strong>💡 In-Flight Invoice Protection:</strong> Perubahan harga di bawah langsung aktif real-time pada layar <em>Upgrade Plan</em> semua pengguna, checkout <strong>QRIS Dinamis</strong> baru, dan <strong>Komisi Afiliasi 20%</strong>. Transaksi QRIS yang masih <em>PENDING</em> tetap aman di nominal awal.
+      </div>
+      <div id="pricing-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- TAB 3: AUDIT LOGS -->
+    <section id="tab-audit" class="hidden space-y-3">
+      <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden card-shadow">
+        <div class="px-4 py-3 border-b border-stone-200 flex items-center justify-between">
+          <h3 class="font-extrabold text-sm text-roast">📜 Riwayat Perubahan Admin (Immutable Audit Log)</h3>
+          <button onclick="loadAuditLogs()" class="px-3 py-1 rounded-lg text-xs font-bold bg-stone-100 hover:bg-stone-200">Muat Ulang</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-stone-50 text-stone-600 uppercase font-bold">
+              <tr>
+                <th class="px-4 py-3">Waktu</th>
+                <th class="px-4 py-3">Admin</th>
+                <th class="px-4 py-3">Kategori</th>
+                <th class="px-4 py-3">Target</th>
+                <th class="px-4 py-3">Perubahan</th>
+                <th class="px-4 py-3">Versi</th>
+              </tr>
+            </thead>
+            <tbody id="audit-tbody" class="divide-y divide-stone-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL EDIT LOCK KARTU -->
+  <div id="lock-modal" class="hidden fixed inset-0 z-50 bg-black/55 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl border border-stone-200">
+      <div class="flex items-start justify-between gap-2">
+        <div>
+          <span id="modal-feature-key" class="text-[11px] font-mono font-bold text-stone-500"></span>
+          <h3 id="modal-feature-name" class="text-lg font-extrabold text-roast"></h3>
+        </div>
+        <button onclick="closeLockModal()" class="text-stone-400 hover:text-stone-700 text-xl font-bold">✕</button>
+      </div>
+
+      <label class="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200 cursor-pointer">
+        <div>
+          <div class="text-sm font-extrabold text-roast">Kunci Kartu Fitur Ini</div>
+          <div class="text-xs text-stone-500">User non-Admin tidak bisa masuk ke fitur saat terkunci.</div>
+        </div>
+        <input id="m-locked" type="checkbox" onchange="updateModalStatusVisibility()" class="w-5 h-5 accent-red-600" />
+      </label>
+
+      <div id="m-status-section" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1.5">Status Kunci &amp; Warna Teks Kartu</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" onclick="selectModalStatus('MAINTENANCE')" id="btn-st-MAINTENANCE" class="py-2 px-2 rounded-xl border text-xs font-extrabold transition">🔧 Maintenance</button>
+            <button type="button" onclick="selectModalStatus('COMING_SOON')" id="btn-st-COMING_SOON" class="py-2 px-2 rounded-xl border text-xs font-extrabold transition">🚀 Coming Soon</button>
+            <button type="button" onclick="selectModalStatus('UPDATED')" id="btn-st-UPDATED" class="py-2 px-2 rounded-xl border text-xs font-extrabold transition">✨ Updated</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">Override Teks Pill (Opsional)</label>
+            <input id="m-badge" type="text" placeholder="Default sesuai status" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">Estimasi Selesai / ETA (Opsional)</label>
+            <input id="m-eta" type="datetime-local" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1">Judul Pesan Kunci</label>
+          <input id="m-title" type="text" placeholder="Contoh: Sedang Sinkronisasi Katalog Baru" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1">Pesan Kustom untuk Pengguna</label>
+          <textarea id="m-message" rows="2" placeholder="Ditampilkan langsung di kartu &amp; bottom sheet user..." class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs"></textarea>
+        </div>
+        <label class="flex items-center gap-2 text-xs font-bold text-stone-700 cursor-pointer">
+          <input id="m-bypass" type="checkbox" class="w-4 h-4 accent-emerald-600" checked />
+          Izinkan Akun Admin Tetap Masuk (Admin QA Bypass)
+        </label>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-stone-100">
+        <button onclick="closeLockModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-stone-100 hover:bg-stone-200">Batal</button>
+        <button onclick="saveLockModal()" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-roast hover:bg-espresso text-white">⚡ Terapkan Real-Time ke Semua Akun</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let jwtToken = sessionStorage.getItem('cl_admin_ctrl_jwt') || '';
+    let adminName = sessionStorage.getItem('cl_admin_ctrl_name') || '@admin';
+    let currentSnapshot = { config_version: 1, connected_clients: 0, features: [], plans: [] };
+    let editingFeatureKey = null;
+    let selectedModalStatus = 'MAINTENANCE';
+    let ws = null;
+
+    const STATUS_META = {
+      MAINTENANCE: { cls: 'status-maintenance', pill: 'MAINTENANCE', icon: '🔧', defaultMsg: 'Sedang dalam perbaikan sistem...' },
+      COMING_SOON: { cls: 'status-coming-soon', pill: 'COMING SOON', icon: '🚀', defaultMsg: 'Fitur baru segera hadir!' },
+      UPDATED:     { cls: 'status-updated',     pill: 'UPDATED',     icon: '✨', defaultMsg: 'Pembaruan versi sedang diterapkan...' },
+      UNLOCKED:    { cls: 'status-unlocked',    pill: 'ACTIVE',      icon: '✅', defaultMsg: 'Aktif & dapat diakses semua user' },
+    };
+
+    function fmtRp(n) {
+      return 'Rp ' + Number(n || 0).toLocaleString('id-ID');
+    }
+
+    function showToast(msg, isErr = false) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = `fixed bottom-5 right-5 z-50 px-4 py-3 rounded-xl text-sm font-bold text-white shadow-2xl border ${isErr ? 'bg-red-700 border-red-400' : 'bg-roast border-gold/40'}`;
+      el.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => el.classList.add('hidden'), 3200);
+    }
+
+    async function apiFetch(path, opts = {}) {
+      const headers = Object.assign({ 'Content-Type': 'application/json' }, opts.headers || {});
+      if (jwtToken) headers['Authorization'] = `Bearer ${jwtToken}`;
+      const res = await fetch(path, Object.assign({}, opts, { headers }));
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || `HTTP ${res.status}`);
+      return data;
+    }
+
+    async function loginAdmin() {
+      const username = document.getElementById('login-user').value.trim();
+      const password = document.getElementById('login-pass').value;
+      const errEl = document.getElementById('login-err');
+      errEl.classList.add('hidden');
+      try {
+        const res = await apiFetch('/api/v1/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ username, password }),
+        });
+        const payload = res.data || res;
+        const token = payload.token || payload.access_token;
+        const user = payload.user || {};
+        if (!token || (user.role || '').toLowerCase() !== 'admin') {
+          throw new Error('Akun ini tidak memiliki hak akses role ADMIN.');
+        }
+        jwtToken = token;
+        adminName = '@' + (user.username || username);
+        sessionStorage.setItem('cl_admin_ctrl_jwt', jwtToken);
+        sessionStorage.setItem('cl_admin_ctrl_name', adminName);
+        enterWorkspace();
+      } catch (e) {
+        errEl.textContent = e.message;
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    function logoutAdmin() {
+      jwtToken = '';
+      sessionStorage.removeItem('cl_admin_ctrl_jwt');
+      sessionStorage.removeItem('cl_admin_ctrl_name');
+      if (ws) ws.close();
+      document.getElementById('app-view').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('login-view').classList.remove('hidden');
+    }
+
+    function enterWorkspace() {
+      document.getElementById('login-view').classList.add('hidden');
+      document.getElementById('app-view').classList.remove('hidden');
+      document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('admin-badge').textContent = adminName;
+      connectControlWs();
+      refreshAll();
+    }
+
+    function connectControlWs() {
+      if (ws) try { ws.close(); } catch (_) {}
+      const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${proto}//${location.host}/api/v1/system/control-ws`);
+      ws.onopen = () => {
+        const pill = document.getElementById('ws-pill');
+        pill.textContent = '🟢 LIVE REAL-TIME WS';
+        pill.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 text-emerald-300 border border-emerald-600/60';
+      };
+      ws.onmessage = (ev) => {
+        try {
+          const frame = JSON.parse(ev.data);
+          if (frame.event === 'SNAPSHOT_SYNCED' && frame.snapshot) {
+            applySnapshot(frame.snapshot);
+          } else if (frame.event === 'HEARTBEAT') {
+            document.getElementById('ver-pill').textContent = `Versi #${frame.config_version} • ${frame.connected_clients} Perangkat`;
+          }
+        } catch (_) {}
+      };
+      ws.onclose = () => {
+        const pill = document.getElementById('ws-pill');
+        pill.textContent = '🟠 Reconnecting WS...';
+        pill.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-950 text-amber-300 border border-amber-700/60';
+        if (jwtToken) setTimeout(connectControlWs, 3000);
+      };
+    }
+
+    function applySnapshot(snap) {
+      currentSnapshot = snap;
+      document.getElementById('ver-pill').textContent = `Versi #${snap.config_version} • ${snap.connected_clients || 0} Perangkat`;
+      const lockedCount = (snap.features || []).filter(f => f.is_locked).length;
+      document.getElementById('locked-count-badge').textContent = `${lockedCount}/${(snap.features || []).length} Terkunci`;
+      renderFeatures();
+      renderPricing();
+    }
+
+    async function refreshAll() {
+      try {
+        const res = await apiFetch('/api/v1/admin/control/features');
+        if (res.data) applySnapshot(res.data);
+        await loadAuditLogs();
+      } catch (e) {
+        if (e.message.includes('401') || e.message.includes('403')) logoutAdmin();
+        else showToast(e.message, true);
+      }
+    }
+
+    function switchTab(name) {
+      ['locks', 'pricing', 'audit'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== name);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        btn.className = t === name
+          ? 'px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-roast text-white transition'
+          : 'px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold bg-stone-100 text-stone-700 hover:bg-stone-200 transition';
+      });
+      if (name === 'audit') loadAuditLogs();
+    }
+
+    function renderFeatures() {
+      const q = (document.getElementById('feature-search').value || '').toLowerCase();
+      const sec = document.getElementById('section-filter').value;
+      const list = (currentSnapshot.features || []).filter(f => {
+        if (sec !== 'ALL' && f.group_section !== sec) return false;
+        if (q && !`${f.display_name} ${f.feature_key} ${f.route_prefix}`.toLowerCase().includes(q)) return false;
+        return true;
+      });
+      const grid = document.getElementById('features-grid');
+      grid.innerHTML = list.map(f => {
+        const stKey = f.is_locked ? (f.lock_status || 'MAINTENANCE') : 'UNLOCKED';
+        const meta = STATUS_META[stKey] || STATUS_META.MAINTENANCE;
+        const badgeText = f.is_locked ? (f.custom_badge_label || meta.pill) : 'ACTIVE';
+        const subText = f.is_locked ? (f.lock_message || meta.defaultMsg) : `${f.route_prefix} • Akses Normal`;
+        return `
+          <div class="rounded-2xl border-2 p-4 transition card-shadow ${f.is_locked ? meta.cls : 'bg-white border-stone-200'}">
+            <div class="flex items-start justify-between gap-2 mb-2.5">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider opacity-70">${f.group_section.replaceAll('_', ' ')}</span>
+                <h4 class="text-sm font-extrabold text-roast">${f.display_name}</h4>
+                <span class="text-[10px] font-mono text-stone-500">${f.feature_key}</span>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg text-[10px] font-black border ${f.is_locked ? meta.cls : 'bg-emerald-50 border-emerald-200 text-emerald-700'}">
+                ${f.is_locked ? '🔒 ' : '✅ '}${badgeText}
+              </span>
+            </div>
+            <p class="text-xs font-semibold mb-3 line-clamp-2 ${f.is_locked ? '' : 'text-stone-500'}">${subText}</p>
+            <div class="flex items-center justify-between gap-2 pt-2.5 border-t border-black/10">
+              <button onclick="quickToggleLock('${f.feature_key}', ${!f.is_locked})" class="px-3 py-1.5 rounded-lg text-xs font-extrabold ${f.is_locked ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-red-600 text-white hover:bg-red-700'} transition">
+                ${f.is_locked ? '🔓 Unlock Cepat' : '🔒 Lock Cepat'}
+              </button>
+              <button onclick="openLockModal('${f.feature_key}')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white/90 hover:bg-white border border-stone-300 text-roast">
+                ⚙️ Atur Status &amp; Pesan
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    async function quickToggleLock(featureKey, nextLocked) {
+      const f = (currentSnapshot.features || []).find(x => x.feature_key === featureKey);
+      if (!f) return;
+      try {
+        const res = await apiFetch(`/api/v1/admin/control/features/${featureKey}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            is_locked: nextLocked,
+            lock_status: nextLocked ? (f.lock_status === 'UNLOCKED' ? 'MAINTENANCE' : f.lock_status) : 'UNLOCKED',
+            custom_badge_label: f.custom_badge_label,
+            lock_title: f.lock_title || '',
+            lock_message: f.lock_message || '',
+            estimated_unlock_at: f.estimated_unlock_at,
+            allow_admin_bypass: f.allow_admin_bypass,
+          }),
+        });
+        if (res.data) applySnapshot(res.data);
+        showToast(`${f.display_name} berhasil di-${nextLocked ? 'LOCK' : 'UNLOCK'} secara real-time!`);
+      } catch (e) { showToast(e.message, true); }
+    }
+
+    async function bulkLockAction(shouldLock) {
+      if (!confirm(shouldLock ? 'Kunci SEMUA kartu Barista Toolkit dalam mode MAINTENANCE secara real-time?' : 'Buka kunci (UNLOCK) semua kartu Barista Toolkit sekarang?')) return;
+      try {
+        const res = await apiFetch('/api/v1/admin/control/features/bulk-lock', {
+          method: 'POST',
+          body: JSON.stringify({
+            is_locked: shouldLock,
+            lock_status: shouldLock ? 'MAINTENANCE' : 'UNLOCKED',
+            lock_title: shouldLock ? 'Maintenance Sistem Terjadwal' : '',
+            lock_message: shouldLock ? 'Tim Coffee Labs sedang melakukan pemeliharaan sistem menyeluruh. Mohon tunggu sebentar.' : '',
+            allow_admin_bypass: true,
+          }),
+        });
+        if (res.data && res.data.snapshot) applySnapshot(res.data.snapshot);
+        showToast(shouldLock ? 'Seluruh kartu berhasil di-LOCK (Maintenance) real-time!' : 'Seluruh kartu berhasil di-UNLOCK real-time!');
+      } catch (e) { showToast(e.message, true); }
+    }
+
+    function openLockModal(featureKey) {
+      const f = (currentSnapshot.features || []).find(x => x.feature_key === featureKey);
+      if (!f) return;
+      editingFeatureKey = featureKey;
+      document.getElementById('modal-feature-key').textContent = f.feature_key;
+      document.getElementById('modal-feature-name').textContent = f.display_name;
+      document.getElementById('m-locked').checked = !!f.is_locked;
+      document.getElementById('m-badge').value = f.custom_badge_label || '';
+      document.getElementById('m-title').value = f.lock_title || '';
+      document.getElementById('m-message').value = f.lock_message || '';
+      document.getElementById('m-bypass').checked = f.allow_admin_bypass !== false;
+      document.getElementById('m-eta').value = f.estimated_unlock_at ? f.estimated_unlock_at.slice(0, 16) : '';
+      selectModalStatus(f.lock_status && f.lock_status !== 'UNLOCKED' ? f.lock_status : 'MAINTENANCE');
+      updateModalStatusVisibility();
+      document.getElementById('lock-modal').classList.remove('hidden');
+    }
+
+    function closeLockModal() {
+      document.getElementById('lock-modal').classList.add('hidden');
+    }
+
+    function updateModalStatusVisibility() {
+      const locked = document.getElementById('m-locked').checked;
+      document.getElementById('m-status-section').classList.toggle('opacity-40', !locked);
+    }
+
+    function selectModalStatus(st) {
+      selectedModalStatus = st;
+      ['MAINTENANCE', 'COMING_SOON', 'UPDATED'].forEach(k => {
+        const el = document.getElementById(`btn-st-${k}`);
+        const meta = STATUS_META[k];
+        el.className = k === st
+          ? `py-2 px-2 rounded-xl border-2 text-xs font-extrabold ${meta.cls} ring-2 ring-offset-1 ring-roast/20`
+          : 'py-2 px-2 rounded-xl border border-stone-200 bg-stone-50 text-stone-600 text-xs font-bold';
+      });
+    }
+
+    async function saveLockModal() {
+      if (!editingFeatureKey) return;
+      const isLocked = document.getElementById('m-locked').checked;
+      const etaRaw = document.getElementById('m-eta').value;
+      const etaIso = etaRaw ? new Date(etaRaw).toISOString() : null;
+      try {
+        const res = await apiFetch(`/api/v1/admin/control/features/${editingFeatureKey}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            is_locked: isLocked,
+            lock_status: isLocked ? selectedModalStatus : 'UNLOCKED',
+            custom_badge_label: document.getElementById('m-badge').value.trim() || null,
+            lock_title: document.getElementById('m-title').value.trim(),
+            lock_message: document.getElementById('m-message').value.trim(),
+            estimated_unlock_at: etaIso,
+            allow_admin_bypass: document.getElementById('m-bypass').checked,
+          }),
+        });
+        if (res.data) applySnapshot(res.data);
+        closeLockModal();
+        showToast(`Perubahan ${editingFeatureKey} langsung dieksekusi ke semua perangkat!`);
+      } catch (e) { showToast(e.message, true); }
+    }
+
+    function renderPricing() {
+      const grid = document.getElementById('pricing-grid');
+      grid.innerHTML = (currentSnapshot.plans || []).map(p => {
+        const isBiz = p.target_tier === 'business';
+        const disc10 = Math.round(p.base_price_idr * 0.9);
+        const comm20 = Math.round(p.base_price_idr * 0.2);
+        return `
+          <div class="bg-white rounded-2xl border-2 ${p.is_active ? 'border-espresso/40' : 'border-stone-200 opacity-85'} p-5 space-y-3 card-shadow">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase ${isBiz ? 'bg-amber-100 text-amber-900' : 'bg-indigo-100 text-indigo-800'}">${p.plan_code}</span>
+                <h4 class="text-sm font-extrabold text-roast mt-1">${p.display_name}</h4>
+              </div>
+              <label class="flex items-center gap-1.5 text-xs font-bold">
+                <input id="p-active-${p.plan_code}" type="checkbox" ${p.is_active ? 'checked' : ''} class="w-4 h-4 accent-emerald-600" />
+                Aktif
+              </label>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-stone-600 mb-1">Harga Jual Aktif (Rp)</label>
+                <input id="p-price-${p.plan_code}" type="number" min="1000" step="1000" value="${p.base_price_idr}" oninput="updatePricePreview('${p.plan_code}')" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm font-extrabold text-roast" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-stone-600 mb-1">Harga Coret Promo (Rp)</label>
+                <input id="p-orig-${p.plan_code}" type="number" min="0" step="1000" value="${p.original_price_idr || ''}" placeholder="Opsional" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-stone-600 mb-1">Badge Promo</label>
+                <input id="p-badge-${p.plan_code}" type="text" value="${p.promo_badge_text || ''}" placeholder="POPULER / HEMAT 30%" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-stone-600 mb-1">Durasi (Hari)</label>
+                <input id="p-days-${p.plan_code}" type="number" min="1" value="${p.duration_days}" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs" />
+              </div>
+            </div>
+
+            <div id="p-preview-${p.plan_code}" class="p-3 rounded-xl bg-cream border border-amber-900/15 text-[11.5px] font-semibold text-espresso">
+              QRIS: <strong>${fmtRp(p.base_price_idr)}</strong> • Setelah Referral 10%: <strong>${fmtRp(disc10)}</strong> • Komisi Afiliasi 20%: <strong>${fmtRp(comm20)}</strong>
+            </div>
+
+            <button onclick="savePlanPrice('${p.plan_code}')" class="w-full py-2.5 rounded-xl bg-roast hover:bg-espresso text-white font-extrabold text-xs transition">
+              💾 Simpan &amp; Broadcast Harga ${p.plan_code}
+            </button>
+          </div>`;
+      }).join('');
+    }
+
+    function updatePricePreview(code) {
+      const val = Number(document.getElementById(`p-price-${code}`).value || 0);
+      const disc10 = Math.round(val * 0.9);
+      const comm20 = Math.round(val * 0.2);
+      document.getElementById(`p-preview-${code}`).innerHTML =
+        `QRIS: <strong>${fmtRp(val)}</strong> • Setelah Referral 10%: <strong>${fmtRp(disc10)}</strong> • Komisi Afiliasi 20%: <strong>${fmtRp(comm20)}</strong>`;
+    }
+
+    async function savePlanPrice(code) {
+      const base_price_idr = Number(document.getElementById(`p-price-${code}`).value || 0);
+      const origRaw = document.getElementById(`p-orig-${code}`).value;
+      const original_price_idr = origRaw ? Number(origRaw) : null;
+      const promo_badge_text = document.getElementById(`p-badge-${code}`).value.trim() || null;
+      const duration_days = Number(document.getElementById(`p-days-${code}`).value || 30);
+      const is_active = document.getElementById(`p-active-${code}`).checked;
+      try {
+        const res = await apiFetch(`/api/v1/admin/control/pricing/${code}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            base_price_idr,
+            original_price_idr,
+            promo_badge_text,
+            duration_days,
+            is_active,
+          }),
+        });
+        if (res.data) applySnapshot(res.data);
+        showToast(`Harga ${code} (${fmtRp(base_price_idr)}) berhasil disiarkan real-time!`);
+      } catch (e) { showToast(e.message, true); }
+    }
+
+    async function loadAuditLogs() {
+      try {
+        const res = await apiFetch('/api/v1/admin/control/audit-logs?limit=50');
+        const tbody = document.getElementById('audit-tbody');
+        tbody.innerHTML = (res.data || []).map(l => `
+          <tr class="hover:bg-stone-50">
+            <td class="px-4 py-2.5 whitespace-nowrap text-stone-500">${new Date(l.created_at).toLocaleString('id-ID')}</td>
+            <td class="px-4 py-2.5 font-bold text-roast">${l.admin_email}</td>
+            <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded bg-stone-100 font-bold text-[10px]">${l.action_category}</span></td>
+            <td class="px-4 py-2.5 font-mono font-bold text-espresso">${l.target_key}</td>
+            <td class="px-4 py-2.5 font-mono text-[11px] text-stone-600 max-w-md truncate">${JSON.stringify(l.new_state)}</td>
+            <td class="px-4 py-2.5 font-bold text-emerald-700">#${l.config_version_after}</td>
+          </tr>`).join('') || '<tr><td colspan="6" class="px-4 py-6 text-center text-stone-400">Belum ada catatan perubahan admin.</td></tr>';
+      } catch (_) {}
+    }
+
+    if (jwtToken) enterWorkspace();
+  </script>
+</body>
+</html>

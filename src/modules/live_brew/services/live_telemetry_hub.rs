@@ -11,6 +11,7 @@ use uuid::Uuid;
 use crate::modules::live_brew::{
     dto::{CatchupCurvePoint, WebRtcSignalPayload},
     protocol::ViewerDownstreamEvent,
+    services::mirror_state_hub::MirrorStateHub,
 };
 
 const MAX_RAM_CURVE_POINTS: usize = 900;
@@ -18,6 +19,7 @@ const CHANNEL_CAP: usize = 128;
 
 pub struct LiveTelemetryHub {
     pub redis_pool: Option<RedisPool>,
+    pub mirror_hub: Arc<MirrorStateHub>,
     session_channels: DashMap<Uuid, broadcast::Sender<Arc<ViewerDownstreamEvent>>>,
     table_waiting_channels: DashMap<String, broadcast::Sender<Arc<ViewerDownstreamEvent>>>,
     barista_cheer_channels: DashMap<Uuid, broadcast::Sender<String>>,
@@ -30,8 +32,10 @@ pub struct LiveTelemetryHub {
 
 impl LiveTelemetryHub {
     pub fn new(redis_pool: Option<RedisPool>) -> Self {
+        let mirror_hub = Arc::new(MirrorStateHub::new(redis_pool.clone()));
         Self {
             redis_pool,
+            mirror_hub,
             session_channels: DashMap::new(),
             table_waiting_channels: DashMap::new(),
             barista_cheer_channels: DashMap::new(),

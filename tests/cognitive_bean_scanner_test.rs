@@ -342,3 +342,36 @@ fn test_fuzzy_typo_tasting_notes() {
     assert!(matched.contains(&"Black Tea".to_string()));
     assert!(matched.contains(&"Milk Chocolate".to_string()));
 }
+
+#[test]
+fn test_sabang_to_merauke_and_world_origins_zero_hallucination() {
+    // 1. Sabang -> Merauke Nusantara micro-regions
+    let colol = CognitiveResolver::analyze("FLORES COLOL MANGGARAI\nHONEY PROCESS\nJURIA", &[]);
+    assert!(colol.origin.contains("Flores"), "got {}", colol.origin);
+    assert_eq!(colol.variety, "Juria");
+    assert_eq!(colol.process, "Honey Process");
+
+    let tiom = CognitiveResolver::analyze("PAPUA TIOM LANNY JAYA\nFULL WASHED\nTYPICA", &[]);
+    assert!(tiom.origin.contains("Papua"), "got {}", tiom.origin);
+    assert_eq!(tiom.variety, "Typica");
+
+    let libtukom = CognitiveResolver::analyze("LIBTUKOM TUNGKAL JAMBI\nNATURAL", &[]);
+    assert!(libtukom.origin.contains("Jambi"), "got {}", libtukom.origin);
+    assert_eq!(libtukom.variety, "Libtukom");
+
+    // 2. Global specialty origin + exotic varietal + modern fermentation
+    let colombia = CognitiveResolver::analyze(
+        "COLOMBIA HUILA EL PARAISO\nPINK BOURBON\nTHERMAL SHOCK\nPeach, Jasmine, Lychee",
+        &[],
+    );
+    assert!(colombia.origin.contains("Colombia"), "got {}", colombia.origin);
+    assert_eq!(colombia.variety, "Pink Bourbon");
+    assert_eq!(colombia.notes_source, "OCR_EXPLICIT");
+
+    // 3. Anti-Hallucination Gate: random non-coffee / gibberish text MUST NOT invent 94.5% Indonesia Washed!
+    let noise = CognitiveResolver::analyze("12345 XYZ QWRTY RANDOM RECEIPT #998", &[]);
+    assert!(noise.confidence_score < 40.0, "must stay low confidence, got {}", noise.confidence_score);
+    assert_eq!(noise.notes_source, "LOW_CONFIDENCE_NO_MATCH");
+    assert_eq!(noise.origin, "Belum Terdeteksi");
+    assert!(noise.tasting_notes.is_empty());
+}

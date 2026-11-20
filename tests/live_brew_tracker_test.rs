@@ -21,8 +21,17 @@ use coffe_labs_backend::{
                 verify_and_classify_code, verify_luhn_13, AddressCodeKind,
             },
             dto::{CatchupCurvePoint, WebRtcSignalPayload},
+            mirror_dto::LiveSessionMirrorSnapshot,
+            mirror_models::slugify_livebrew_segment,
+            mirror_protocol::{
+                BrewerMirrorCommand, LiveBrewMirrorPhase, LiveTimerStatus, MirrorDownstreamFrame,
+            },
             protocol::{LiveBrewStage, ViewerDownstreamEvent},
-            services::live_telemetry_hub::LiveTelemetryHub,
+            services::{
+                live_telemetry_hub::LiveTelemetryHub,
+                mirror_state_hub::MirrorStateHub,
+                mirror_state_machine::apply_mirror_command,
+            },
         },
         monitoring::MonitoringEngine,
         notifications::services::producer_service::NotificationProducerService,
@@ -51,6 +60,7 @@ async fn offline_state() -> AppState {
         google_application_credentials: None,
         fcm_project_id: "coffe-labs-test".to_string(),
         cloudinary_url: None,
+        geoapify_api_key: None,
         jwt_secret: secrecy::SecretString::from(
             "test_secret_64_bytes_minimum_entropy_0123456789abcdef0123456789".to_string(),
         ),
@@ -106,6 +116,7 @@ async fn offline_state() -> AppState {
         taste_profiler,
         monitoring: MonitoringEngine::init(None),
         live_brew_hub: Arc::new(LiveTelemetryHub::new(None)),
+        admin_control: coffe_labs_backend::modules::admin_control::RuntimeSnapshotStore::empty(None),
     }
 }
 
@@ -213,6 +224,7 @@ async fn router_validates_luhn_in_ram_and_protects_barista_endpoints() {
     assert_eq!(bad_resolve.status(), StatusCode::BAD_REQUEST);
 
     let unauth_create = app
+        .clone()
         .oneshot(
             Request::builder()
                 .method("POST")
@@ -224,4 +236,151 @@ async fn router_validates_luhn_in_ram_and_protects_barista_endpoints() {
         .await
         .expect("resp");
     assert_eq!(unauth_create.status(), StatusCode::UNAUTHORIZED);
+
+    // v2.0 NTP calibration endpoint returns 200 OK
+    let ntp_res = app
+        .clone()
+        .oneshot(
+            Request::builder()
+                .uri("/api/v1/livebrew/ntp?client_send_ms=1760000000000")
+                .body(Body::empty())
+                .expect("req"),
+        )
+        .await
+        .expect("resp");
+    assert_eq!(ntp_res.status(), StatusCode::OK);
+
+    // v2.0 Business Branding endpoint rejects non-authenticated requests
+    let unauth_branding = app
+        .oneshot(
+            Request::builder()
+                .method("PUT")
+                .uri("/api/v1/livebrew/business/branding")
+                .header("content-type", "application/json")
+                .body(Body::from(r#"{"cafe_slug":"senja-bar","cafe_display_name":"Senja Bar"}"#))
+                .expect("req"),
+        )
+        .await
+        .expect("resp");
+    assert_eq!(unauth_branding.status(), StatusCode::UNAUTHORIZED);
+}
+
+#[tokio::test]
+async fn live_brew_v2_8_phase_mirror_state_machine_and_ntp_anchor() {
+    let ddl = live_brew_schema::statements().join("\n");
+    for sym in [
+        "live_brew_mirror_phase",
+        "business_livebrew_branding",
+        "business_cafe_seats",
+        "live_brew_real_sessions",
+        "timer_anchor_server_ms",
+        "state_version",
+    ] {
+        assert!(ddl.contains(sym), "Missing v2 DDL symbol {sym}");
+    }
+
+    assert_eq!(slugify_livebrew_segment("Kopi Senja BDG!", 64), "kopi-senja-bdg");
+    assert_eq!(slugify_livebrew_segment("Meja 04", 48), "meja-04");
+
+    let sid = Uuid::now_v7();
+    let mut snap = LiveSessionMirrorSnapshot {
+        session_id: sid,
+        share_code: "3100000000018".into(),
+        share_url: "https://coffeelabs.com/livebrew/senja-roastery/meja-04".into(),
+        deep_link_url: "coffeelabs://livebrew/senja-roastery/meja-04".into(),
+        is_business_session: true,
+        store_id: Some(Uuid::now_v7()),
+        seat_id: Some(Uuid::now_v7()),
+        pos_order_id: Some(Uuid::now_v7()),
+        pos_order_number: Some("ORD-042".into()),
+        pos_order_status: Some("QUEUED".into()),
+        brewer_display_name: "Barista Raka".into(),
+        brewer_avatar_url: None,
+        customer_name: "Meja 04".into(),
+        phase: LiveBrewMirrorPhase::PosOrderQueued,
+        phase_label_id: LiveBrewMirrorPhase::PosOrderQueued.label_id().into(),
+        state_version: 1,
+        selected_method_id: None,
+        selected_method_name: None,
+        selected_recipe_id: None,
+        selected_recipe_title: None,
+        recipe_snapshot_json: serde_json::json!({}),
+        selected_bean_id: None,
+        bean_snapshot_json: serde_json::json!({}),
+        timer_status: LiveTimerStatus::Idle,
+        timer_accumulated_ms: 0,
+        timer_anchor_server_ms: None,
+        current_step_index: 0,
+        current_weight_g: 0.0,
+        current_flow_rate_ml_s: 0.0,
+        current_temp_c: 91.0,
+        telemetry_curve_json: serde_json::json!([]),
+        cheers_count: 0,
+        active_viewers_count: 0,
+        server_epoch_ms: 1_000_000,
+    };
+
+    // 1. Brewer selects recipe live
+    assert!(apply_mirror_command(
+        &mut snap,
+        &BrewerMirrorCommand::SelectRecipePreview {
+            method_id: "v60".into(),
+            method_name: "V60 Pour Over".into(),
+            recipe_id: None,
+            recipe_title: "Tetsu Kasuya 4:6".into(),
+            recipe_snapshot_json: serde_json::json!({"coffeeWeightGrams": 15, "totalWaterWeightGrams": 225}),
+        },
+        1_001_000,
+    ));
+    assert_eq!(snap.phase, LiveBrewMirrorPhase::BrewerSelectingRecipe);
+    assert_eq!(snap.state_version, 2);
+
+    // 2. Brewer selects coffee bean live
+    assert!(apply_mirror_command(
+        &mut snap,
+        &BrewerMirrorCommand::SelectBeanPreview {
+            bean_id: None,
+            bean_snapshot_json: serde_json::json!({"name": "Fugol Halu Banana", "process": "Wine Natural"}),
+        },
+        1_002_000,
+    ));
+    assert_eq!(snap.phase, LiveBrewMirrorPhase::BrewerSelectingBean);
+    assert_eq!(snap.state_version, 3);
+
+    // 3. Confirm Ready -> Start NTP-Anchored Timer at t = 1_005_000 ms
+    assert!(apply_mirror_command(&mut snap, &BrewerMirrorCommand::ConfirmReadyToBrew, 1_003_000));
+    assert!(apply_mirror_command(&mut snap, &BrewerMirrorCommand::TimerStartOrResume, 1_005_000));
+    assert_eq!(snap.phase, LiveBrewMirrorPhase::BrewingActive);
+    assert_eq!(snap.timer_status, LiveTimerStatus::Running);
+    assert_eq!(snap.timer_anchor_server_ms, Some(1_005_000));
+    assert_eq!(snap.pos_order_status.as_deref(), Some("BREWING"));
+
+    // 4. Pause after 45.250s -> accumulated must be exact 45250 ms
+    assert!(apply_mirror_command(&mut snap, &BrewerMirrorCommand::TimerPause, 1_050_250));
+    assert_eq!(snap.phase, LiveBrewMirrorPhase::BrewingPaused);
+    assert_eq!(snap.timer_status, LiveTimerStatus::Paused);
+    assert_eq!(snap.timer_accumulated_ms, 45_250);
+    assert_eq!(snap.timer_anchor_server_ms, None);
+
+    // 5. Resume at 1_060_000 & Complete at 1_150_000 -> total 135250 ms, POS READY_TO_DELIVER
+    assert!(apply_mirror_command(&mut snap, &BrewerMirrorCommand::TimerStartOrResume, 1_060_000));
+    assert!(apply_mirror_command(
+        &mut snap,
+        &BrewerMirrorCommand::CompleteAndServe {
+            final_weight_g: 225.4,
+            accuracy_score_pct: Some(98.5),
+        },
+        1_150_000,
+    ));
+    assert_eq!(snap.phase, LiveBrewMirrorPhase::ServingReadyPassport);
+    assert_eq!(snap.timer_status, LiveTimerStatus::Finished);
+    assert_eq!(snap.timer_accumulated_ms, 135_250);
+    assert_eq!(snap.pos_order_status.as_deref(), Some("READY_TO_DELIVER"));
+
+    // Broadcast fan-out check
+    let hub = MirrorStateHub::new(None);
+    let mut rx = hub.subscribe_session(sid);
+    hub.publish_snapshot(snap.clone());
+    let received = rx.recv().await.expect("mirror frame");
+    assert!(matches!(*received, MirrorDownstreamFrame::MirrorSnapshot(_)));
 }

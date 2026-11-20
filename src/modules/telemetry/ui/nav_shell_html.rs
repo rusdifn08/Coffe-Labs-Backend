@@ -12,6 +12,7 @@ pub const NAV_SHELL_HTML: &str = r#"
       <button class="btn primary" onclick="runApiBenchmark()">⚡ Benchmark Mobile API</button>
       <button class="btn" onclick="refreshAllPanels()">🔄 Refresh</button>
       <button class="btn" onclick="resetTelemetry()">🧹 Reset Metrics</button>
+      <a class="btn espresso" href="/admin-control">🔐 Admin Control Panel</a>
       <a class="btn espresso" href="/api/v1/openapi.json" target="_blank">📄 OpenAPI 3.1 JSON</a>
     </div>
   </header>

@@ -153,6 +153,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             redis.active_pool(),
         ),
     );
+    let admin_control = crate::modules::admin_control::RuntimeSnapshotStore::init_and_spawn(
+        &pool,
+        redis.active_pool(),
+        redis.active_subscriber(),
+    )
+    .await;
 
     let rabbitmq = RabbitMqClient::connect_or_lazy(
         config
@@ -188,13 +194,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         taste_profiler,
         monitoring,
         live_brew_hub,
+        admin_control,
     };
 
     spawn_rabbitmq_worker(rabbitmq, state.clone());
+    crate::modules::beans_radar::services::rtree_memory_engine::RTreeMemoryEngine::spawn_background_refresher(
+        state.caches.beans_radar_rtree.clone(),
+        state.pool.clone(),
+    );
     crate::modules::brew_methods_audit::services::alarm_wakeup_worker::spawn_cold_brew_alarm_worker(
         state.pool.clone(),
         state.redis.active_pool(),
         state.notifications.clone(),
+    );
+    crate::modules::qris_billing::services::amount_allocator_service::spawn_expiration_sweeper(
+        state.clone(),
+    );
+    crate::modules::qris_billing::services::email_imap_watcher_worker::spawn_email_imap_watcher(
+        state.clone(),
     );
     let router = app::build_app(state);
     let addr = SocketAddr::from(([0, 0, 0, 0], port));

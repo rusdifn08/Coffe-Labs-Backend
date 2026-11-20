@@ -74,6 +74,7 @@ pub struct AppConfig {
     pub google_application_credentials: Option<String>,
     pub fcm_project_id: String,
     pub cloudinary_url: Option<String>,
+    pub geoapify_api_key: Option<String>,
     pub jwt_secret: SecretString,
     pub jwt_expiration_seconds: u64,
     pub port: u16,
@@ -91,6 +92,7 @@ impl fmt::Debug for AppConfig {
             .field("google_application_credentials", &self.google_application_credentials)
             .field("fcm_project_id", &self.fcm_project_id)
             .field("cloudinary_url", &self.cloudinary_url.as_ref().map(|_| "[REDACTED]"))
+            .field("geoapify_api_key", &self.geoapify_api_key.as_ref().map(|_| "[REDACTED]"))
             .field("jwt_secret", &"[REDACTED]")
             .field("jwt_expiration_seconds", &self.jwt_expiration_seconds)
             .field("port", &self.port)
@@ -144,6 +146,7 @@ impl AppConfig {
             .or_else(|| Path::new("./firebase-service-account.json").exists().then(|| "./firebase-service-account.json".to_string()));
         let fcm_project_id = read_optional_env("FCM_PROJECT_ID").unwrap_or_else(|| DEFAULT_FCM_PROJECT_ID.to_string());
         let cloudinary_url = read_optional_env("CLOUDINARY_URL");
+        let geoapify_api_key = read_optional_env("GEOAPIFY_API_KEY");
         let jwt_secret = parse_jwt_secret(read_optional_env("JWT_SECRET")).unwrap_or_else(|msg| {
             error!("{msg}");
             eprintln!("{msg}");
@@ -162,6 +165,7 @@ impl AppConfig {
             google_application_credentials,
             fcm_project_id,
             cloudinary_url,
+            geoapify_api_key,
             jwt_secret,
             jwt_expiration_seconds,
             port,

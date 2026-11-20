@@ -50,7 +50,7 @@ pub fn statements() -> &'static [&'static str] {
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )"#,
         "INSERT INTO trial_access_policies (id) VALUES ('default') ON CONFLICT (id) DO NOTHING",
-        "UPDATE users SET tier = 'trial', subscription_plan_id = 'plan_trial' WHERE role != 'admin' AND username != 'bisnis123' AND (tier IS NULL OR tier = '' OR tier = 'business')",
+        "UPDATE users SET tier = 'trial', subscription_plan_id = 'plan_trial' WHERE role != 'admin' AND username != 'bisnis123' AND subscription_activated_at IS NULL AND (tier IS NULL OR tier = '' OR tier = 'business')",
         r#"CREATE TABLE IF NOT EXISTS auth_refresh_tokens (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,

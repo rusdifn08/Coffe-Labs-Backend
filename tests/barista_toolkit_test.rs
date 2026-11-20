@@ -66,6 +66,7 @@ async fn offline_state() -> AppState {
         google_application_credentials: None,
         fcm_project_id: "coffe-labs-test".to_string(),
         cloudinary_url: None,
+        geoapify_api_key: None,
         jwt_secret: secrecy::SecretString::from(
             "test_secret_64_bytes_minimum_entropy_0123456789abcdef0123456789".to_string(),
         ),
@@ -123,6 +124,7 @@ async fn offline_state() -> AppState {
         live_brew_hub: Arc::new(
             coffe_labs_backend::modules::live_brew::services::live_telemetry_hub::LiveTelemetryHub::new(None),
         ),
+        admin_control: coffe_labs_backend::modules::admin_control::RuntimeSnapshotStore::empty(None),
     }
 }
 

@@ -16,12 +16,13 @@ pub async fn query_beans(
 
     let rows = sqlx::query_as::<_, CuratedBeanRow>(
         r#"SELECT * FROM curated_beans
-           WHERE ($1::text IS NULL OR name ILIKE $1 OR tasting_notes ILIKE $1 OR origin ILIKE $1)
+           WHERE ($1::text IS NULL OR name ILIKE $1 OR tasting_notes ILIKE $1
+                  OR origin ILIKE $1 OR variety ILIKE $1 OR roastery_name ILIKE $1)
              AND ($2::text IS NULL OR roastery_name ILIKE $2)
-             AND ($3::text IS NULL OR roastery_city ILIKE $3)
+             AND ($3::text IS NULL OR roastery_city ILIKE $3 OR origin ILIKE $3)
              AND ($4::text IS NULL OR process ILIKE $4)
            ORDER BY rating DESC, name ASC
-           LIMIT 100"#,
+           LIMIT 200"#,
     )
     .bind(search_pattern)
     .bind(roastery_pattern)

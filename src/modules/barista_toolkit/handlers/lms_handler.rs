@@ -1,9 +1,7 @@
 use std::collections::HashMap;
-
 use axum::{extract::{Path, State}, response::IntoResponse};
 use base64::{engine::general_purpose::STANDARD as B64, Engine as _};
 use uuid::Uuid;
-
 use crate::{
     core::{error::{ApiResponse, AppError, AppResult}, extractors::{AuthUser, ValidatedJson}, AppState},
     modules::barista_toolkit::{
@@ -14,6 +12,7 @@ use crate::{
         repositories::lms_repo,
         services::{
             lms_progress_service::{decode_bitmap_13, evaluate_completion, grade_quiz_answers, merge_bitmap_or, popcount_100bit, sign_hls_manifest_url, BITMAP_BYTES_LEN},
+            object_storage_stream::resolve_local_lms_stream_path,
             rabbitmq_lms_worker::publish_lms_lesson_completed,
         },
     },
@@ -110,6 +109,8 @@ pub async fn get_lesson_stream(
     let cloud_creds = state.config.cloudinary_config().ok().flatten();
     let (signed_hls_url, expires_at) = if cloud_creds.is_some() {
         (generate_hls_stream_url(cloud_creds.as_ref(), &manifest), chrono::Utc::now() + chrono::Duration::minutes(30))
+    } else if let Some(local_obj_url) = resolve_local_lms_stream_path(&manifest).await {
+        (local_obj_url, chrono::Utc::now() + chrono::Duration::minutes(30))
     } else {
         sign_hls_manifest_url(&manifest, claims.sub, state.config.jwt_secret_str())
     };

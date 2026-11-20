@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use axum::{
     body::Body,
     extract::{Path, Query, State},
-    http::{header, StatusCode},
+    http::{header, HeaderMap, StatusCode},
     response::IntoResponse,
 };
 use uuid::Uuid;
@@ -21,6 +21,7 @@ use crate::{
         error::BaristaToolkitError,
         models::has_tier_access,
         repositories::{ebook_ast_repo, ebook_repo},
+        services::object_storage_stream::stream_object_file,
     },
 };
 
@@ -140,37 +141,11 @@ pub async fn download_encrypted_clbook(
     Ok((StatusCode::OK, [(header::CONTENT_TYPE, mime)], Body::from(bytes)))
 }
 
-/// Mengalirkan file media publik/terindeks di bucket Object Storage backend dengan pengaman path traversal.
+/// Mengalirkan file media publik/terindeks (HLS .m3u8/.ts, MP4, WebVTT, Gambar, E-Book)
+/// dengan dukungan HTTP 206 Partial Content Range & chunk streaming hemat RAM 512 MB.
 pub async fn serve_object_storage_file(
+    headers: HeaderMap,
     Path(raw_key): Path<String>,
 ) -> AppResult<impl IntoResponse> {
-    let trimmed = raw_key.trim().trim_start_matches('/');
-    if trimmed.is_empty()
-        || trimmed.contains("..")
-        || trimmed.contains('\\')
-        || !trimmed
-            .chars()
-            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '_' | '-' | '/' | '.'))
-    {
-        return Err(AppError::BadRequest("Object Storage key tidak valid.".into()));
-    }
-
-    let full_path = PathBuf::from("storage/object_storage").join(trimmed);
-    let bytes = tokio::fs::read(&full_path)
-        .await
-        .map_err(|_| AppError::from(BaristaToolkitError::NotFound))?;
-
-    let mime = if trimmed.ends_with(".webp") {
-        "image/webp"
-    } else if trimmed.ends_with(".png") {
-        "image/png"
-    } else if trimmed.ends_with(".pdf") {
-        "application/pdf"
-    } else if trimmed.ends_with(".epub") {
-        "application/epub+zip"
-    } else {
-        "application/octet-stream"
-    };
-
-    Ok((StatusCode::OK, [(header::CONTENT_TYPE, mime)], Body::from(bytes)))
+    stream_object_file(&headers, &raw_key).await
 }

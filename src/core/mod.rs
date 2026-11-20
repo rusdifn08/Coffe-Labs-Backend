@@ -30,6 +30,7 @@ use crate::{
         redis::RedisManager, storage::CloudinaryStorage, telemetry::TelemetryRegistry,
     },
     modules::{
+        admin_control::RuntimeSnapshotStore,
         chat::services::{
             connection_hub::ConnectionHub, message_service::MessageService,
             moderation_guard::ModerationGuard, presence_service::PresenceService,
@@ -83,6 +84,7 @@ pub struct AppState {
     pub taste_profiler: Arc<TasteProfilerService>,
     pub monitoring: Arc<MonitoringEngine>,
     pub live_brew_hub: Arc<LiveTelemetryHub>,
+    pub admin_control: Arc<RuntimeSnapshotStore>,
 }
 
 pub fn init_module35_engines(

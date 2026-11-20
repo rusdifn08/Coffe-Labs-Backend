@@ -1,81 +1,117 @@
 use sqlx::PgPool;
 use crate::core::error::AppResult;
-use crate::modules::bean_scanner::dto::{BeanScanRequestDto, RecommendedRecipeSummary, ResolvedCoffeeBeanResponse};
+use crate::modules::bean_scanner::dto::{
+    BeanScanRequestDto, RecommendedRecipeSummary, ResolvedCoffeeBeanResponse,
+};
 use crate::modules::bean_scanner::repository::BeanScannerRepository;
 use super::cognitive_resolver::CognitiveResolver;
 
 pub struct BeanResolverService;
 
 impl BeanResolverService {
-    pub async fn resolve(pool: &PgPool, req: BeanScanRequestDto) -> AppResult<ResolvedCoffeeBeanResponse> {
+    pub async fn resolve(
+        pool: &PgPool,
+        req: BeanScanRequestDto,
+    ) -> AppResult<ResolvedCoffeeBeanResponse> {
         let _ = BeanScannerRepository::ensure_seed_catalog_if_empty(pool).await;
 
-        // 1. Cognitive AI Analysis (Noise Filter, Knowledge Graph, Fuzzy Flavors & Sommelier Inference)
-        let mut cognitive_result = CognitiveResolver::analyze(&req.raw_full_text, &req.blocks);
+        // 1. Grounded On-Engine Cognitive AI Analysis (Sabang-Merauke + 65 World Countries)
+        let mut res = CognitiveResolver::analyze(&req.raw_full_text, &req.blocks);
 
-        // 2. Query NeonDB verified catalog using high-confidence tokens
+        // 2. Query 171,000+ NeonDB `coffee_ocr_lexicon` GIN pg_trgm tokens to recover OCR typos
+        let lines: Vec<String> = req
+            .raw_full_text
+            .lines()
+            .map(|l| l.trim().to_string())
+            .filter(|l| l.len() >= 3)
+            .collect();
+        let lex_hits = BeanScannerRepository::lookup_ocr_lexicon(pool, &lines).await?;
+        for hit in &lex_hits {
+            if hit.sim_score < 0.65 {
+                continue;
+            }
+            match hit.entity_type.as_str() {
+                "ROASTERY" if res.roastery_name == "Specialty Roastery" || res.roastery_name == "Belum Terdeteksi" => {
+                    res.roastery_name = hit.canonical_value.clone();
+                    res.confidence_score = (res.confidence_score + 12.0).min(97.0);
+                }
+                "ORIGIN" if res.origin == "Single Origin, Indonesia" || res.origin == "Belum Terdeteksi" => {
+                    res.origin = hit.canonical_value.clone();
+                    res.confidence_score = (res.confidence_score + 14.0).min(97.0);
+                }
+                "VARIETY" if res.is_ai_inferred_variety || res.variety == "Belum Terdeteksi" => {
+                    res.variety = hit.canonical_value.clone();
+                    res.is_ai_inferred_variety = false;
+                    res.confidence_score = (res.confidence_score + 8.0).min(97.0);
+                }
+                "PROCESS" if res.process == "Belum Terdeteksi" => {
+                    res.process = hit.canonical_value.clone();
+                    res.confidence_score = (res.confidence_score + 10.0).min(97.0);
+                }
+                "FLAVOR" if !res.tasting_notes.contains(&hit.canonical_value) && res.tasting_notes.len() < 5 => {
+                    res.tasting_notes.push(hit.canonical_value.clone());
+                }
+                _ => {}
+            }
+        }
+
+        // 3. Query 2,155+ verified `coffee_beans_catalog` using pg_trgm GIN index
+        if res.notes_source == "LOW_CONFIDENCE_NO_MATCH" && lex_hits.is_empty() {
+            return Ok(res);
+        }
+
         let search_query = format!(
             "{} {} {} {}",
-            cognitive_result.roastery_name,
-            cognitive_result.bean_name,
-            cognitive_result.origin,
-            cognitive_result.process
+            res.roastery_name, res.bean_name, res.origin, res.process
         );
-
-        let catalog_match = BeanScannerRepository::find_best_catalog_match(pool, &search_query).await?;
-
-        if let Some(matched) = catalog_match {
-            if matched.similarity_score >= 0.88 {
+        if let Some(matched) = BeanScannerRepository::find_best_catalog_match(pool, &search_query).await? {
+            if matched.similarity_score >= 0.48 {
                 let rec = matched.row;
-                cognitive_result.bean_id = Some(rec.id);
-                cognitive_result.is_catalog_verified = true;
-                cognitive_result.confidence_score = (matched.similarity_score * 100.0).clamp(85.0, 99.5);
+                res.bean_id = Some(rec.id);
+                res.is_catalog_verified = matched.similarity_score >= 0.58;
+                res.confidence_score = ((matched.similarity_score * 100.0).max(res.confidence_score)).clamp(72.0, 99.5);
 
-                // Only overwrite bean name if cognitive result was generic
-                if cognitive_result.bean_name.to_lowercase().starts_with("specialty coffee") {
-                    cognitive_result.bean_name = rec.bean_name;
+                if res.bean_name.to_lowercase().starts_with("specialty coffee")
+                    || res.bean_name == "Kemasan Kopi Belum Terbaca"
+                {
+                    res.bean_name = rec.bean_name;
                 }
-                if cognitive_result.roastery_name == "Specialty Roastery" && !rec.roastery_name.is_empty() {
-                    cognitive_result.roastery_name = rec.roastery_name;
+                if (res.roastery_name == "Specialty Roastery" || res.roastery_name == "Belum Terdeteksi")
+                    && !rec.roastery_name.is_empty()
+                {
+                    res.roastery_name = rec.roastery_name;
                 }
-
-                if cognitive_result.origin == "Single Origin, Indonesia" {
-                    cognitive_result.origin = rec.origin_region.or(rec.origin_country).unwrap_or(cognitive_result.origin);
+                if res.origin == "Single Origin, Indonesia" || res.origin == "Belum Terdeteksi" {
+                    res.origin = rec.origin_region.or(rec.origin_country).unwrap_or(res.origin);
                 }
-
-                if cognitive_result.is_ai_inferred_variety && !rec.variety.is_empty() {
-                    cognitive_result.variety = rec.variety;
-                    cognitive_result.is_ai_inferred_variety = false;
+                if (res.is_ai_inferred_variety || res.variety == "Belum Terdeteksi") && !rec.variety.is_empty() {
+                    res.variety = rec.variety;
+                    res.is_ai_inferred_variety = false;
                 }
-
-                if cognitive_result.process == "Full Washed" && !rec.process.is_empty() {
-                    cognitive_result.process = rec.process;
+                if (res.process == "Full Washed" || res.process == "Belum Terdeteksi") && !rec.process.is_empty() {
+                    res.process = rec.process;
                 }
-
-                if cognitive_result.is_ai_inferred_altitude {
+                if res.is_ai_inferred_altitude || res.altitude_masl.is_none() {
                     if let Some(alt) = rec.altitude_masl {
-                        cognitive_result.altitude_masl = Some(alt);
-                        cognitive_result.is_ai_inferred_altitude = false;
+                        res.altitude_masl = Some(alt);
+                        res.is_ai_inferred_altitude = false;
                     }
                 }
-
-                // Never overwrite explicit OCR tasting notes with catalog notes!
-                if cognitive_result.notes_source != "OCR_EXPLICIT" && !rec.tasting_notes.is_empty() {
-                    cognitive_result.tasting_notes = rec.tasting_notes;
-                    cognitive_result.notes_source = "CATALOG_VERIFIED".to_string();
+                if res.notes_source != "OCR_EXPLICIT" && !rec.tasting_notes.is_empty() {
+                    res.tasting_notes = rec.tasting_notes;
+                    res.notes_source = "CATALOG_VERIFIED".to_string();
                 }
-
                 if let Some(temp) = rec.recommended_water_temp_c {
-                    cognitive_result.recommended_water_temp_c = temp;
+                    res.recommended_water_temp_c = temp;
                 }
-                cognitive_result.recommended_recipes = Self::build_recipes_for_process(
-                    &cognitive_result.process,
-                    cognitive_result.recommended_water_temp_c,
+                res.recommended_recipes = Self::build_recipes_for_process(
+                    &res.process,
+                    res.recommended_water_temp_c,
                 );
             }
         }
 
-        Ok(cognitive_result)
+        Ok(res)
     }
 
     fn build_recipes_for_process(process: &str, temp: i32) -> Vec<RecommendedRecipeSummary> {

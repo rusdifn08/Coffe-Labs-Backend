@@ -1,0 +1,124 @@
+-- Migration: Shopee-Grade Marketplace with AI Self-Healing Verified Coffee Bags & QRIS-Only Checkout
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'media_verification_status') THEN
+        CREATE TYPE media_verification_status AS ENUM (
+            'PENDING_AUDIT',
+            'VERIFIED_COFFEE_BAG',
+            'REJECTED_WRONG_IMAGE',
+            'REJECTED_DUPLICATE_HASH'
+        );
+    END IF;
+END
+$$;
+
+CREATE TABLE IF NOT EXISTS marketplace_products (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    roastery_id UUID REFERENCES coffee_roasteries(id) ON DELETE CASCADE,
+    roastery_name VARCHAR(120) NOT NULL,
+    is_mall_roastery BOOLEAN NOT NULL DEFAULT TRUE,
+    city_origin VARCHAR(80) NOT NULL DEFAULT 'Jakarta',
+    sku_slug VARCHAR(160) NOT NULL UNIQUE,
+    title VARCHAR(180) NOT NULL,
+    category VARCHAR(40) NOT NULL DEFAULT 'SINGLE_ORIGIN',
+    origin_region VARCHAR(120) NOT NULL DEFAULT '',
+    altitude_masl VARCHAR(60) NOT NULL DEFAULT '',
+    varieties JSONB NOT NULL DEFAULT '[]'::jsonb,
+    post_harvest_process VARCHAR(60) NOT NULL DEFAULT 'Washed',
+    roast_level VARCHAR(40) NOT NULL DEFAULT 'Medium',
+    tasting_notes JSONB NOT NULL DEFAULT '[]'::jsonb,
+    description TEXT NOT NULL DEFAULT '',
+    base_weight_grams INT NOT NULL DEFAULT 200,
+    price_idr BIGINT NOT NULL,
+    original_price_idr BIGINT,
+    discount_pct SMALLINT NOT NULL DEFAULT 0,
+    is_flash_sale BOOLEAN NOT NULL DEFAULT FALSE,
+    flash_sale_stock_left INT NOT NULL DEFAULT 0,
+    stock_qty INT NOT NULL DEFAULT 50,
+    sold_count INT NOT NULL DEFAULT 0,
+    avg_rating REAL NOT NULL DEFAULT 4.9,
+    reviews_count INT NOT NULL DEFAULT 0,
+    primary_image_url TEXT NOT NULL,
+    primary_cloudinary_public_id TEXT,
+    gallery_image_urls JSONB NOT NULL DEFAULT '[]'::jsonb,
+    image_verification_status media_verification_status NOT NULL DEFAULT 'PENDING_AUDIT',
+    image_phash_hex VARCHAR(32),
+    image_ai_bag_confidence REAL NOT NULL DEFAULT 0.0,
+    image_face_detected BOOLEAN NOT NULL DEFAULT FALSE,
+    image_audit_notes TEXT,
+    image_verified_at TIMESTAMPTZ,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_mkt_verified_bestseller
+    ON marketplace_products (sold_count DESC, avg_rating DESC, id DESC)
+    WHERE is_active = TRUE AND image_verification_status = 'VERIFIED_COFFEE_BAG';
+
+CREATE INDEX IF NOT EXISTS idx_mkt_verified_price
+    ON marketplace_products (price_idr ASC, id DESC)
+    WHERE is_active = TRUE AND image_verification_status = 'VERIFIED_COFFEE_BAG';
+
+CREATE INDEX IF NOT EXISTS idx_mkt_title_trgm
+    ON marketplace_products USING GIN (title gin_trgm_ops);
+
+CREATE INDEX IF NOT EXISTS idx_mkt_phash_dedup
+    ON marketplace_products (image_phash_hex)
+    WHERE image_phash_hex IS NOT NULL;
+
+CREATE TABLE IF NOT EXISTS marketplace_product_variants (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    product_id UUID NOT NULL REFERENCES marketplace_products(id) ON DELETE CASCADE,
+    weight_grams INT NOT NULL,
+    grind_option VARCHAR(50) NOT NULL DEFAULT 'Biji Utuh (Whole Bean)',
+    price_idr BIGINT NOT NULL,
+    stock_qty INT NOT NULL DEFAULT 25,
+    CONSTRAINT uq_product_weight_grind UNIQUE (product_id, weight_grams, grind_option)
+);
+
+CREATE TABLE IF NOT EXISTS marketplace_cart_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    product_id UUID NOT NULL REFERENCES marketplace_products(id) ON DELETE CASCADE,
+    variant_id UUID REFERENCES marketplace_product_variants(id) ON DELETE SET NULL,
+    quantity INT NOT NULL DEFAULT 1 CHECK (quantity > 0),
+    selected_for_checkout BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_user_cart_product_variant UNIQUE (user_id, product_id, variant_id)
+);
+
+CREATE TABLE IF NOT EXISTS marketplace_orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_code VARCHAR(40) NOT NULL UNIQUE,
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    username VARCHAR(80) NOT NULL DEFAULT 'guest',
+    recipient_name VARCHAR(120) NOT NULL,
+    phone_number VARCHAR(40) NOT NULL,
+    shipping_address TEXT NOT NULL,
+    courier_name VARCHAR(80) NOT NULL,
+    payment_method VARCHAR(30) NOT NULL DEFAULT 'QRIS',
+    voucher_code VARCHAR(40),
+    subtotal INT NOT NULL DEFAULT 0,
+    shipping_fee INT NOT NULL DEFAULT 0,
+    discount INT NOT NULL DEFAULT 0,
+    total INT NOT NULL DEFAULT 0,
+    status VARCHAR(40) NOT NULL DEFAULT 'Menunggu Pembayaran QRIS',
+    payment_status VARCHAR(30) NOT NULL DEFAULT 'PENDING_QRIS',
+    qris_reference VARCHAR(80),
+    qris_payload TEXT,
+    qris_expires_at TIMESTAMPTZ,
+    paid_at TIMESTAMPTZ,
+    items_json JSONB NOT NULL DEFAULT '[]'::jsonb,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE marketplace_orders ADD COLUMN IF NOT EXISTS payment_status VARCHAR(30) NOT NULL DEFAULT 'PENDING_QRIS';
+ALTER TABLE marketplace_orders ADD COLUMN IF NOT EXISTS qris_reference VARCHAR(80);
+ALTER TABLE marketplace_orders ADD COLUMN IF NOT EXISTS qris_payload TEXT;
+ALTER TABLE marketplace_orders ADD COLUMN IF NOT EXISTS qris_expires_at TIMESTAMPTZ;
+ALTER TABLE marketplace_orders ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ;

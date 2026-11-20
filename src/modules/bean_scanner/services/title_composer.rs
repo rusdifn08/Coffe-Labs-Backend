@@ -90,8 +90,21 @@ impl TitleComposer {
     pub fn extract_explicit_varietal(text: &str) -> Option<String> {
         let lower = text.to_lowercase();
         const KNOWN: &[&str] = &[
-            "geisha", "gesha", "pink bourbon", "bourbon", "typica", "sl28", "sl34",
-            "sigararutang", "kartika", "andungsari", "lini s795", "caturra", "catimor",
+            "jamaica blue mountain", "bourbon pointu", "pink bourbon", "yellow bourbon",
+            "red bourbon", "orange bourbon", "aji bourbon", "ethiopian heirloom",
+            "ateng super", "sigarar utang", "sigararutang", "lini s795", "s795", "s-795",
+            "andungsari", "tungkal komposit", "libtukom", "hybrido de timor", "sudan rume",
+            "wush wush", "villa sarchi", "mundo novo", "blue mountain", "fine robusta",
+            "kopi lanang", "peaberry", "longberry", "maracaturra", "maragogype", "pacamara",
+            "parainema", "marsellesa", "centroamericano", "starmaya", "eugenoides",
+            "mejorado", "geisha", "gesha", "sidra", "chiroso", "ombligon", "papayo",
+            "bourbon", "typica", "caturra", "catuai", "pacas", "pache", "castillo",
+            "cenicafe", "catimor", "sarchimor", "obata", "arara", "icatu", "tabi",
+            "sl28", "sl34", "sl14", "ruiru 11", "batian", "heirloom", "kurume",
+            "wolisho", "74110", "74112", "74158", "yemenia", "abyssinia", "timtim",
+            "borbor", "p88", "kartika", "komasti", "usda 762", "kopyol", "juria",
+            "bergendal", "lasuna", "garunggang", "besemah", "liberika", "liberica",
+            "excelsa", "robusta", "laurina", "kent", "arusha", "kona",
         ];
         for &v in KNOWN {
             if lower.contains(v) {

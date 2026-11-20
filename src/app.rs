@@ -13,10 +13,11 @@ use crate::{
         attach_governor_layer, build_cors_layer, telemetry_and_security_middleware,
     },
     modules::{
-        auth, barista_toolkit, bean_scanner, beans, brew_logs, brew_methods_audit, business_pos,
+        admin_control, affiliate, auth, barista_toolkit, bean_scanner, beans, beans_radar, brew_logs, brew_methods_audit, business_pos,
         chat, communities,
-        gamification, live_brew, marketplace, media, monitoring, notifications, platform, rbac,
-        recipes, recommendation, social, social_feed, social_graph, telemetry, users,
+        gamification, live_brew, marketplace, media, monitoring, notifications, platform,
+        qris_billing, radar, rbac,
+        recipes, recommendation, roasteries, social, social_feed, social_graph, telemetry, users,
         vision_dataset,
     },
 };
@@ -49,8 +50,10 @@ pub fn build_app(state: AppState) -> Router {
         .merge(users::routes::router())
         .merge(platform::routes::router())
         .merge(recipes::routes::router())
+        .merge(roasteries::routes::router())
         .merge(brew_logs::routes::router())
         .merge(beans::routes::router())
+        .merge(beans_radar::routes::router())
         .merge(marketplace::routes::router())
         .merge(media::routes::router())
         .merge(gamification::routes::router())
@@ -61,6 +64,14 @@ pub fn build_app(state: AppState) -> Router {
         .merge(communities::routes::router())
         .merge(recommendation::routes::router())
         .merge(notifications::routes::router())
+        .merge(qris_billing::routes::router())
+        .merge(affiliate::routes::router())
+        .merge(radar::routes::router())
+        .merge(admin_control::routes::router())
+        .layer(axum_mw::from_fn_with_state(
+            state.clone(),
+            admin_control::middleware::feature_gate_middleware::feature_gate_middleware,
+        ))
         .layer(axum_mw::from_fn_with_state(
             mw_state,
             telemetry_and_security_middleware,

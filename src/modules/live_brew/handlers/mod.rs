@@ -1,4 +1,9 @@
 pub mod barista_ws_handler;
+pub mod brewer_session_handler;
+pub mod business_seat_handler;
+pub mod ntp_and_cheer_handler;
 pub mod session_table_handler;
+pub mod viewer_resolve_handler;
+pub mod viewer_sse_handler;
 pub mod viewer_stream_handler;
 pub mod webrtc_signaling_handler;

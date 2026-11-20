@@ -1,4 +1,7 @@
+pub mod admin_control_schema;
+pub mod affiliate_schema;
 pub mod barista_toolkit_schema;
+pub mod beans_radar_schema;
 pub mod brew_methods_audit_schema;
 pub mod business_schema;
 pub mod catalog_schema;
@@ -6,9 +9,12 @@ pub mod chat_schema;
 pub mod communities_schema;
 pub mod core_schema;
 pub mod live_brew_schema;
+pub mod marketplace_schema;
 pub mod monitoring_schema;
 pub mod notifications_schema;
 pub mod profile_feed_schema;
+pub mod qris_billing_schema;
+pub mod roasteries_schema;
 pub mod social_graph_schema;
 pub mod transfer_learning_schema;
 
@@ -39,5 +45,11 @@ pub async fn run_migrations(pool: &PgPool) -> AppResult<()> {
     exec_batch(pool, "barista_toolkit_schema", barista_toolkit_schema::statements()).await;
     exec_batch(pool, "live_brew_schema", live_brew_schema::statements()).await;
     exec_batch(pool, "brew_methods_audit_schema", brew_methods_audit_schema::statements()).await;
+    exec_batch(pool, "roasteries_schema", roasteries_schema::statements()).await;
+    exec_batch(pool, "marketplace_schema", marketplace_schema::statements()).await;
+    exec_batch(pool, "beans_radar_schema", beans_radar_schema::statements()).await;
+    exec_batch(pool, "qris_billing_schema", qris_billing_schema::statements()).await;
+    exec_batch(pool, "affiliate_schema", affiliate_schema::statements()).await;
+    exec_batch(pool, "admin_control_schema", admin_control_schema::statements()).await;
     Ok(())
 }
