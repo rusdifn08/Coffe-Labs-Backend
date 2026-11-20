@@ -54,9 +54,24 @@ pub async fn upgrade_tier(
             }),
         ),
     );
-    Ok(ApiResponse::ok(
-        format!("Selamat! Akun Anda berhasil di-upgrade ke tier {:?}.", updated.tier),
-        updated,
+    let fresh_access_token = state
+        .jwt
+        .generate_user_token(
+            user_id,
+            &claims.username,
+            &claims.role,
+            updated.tier.as_str(),
+            &claims.status,
+        )
+        .ok();
+    Ok((
+        axum::http::StatusCode::OK,
+        axum::Json(serde_json::json!({
+            "success": true,
+            "message": format!("Selamat! Akun Anda berhasil di-upgrade ke tier {:?}.", updated.tier),
+            "data": updated,
+            "fresh_access_token": fresh_access_token
+        })),
     ))
 }
 

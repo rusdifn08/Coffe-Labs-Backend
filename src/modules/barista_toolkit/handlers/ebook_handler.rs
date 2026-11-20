@@ -23,7 +23,10 @@ use crate::{
         error::BaristaToolkitError,
         models::has_tier_access,
         repositories::ebook_repo,
-        services::drm_crypto_service::{resolved_drm_secret, unwrap_master_cek, wrap_cek_for_device},
+        services::{
+            drm_crypto_service::{resolved_drm_secret, unwrap_master_cek, wrap_cek_for_device},
+            tier_access_resolver::{resolve_live_effective_tier, user_has_tier_access},
+        },
     },
 };
 
@@ -31,11 +34,17 @@ pub async fn list_ebooks(
     State(state): State<AppState>,
     AuthUser(claims): AuthUser,
 ) -> AppResult<impl IntoResponse> {
-    let (books, progress_list) = tokio::try_join!(
-        ebook_repo::fetch_ebooks_catalog(&state.pool),
-        ebook_repo::fetch_user_ebook_progress_map(&state.pool, claims.sub),
-    )
-    .map_err(AppError::from)?;
+    let (loaded, (live_tier, live_role)) = tokio::join!(
+        async {
+            tokio::try_join!(
+                ebook_repo::fetch_ebooks_catalog(&state.pool),
+                ebook_repo::fetch_user_ebook_progress_map(&state.pool, claims.sub),
+            )
+            .map_err(AppError::from)
+        },
+        resolve_live_effective_tier(&state.pool, &claims),
+    );
+    let (books, progress_list) = loaded?;
 
     let cloud_creds = state.config.cloudinary_config().ok().flatten();
     let prog_map: HashMap<Uuid, _> = progress_list.into_iter().map(|p| (p.ebook_id, p)).collect();
@@ -44,7 +53,7 @@ pub async fn list_ebooks(
         .into_iter()
         .map(|b| {
             let p = prog_map.get(&b.id);
-            let unlocked = has_tier_access(&claims.tier, &claims.role, &b.required_tier);
+            let unlocked = has_tier_access(&live_tier, &live_role, &b.required_tier);
             let cover_url = b
                 .cover_cloudinary_public_id
                 .as_deref()
@@ -97,7 +106,7 @@ pub async fn request_ebook_license(
         .await
         .map_err(AppError::from)?;
 
-    if !has_tier_access(&claims.tier, &claims.role, &ebook.required_tier) {
+    if !user_has_tier_access(&state.pool, &claims, &ebook.required_tier).await {
         return Err(AppError::from(BaristaToolkitError::TierUpgradeRequired(
             ebook.required_tier,
         )));

@@ -60,13 +60,33 @@ pub async fn refresh_token(
 
 pub async fn get_me(
     State(pool): State<PgPool>,
+    State(jwt): State<JwtManager>,
     AuthUser(claims): AuthUser,
 ) -> AppResult<impl IntoResponse> {
     let user = repository::find_by_id(&pool, claims.sub)
         .await?
         .ok_or_else(|| AppError::NotFound("User tidak ditemukan.".to_string()))?;
+
+    let needs_fresh_token = !user.tier.eq_ignore_ascii_case(&claims.tier)
+        || !user.role.eq_ignore_ascii_case(&claims.role)
+        || !user.status.eq_ignore_ascii_case(&claims.status);
+    let fresh_access_token = if needs_fresh_token {
+        jwt.generate_user_token(user.id, &user.username, &user.role, &user.tier, &user.status)
+            .ok()
+    } else {
+        None
+    };
+
     let summary: UserSummary = user.into();
-    Ok(ApiResponse::ok("Data profil berhasil diambil.", summary))
+    Ok((
+        StatusCode::OK,
+        Json(json!({
+            "success": true,
+            "message": "Data profil berhasil diambil.",
+            "data": summary,
+            "fresh_access_token": fresh_access_token
+        })),
+    ))
 }
 
 pub async fn change_password(

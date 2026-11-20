@@ -14,6 +14,7 @@ use crate::{
             lms_progress_service::{decode_bitmap_13, evaluate_completion, grade_quiz_answers, merge_bitmap_or, popcount_100bit, sign_hls_manifest_url, BITMAP_BYTES_LEN},
             object_storage_stream::resolve_local_lms_stream_path,
             rabbitmq_lms_worker::publish_lms_lesson_completed,
+            tier_access_resolver::{resolve_live_effective_tier, user_has_tier_access},
         },
     },
 };
@@ -45,18 +46,24 @@ fn build_lesson_summary(l: &LmsLessonRow, p: Option<&UserLmsProgressRow>) -> Lms
 }
 
 pub async fn get_lms_courses(State(state): State<AppState>, AuthUser(claims): AuthUser) -> AppResult<impl IntoResponse> {
-    let (courses, lessons, progress_list) = tokio::try_join!(
-        lms_repo::fetch_published_courses(&state.pool),
-        lms_repo::fetch_all_lessons(&state.pool),
-        lms_repo::fetch_user_lms_progress(&state.pool, claims.sub),
-    )
-    .map_err(AppError::from)?;
+    let (loaded, (live_tier, live_role)) = tokio::join!(
+        async {
+            tokio::try_join!(
+                lms_repo::fetch_published_courses(&state.pool),
+                lms_repo::fetch_all_lessons(&state.pool),
+                lms_repo::fetch_user_lms_progress(&state.pool, claims.sub),
+            )
+            .map_err(AppError::from)
+        },
+        resolve_live_effective_tier(&state.pool, &claims),
+    );
+    let (courses, lessons, progress_list) = loaded?;
 
     let prog_map: HashMap<Uuid, UserLmsProgressRow> = progress_list.into_iter().map(|p| (p.lesson_id, p)).collect();
     let out: Vec<LmsCourseDto> = courses
         .into_iter()
         .map(|c| {
-            let is_unlocked = has_tier_access(&claims.tier, &claims.role, &c.required_tier);
+            let is_unlocked = has_tier_access(&live_tier, &live_role, &c.required_tier);
             let course_lessons: Vec<LmsLessonSummaryDto> = lessons
                 .iter()
                 .filter(|l| l.course_id == c.id)
@@ -98,7 +105,7 @@ pub async fn get_lesson_stream(
     let (lesson, required_tier) = lms_repo::fetch_lesson_and_course_tier(&state.pool, lesson_id)
         .await
         .map_err(AppError::from)?;
-    if !has_tier_access(&claims.tier, &claims.role, &required_tier) {
+    if !user_has_tier_access(&state.pool, &claims, &required_tier).await {
         return Err(AppError::from(BaristaToolkitError::TierUpgradeRequired(required_tier)));
     }
 
@@ -149,7 +156,7 @@ pub async fn sync_lesson_progress(
     let (lesson, required_tier) = lms_repo::fetch_lesson_and_course_tier(&state.pool, lesson_id)
         .await
         .map_err(AppError::from)?;
-    if !has_tier_access(&claims.tier, &claims.role, &required_tier) {
+    if !user_has_tier_access(&state.pool, &claims, &required_tier).await {
         return Err(AppError::from(BaristaToolkitError::TierUpgradeRequired(required_tier)));
     }
 

@@ -19,9 +19,11 @@ use crate::{
         cloudinary_signer::{generate_optimized_image_url, resolve_protected_book_asset_url},
         dto::{EbookAssetFormatQuery, EbookChapterAstDto, EbookChaptersBundleDto},
         error::BaristaToolkitError,
-        models::has_tier_access,
         repositories::{ebook_ast_repo, ebook_repo},
-        services::object_storage_stream::stream_object_file,
+        services::{
+            object_storage_stream::stream_object_file,
+            tier_access_resolver::user_has_tier_access,
+        },
     },
 };
 
@@ -33,7 +35,7 @@ pub async fn get_ebook_chapters_ast(
     let ebook = ebook_repo::fetch_single_ebook(&state.pool, ebook_id)
         .await
         .map_err(AppError::from)?;
-    if !has_tier_access(&claims.tier, &claims.role, &ebook.required_tier) {
+    if !user_has_tier_access(&state.pool, &claims, &ebook.required_tier).await {
         return Err(AppError::from(BaristaToolkitError::TierUpgradeRequired(
             ebook.required_tier,
         )));
@@ -118,7 +120,7 @@ pub async fn download_encrypted_clbook(
     let ebook = ebook_repo::fetch_single_ebook(&state.pool, ebook_id)
         .await
         .map_err(AppError::from)?;
-    if !has_tier_access(&claims.tier, &claims.role, &ebook.required_tier) {
+    if !user_has_tier_access(&state.pool, &claims, &ebook.required_tier).await {
         return Err(AppError::from(BaristaToolkitError::TierUpgradeRequired(
             ebook.required_tier,
         )));

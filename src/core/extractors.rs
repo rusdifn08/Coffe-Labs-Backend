@@ -4,6 +4,7 @@ use axum::{
     Json,
 };
 use serde::de::DeserializeOwned;
+use sqlx::PgPool;
 use std::marker::PhantomData;
 use validator::Validate;
 
@@ -137,16 +138,28 @@ impl<S, T> FromRequestParts<S> for RequireTier<T>
 where
     S: Send + Sync,
     JwtManager: FromRef<S>,
+    PgPool: FromRef<S>,
     T: TierRequirement,
 {
     type Rejection = AppError;
 
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        let AuthUser(claims) = AuthUser::from_request_parts(parts, state).await?;
-        let user_level = if claims.role == "admin" {
+        let AuthUser(mut claims) = AuthUser::from_request_parts(parts, state).await?;
+        let pool = PgPool::from_ref(state);
+        if let Ok(Some((live_tier, live_role))) = sqlx::query_as::<_, (String, String)>(
+            "SELECT tier, role FROM users WHERE id = $1",
+        )
+        .bind(claims.sub)
+        .fetch_optional(&pool)
+        .await
+        {
+            claims.tier = live_tier;
+            claims.role = live_role;
+        }
+        let user_level = if claims.role.eq_ignore_ascii_case("admin") {
             3
         } else {
-            match claims.tier.to_lowercase().as_str() {
+            match claims.tier.trim().to_lowercase().as_str() {
                 "business" => 3,
                 "pro" => 2,
                 _ => 1,
