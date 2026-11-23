@@ -1,5 +1,6 @@
 pub mod admin_control_schema;
 pub mod affiliate_schema;
+pub mod auth_email_reset_schema;
 pub mod barista_toolkit_schema;
 pub mod beans_radar_schema;
 pub mod brew_methods_audit_schema;
@@ -53,5 +54,6 @@ pub async fn run_migrations(pool: &PgPool) -> AppResult<()> {
     exec_batch(pool, "affiliate_schema", affiliate_schema::statements()).await;
     exec_batch(pool, "admin_control_schema", admin_control_schema::statements()).await;
     exec_batch(pool, "user_cloud_state_schema", user_cloud_state_schema::statements()).await;
+    exec_batch(pool, "auth_email_reset_schema", auth_email_reset_schema::statements()).await;
     Ok(())
 }

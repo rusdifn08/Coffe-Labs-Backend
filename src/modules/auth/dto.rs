@@ -12,6 +12,8 @@ pub struct RegisterRequest {
     pub password: String,
     #[validate(length(min = 1, max = 100, message = "Nama lengkap tidak boleh kosong."))]
     pub full_name: String,
+    #[validate(length(max = 160, message = "Alamat email terlalu panjang."))]
+    pub email: Option<String>,
     pub avatar_url: Option<String>,
     pub device_id: Option<String>,
     pub device_name: Option<String>,
@@ -19,12 +21,34 @@ pub struct RegisterRequest {
 
 #[derive(Debug, Deserialize, Validate, ToSchema)]
 pub struct LoginRequest {
-    #[validate(length(min = 1, max = 50, message = "Username tidak boleh kosong."))]
+    #[validate(length(min = 1, max = 160, message = "Username atau email tidak boleh kosong."))]
     pub username: String,
     #[validate(length(min = 1, max = 128, message = "Password tidak boleh kosong."))]
     pub password: String,
     pub device_id: Option<String>,
     pub device_name: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Validate, ToSchema)]
+pub struct ForgotPasswordRequest {
+    #[validate(length(min = 3, max = 160, message = "Masukkan alamat email atau username akun Anda."))]
+    pub identifier: String,
+}
+
+#[derive(Debug, Serialize, Clone, ToSchema)]
+pub struct ForgotPasswordResponse {
+    pub masked_email: String,
+    pub expires_in_seconds: i64,
+}
+
+#[derive(Debug, Deserialize, Validate, ToSchema)]
+pub struct ResetPasswordRequest {
+    #[validate(length(min = 3, max = 160, message = "Email atau username tidak boleh kosong."))]
+    pub identifier: String,
+    #[validate(length(min = 6, max = 6, message = "Kode reset harus terdiri dari 6 digit angka."))]
+    pub code: String,
+    #[validate(length(min = 4, max = 128, message = "Password baru minimal 4 karakter."))]
+    pub new_password: String,
 }
 
 #[derive(Debug, Deserialize, Validate, ToSchema)]

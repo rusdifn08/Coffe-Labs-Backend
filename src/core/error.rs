@@ -69,6 +69,9 @@ pub enum AppError {
     #[error("{0}")]
     QuotaExceeded(String),
 
+    #[error("{0}")]
+    ServiceUnavailable(String),
+
     #[error("Database operation failed")]
     Database(#[from] sqlx::Error),
 
@@ -148,11 +151,12 @@ impl IntoResponse for AppError {
             }
             AppError::QuotaExceeded(msg) => (
                 StatusCode::PAYMENT_REQUIRED,
-                Json(json!({
-                    "success": false,
-                    "error_code": "QUOTA_EXCEEDED",
-                    "message": msg
-                })),
+                Json(json!({ "success": false, "error_code": "QUOTA_EXCEEDED", "message": msg })),
+            )
+                .into_response(),
+            AppError::ServiceUnavailable(msg) => (
+                StatusCode::SERVICE_UNAVAILABLE,
+                Json(json!({ "success": false, "error_code": "SERVICE_UNAVAILABLE", "message": msg })),
             )
                 .into_response(),
             AppError::Database(db_err) => {

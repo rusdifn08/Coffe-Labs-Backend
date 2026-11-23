@@ -2,6 +2,8 @@ pub mod dto;
 pub mod error;
 pub mod handlers;
 pub mod models;
+pub mod password_reset_repo;
+pub mod password_reset_service;
 pub mod repository;
 pub mod routes;
 pub mod service;

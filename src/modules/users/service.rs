@@ -2,9 +2,12 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::{
-    core::error::{AppError, AppResult},
+    core::{
+        email_service::normalize_email,
+        error::{AppError, AppResult},
+    },
     modules::{
-        auth::models::UserSummary,
+        auth::{models::UserSummary, password_reset_repo},
         chat::services::moderation_normalizer::contains_multilingual_profanity,
         users::{
             dto::UpdateProfileRequest,
@@ -91,6 +94,21 @@ pub async fn update_barista_profile(
             ));
         }
     }
+    let clean_email = match req.email.as_deref().map(str::trim).filter(|s| !s.is_empty()) {
+        Some(raw) => {
+            let valid = normalize_email(raw).ok_or_else(|| {
+                AppError::Validation("Format alamat email tidak valid. Contoh: nama@gmail.com".to_string())
+            })?;
+            if password_reset_repo::exists_by_email(pool, &valid, Some(user_id)).await? {
+                return Err(AppError::Conflict(format!(
+                    "Email '{}' sudah digunakan oleh akun lain.",
+                    valid
+                )));
+            }
+            Some(valid)
+        }
+        None => None,
+    };
     let clean_avatar = req
         .avatar_url
         .as_deref()
@@ -101,6 +119,7 @@ pub async fn update_barista_profile(
         pool,
         user_id,
         clean_name,
+        clean_email.as_deref(),
         clean_avatar.as_deref(),
         req.bio.as_deref(),
         req.equipment_json,

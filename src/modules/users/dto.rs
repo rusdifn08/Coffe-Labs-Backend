@@ -6,6 +6,8 @@ use validator::Validate;
 pub struct UpdateProfileRequest {
     #[validate(length(min = 1, max = 100, message = "Nama lengkap minimal 1 karakter."))]
     pub full_name: Option<String>,
+    #[validate(length(max = 160, message = "Alamat email terlalu panjang."))]
+    pub email: Option<String>,
     pub avatar_url: Option<String>,
     pub bio: Option<String>,
     pub equipment_json: Option<serde_json::Value>,

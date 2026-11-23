@@ -13,7 +13,7 @@ use crate::{
     modules::auth::models::{RefreshTokenSession, UserRow},
 };
 
-const USER_COLS: &str = "id, username, password_hash, full_name, role, status, tier, avatar_url, trial_full_until, trial_policy_override, created_at, updated_at";
+pub(crate) const USER_COLS: &str = "id, username, email, password_hash, full_name, role, status, tier, avatar_url, trial_full_until, trial_policy_override, created_at, updated_at";
 static USER_ROW_CACHE: OnceLock<DashMap<String, (UserRow, Instant)>> = OnceLock::new();
 
 fn user_cache() -> &'static DashMap<String, (UserRow, Instant)> {
@@ -103,18 +103,19 @@ pub async fn find_by_id(pool: &PgPool, user_id: Uuid) -> AppResult<Option<UserRo
 pub async fn create_user(
     pool: &PgPool,
     username: &str,
+    email: Option<&str>,
     password_hash: &str,
     full_name: &str,
     avatar_url: &str,
 ) -> AppResult<UserRow> {
     let q = format!(
-        "INSERT INTO users (username, password_hash, full_name, role, status, tier, avatar_url)
-         VALUES ($1, $2, $3, 'user', 'approved', 'trial', $4)
-         RETURNING {}",
+        "INSERT INTO users (username, email, password_hash, full_name, role, status, tier, avatar_url)
+         VALUES ($1, $2, $3, $4, 'user', 'approved', 'trial', $5) RETURNING {}",
         USER_COLS
     );
     let user = sqlx::query_as::<_, UserRow>(&q)
         .bind(username)
+        .bind(email)
         .bind(password_hash)
         .bind(full_name)
         .bind(avatar_url)

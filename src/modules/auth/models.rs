@@ -8,6 +8,8 @@ use uuid::Uuid;
 pub struct UserRow {
     pub id: Uuid,
     pub username: String,
+    #[sqlx(default)]
+    pub email: Option<String>,
     #[serde(skip_serializing)]
     pub password_hash: String,
     pub full_name: String,
@@ -27,6 +29,7 @@ pub struct UserRow {
 pub struct UserSummary {
     pub id: Uuid,
     pub username: String,
+    pub email: Option<String>,
     pub full_name: String,
     pub role: String,
     pub status: String,
@@ -42,6 +45,7 @@ impl From<UserRow> for UserSummary {
         Self {
             id: u.id,
             username: u.username,
+            email: u.email,
             full_name: u.full_name,
             role: u.role,
             status: u.status,

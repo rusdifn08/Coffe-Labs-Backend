@@ -15,9 +15,12 @@ use crate::{
         jwt::JwtManager,
     },
     modules::auth::{
-        dto::{ChangePasswordRequest, LoginRequest, RefreshTokenRequest, RegisterRequest},
+        dto::{
+            ChangePasswordRequest, ForgotPasswordRequest, LoginRequest, RefreshTokenRequest,
+            RegisterRequest, ResetPasswordRequest,
+        },
         models::UserSummary,
-        repository, service,
+        password_reset_service, repository, service,
     },
 };
 
@@ -118,5 +121,27 @@ pub async fn revoke_session_family(
     Ok(Json(json!({
         "success": true,
         "message": "Seluruh sesi pada keluarga token tersebut berhasil dihentikan."
+    })))
+}
+
+pub async fn forgot_password(
+    State(pool): State<PgPool>,
+    ValidatedJson(payload): ValidatedJson<ForgotPasswordRequest>,
+) -> AppResult<impl IntoResponse> {
+    let resp = password_reset_service::request_password_reset(&pool, payload).await?;
+    Ok(ApiResponse::ok(
+        format!("Kode reset 6 digit telah dikirim ke email {}.", resp.masked_email),
+        resp,
+    ))
+}
+
+pub async fn reset_password(
+    State(pool): State<PgPool>,
+    ValidatedJson(payload): ValidatedJson<ResetPasswordRequest>,
+) -> AppResult<impl IntoResponse> {
+    password_reset_service::confirm_password_reset(&pool, payload).await?;
+    Ok(Json(json!({
+        "success": true,
+        "message": "Password berhasil direset! Silakan login menggunakan password baru Anda."
     })))
 }

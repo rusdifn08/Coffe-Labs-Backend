@@ -2,6 +2,7 @@ pub mod auth_extractor;
 pub mod cache;
 pub mod config;
 pub mod database;
+pub mod email_service;
 pub mod error;
 pub mod extractors;
 pub mod fcm_oauth;

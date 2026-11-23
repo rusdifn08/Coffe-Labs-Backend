@@ -6,6 +6,7 @@ use uuid::Uuid;
 
 use crate::{
     core::{
+        email_service::normalize_email,
         error::{AppError, AppResult},
         jwt::JwtManager,
         security::{
@@ -13,23 +14,21 @@ use crate::{
             needs_fast_rehash, verify_password,
         },
     },
-    modules::auth::{
-        dto::{
-            AuthSessionPayload, ChangePasswordRequest, LoginRequest, RefreshTokenRequest,
-            RegisterRequest, UnifiedAuthResponse,
+    modules::{
+        auth::{
+            dto::{
+                AuthSessionPayload, ChangePasswordRequest, LoginRequest, RefreshTokenRequest,
+                RegisterRequest, UnifiedAuthResponse,
+            },
+            error::AuthDomainError,
+            models::{RefreshTokenSession, UserRow, UserSummary},
+            password_reset_repo, repository,
         },
-        error::AuthDomainError,
-        models::{RefreshTokenSession, UserRow, UserSummary},
-        repository,
+        chat::services::moderation_normalizer::contains_multilingual_profanity,
     },
 };
 
-fn build_auth_response(
-    user: UserRow,
-    token: String,
-    refresh_token: String,
-    msg: &str,
-) -> UnifiedAuthResponse {
+fn build_auth_response(user: UserRow, token: String, refresh_token: String, msg: &str) -> UnifiedAuthResponse {
     let summary: UserSummary = user.into();
     let payload = AuthSessionPayload {
         token: token.clone(),
@@ -37,14 +36,7 @@ fn build_auth_response(
         user: summary.clone(),
         message: msg.to_string(),
     };
-    UnifiedAuthResponse {
-        success: true,
-        message: msg.to_string(),
-        token,
-        refresh_token,
-        user: summary,
-        data: payload,
-    }
+    UnifiedAuthResponse { success: true, message: msg.to_string(), token, refresh_token, user: summary, data: payload }
 }
 
 pub async fn register_user(
@@ -54,25 +46,34 @@ pub async fn register_user(
 ) -> AppResult<(UserSummary, String, String)> {
     let username = req.username.trim().to_lowercase();
     let full_name = req.full_name.trim();
-
+    if contains_multilingual_profanity(&username) || contains_multilingual_profanity(full_name) {
+        return Err(AppError::Validation("Username atau nama mengandung kata tidak pantas.".to_string()));
+    }
+    let clean_email = match req.email.as_deref().map(str::trim).filter(|s| !s.is_empty()) {
+        Some(raw) => Some(normalize_email(raw).ok_or(AuthDomainError::InvalidEmail)?),
+        None => None,
+    };
     if repository::exists_by_username(pool, &username).await? {
         return Err(AuthDomainError::UsernameTaken(username).into());
     }
-
+    if let Some(ref email) = clean_email {
+        if password_reset_repo::exists_by_email(pool, email, None).await? {
+            return Err(AuthDomainError::EmailTaken(email.clone()).into());
+        }
+    }
     let secret_pwd = SecretString::from(req.password);
     let pwd_hash = hash_password(&secret_pwd)?;
     cache_verified_password(&secret_pwd, &pwd_hash);
     let avatar = req.avatar_url.unwrap_or_else(|| "assets/images/characters/avatar_1.png".to_string());
 
-    let user = repository::create_user(pool, &username, &pwd_hash, full_name, &avatar).await?;
+    let user = repository::create_user(pool, &username, clean_email.as_deref(), &pwd_hash, full_name, &avatar).await?;
     let token = jwt.generate_user_token(user.id, &user.username, &user.role, &user.tier, &user.status)?;
 
     let raw_refresh = generate_refresh_token();
     let rt_hash = hash_refresh_token(&raw_refresh);
     let device_id = req.device_id.unwrap_or_else(|| "mobile_default".to_string());
     let device_name = req.device_name.unwrap_or_else(|| "Coffee Labs Mobile".to_string());
-    let pool_bg = pool.clone();
-    let uid = user.id;
+    let (pool_bg, uid) = (pool.clone(), user.id);
 
     tokio::spawn(async move {
         let _ = crate::modules::social_feed::repositories::profile_projection_repo::ensure_projection_exists(&pool_bg, uid).await;
@@ -86,16 +87,21 @@ pub async fn login_user(
     jwt: &JwtManager,
     req: LoginRequest,
 ) -> AppResult<UnifiedAuthResponse> {
-    let username = req.username.trim().to_lowercase();
-    let user = repository::find_by_username(pool, &username)
-        .await?
-        .ok_or(AuthDomainError::InvalidCredentials)?;
+    let identifier = req.username.trim().to_lowercase();
+    let user = if identifier.contains('@') {
+        password_reset_repo::find_user_by_identifier(pool, &identifier).await?
+    } else {
+        match repository::find_by_username(pool, &identifier).await? {
+            Some(u) => Some(u),
+            None => password_reset_repo::find_user_by_identifier(pool, &identifier).await?,
+        }
+    }
+    .ok_or(AuthDomainError::InvalidCredentials)?;
 
     let secret_pwd = SecretString::from(req.password);
     if !verify_password(&secret_pwd, &user.password_hash) {
         return Err(AuthDomainError::InvalidCredentials.into());
     }
-
     if user.role != "admin" && user.status == "declined" {
         return Err(AppError::AccountStatus {
             status: "declined".to_string(),
@@ -108,10 +114,8 @@ pub async fn login_user(
     let rt_hash = hash_refresh_token(&raw_refresh);
     let device_id = req.device_id.unwrap_or_else(|| "mobile_default".to_string());
     let device_name = req.device_name.unwrap_or_else(|| "Coffee Labs Mobile".to_string());
-
     let should_rehash = needs_fast_rehash(&user.password_hash);
-    let pool_bg = pool.clone();
-    let uid = user.id;
+    let (pool_bg, uid) = (pool.clone(), user.id);
 
     tokio::spawn(async move {
         if should_rehash {
@@ -135,18 +139,15 @@ pub async fn rotate_refresh_token(
     let session = repository::find_refresh_token(pool, &rt_hash)
         .await?
         .ok_or(AuthDomainError::InvalidRefreshToken)?;
-
     if session.is_revoked {
         warn!("🚨 Security Alert: Refresh token reuse for user_id={}, family_id={}", session.user_id, session.family_id);
         repository::revoke_entire_family(pool, session.family_id).await?;
         return Err(AuthDomainError::TokenReuseDetected.into());
     }
-
     if session.expires_at < Utc::now() {
         repository::revoke_token_by_id(pool, session.id).await?;
         return Err(AuthDomainError::InvalidRefreshToken.into());
     }
-
     repository::revoke_token_by_id(pool, session.id).await?;
     let user = repository::find_by_id(pool, session.user_id)
         .await?
@@ -156,30 +157,22 @@ pub async fn rotate_refresh_token(
     let new_refresh = generate_refresh_token();
     let new_hash = hash_refresh_token(&new_refresh);
     let device_id = req.device_id.as_deref().unwrap_or(&session.device_id);
-
     repository::insert_refresh_token(
         pool, user.id, session.family_id, &new_hash, device_id, &session.device_name, session.ip_address.as_deref(),
-    ).await?;
-
+    )
+    .await?;
     Ok(build_auth_response(user, new_access, new_refresh, "Token berhasil diperbarui."))
 }
 
-pub async fn change_user_password(
-    pool: &PgPool,
-    user_id: Uuid,
-    req: ChangePasswordRequest,
-) -> AppResult<()> {
+pub async fn change_user_password(pool: &PgPool, user_id: Uuid, req: ChangePasswordRequest) -> AppResult<()> {
     let user = repository::find_by_id(pool, user_id)
         .await?
         .ok_or_else(|| AppError::NotFound("User tidak ditemukan.".to_string()))?;
-
     let curr_secret = SecretString::from(req.current_password);
     if !verify_password(&curr_secret, &user.password_hash) {
         return Err(AuthDomainError::CurrentPasswordMismatch.into());
     }
-
-    let new_secret = SecretString::from(req.new_password);
-    let new_hash = hash_password(&new_secret)?;
+    let new_hash = hash_password(&SecretString::from(req.new_password))?;
     repository::update_password(pool, user_id, &new_hash).await
 }
 

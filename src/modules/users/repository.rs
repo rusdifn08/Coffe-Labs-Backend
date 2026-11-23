@@ -9,7 +9,7 @@ use crate::{
     },
 };
 
-const USER_COLS: &str = "id, username, password_hash, full_name, role, status, tier, avatar_url, trial_full_until, trial_policy_override, created_at, updated_at";
+const USER_COLS: &str = "id, username, email, password_hash, full_name, role, status, tier, avatar_url, trial_full_until, trial_policy_override, created_at, updated_at";
 
 pub async fn list_all_users(pool: &PgPool) -> AppResult<Vec<UserSummary>> {
     let q = format!("SELECT {} FROM users ORDER BY created_at DESC", USER_COLS);
@@ -152,7 +152,7 @@ pub async fn delete_non_admin_user(pool: &PgPool, user_id: Uuid) -> AppResult<u6
 
 pub async fn get_profile(pool: &PgPool, user_id: Uuid) -> AppResult<Option<BaristaProfile>> {
     let row = sqlx::query_as::<_, BaristaProfile>(
-        "SELECT id, username, full_name, role, status, tier, avatar_url, bio, equipment_json, created_at, updated_at FROM users WHERE id = $1",
+        "SELECT id, username, email, full_name, role, status, tier, avatar_url, bio, equipment_json, created_at, updated_at FROM users WHERE id = $1",
     )
     .bind(user_id)
     .fetch_optional(pool)
@@ -164,6 +164,7 @@ pub async fn update_profile(
     pool: &PgPool,
     user_id: Uuid,
     full_name: Option<&str>,
+    email: Option<&str>,
     avatar_url: Option<&str>,
     bio: Option<&str>,
     equipment_json: Option<serde_json::Value>,
@@ -171,14 +172,16 @@ pub async fn update_profile(
     let row = sqlx::query_as::<_, BaristaProfile>(
         r#"UPDATE users
            SET full_name = COALESCE($1, full_name),
-               avatar_url = COALESCE($2, avatar_url),
-               bio = COALESCE($3, bio),
-               equipment_json = COALESCE($4, equipment_json),
+               email = COALESCE($2, email),
+               avatar_url = COALESCE($3, avatar_url),
+               bio = COALESCE($4, bio),
+               equipment_json = COALESCE($5, equipment_json),
                updated_at = NOW()
-           WHERE id = $5
-           RETURNING id, username, full_name, role, status, tier, avatar_url, bio, equipment_json, created_at, updated_at"#,
+           WHERE id = $6
+           RETURNING id, username, email, full_name, role, status, tier, avatar_url, bio, equipment_json, created_at, updated_at"#,
     )
     .bind(full_name)
+    .bind(email)
     .bind(avatar_url)
     .bind(bio)
     .bind(equipment_json)

@@ -8,6 +8,8 @@ use uuid::Uuid;
 pub struct BaristaProfile {
     pub id: Uuid,
     pub username: String,
+    #[sqlx(default)]
+    pub email: Option<String>,
     pub full_name: String,
     pub role: String,
     pub status: String,
