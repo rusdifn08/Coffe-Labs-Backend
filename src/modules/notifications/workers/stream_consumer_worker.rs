@@ -58,8 +58,14 @@ pub async fn run_stream_consumer(
                     }
                 }
                 Err(err) => {
-                    warn!(error = %err, "Redis XREADGROUP error, jeda 1s sebelum retry");
-                    tokio::time::sleep(Duration::from_secs(1)).await;
+                    if *err.kind() == fred::error::RedisErrorKind::Parse
+                        && err.details().contains("Cannot convert to map")
+                    {
+                        // Timeout BLOCK 2000ms pada Redis Stream kosong mengembalikan Nil; bukan error.
+                    } else {
+                        warn!(error = %err, "Redis XREADGROUP error, jeda 1s sebelum retry");
+                        tokio::time::sleep(Duration::from_secs(1)).await;
+                    }
                 }
             }
 

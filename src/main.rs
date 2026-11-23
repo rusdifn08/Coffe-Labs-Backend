@@ -214,11 +214,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         state.clone(),
     );
     let router = app::build_app(state);
-    let addr = SocketAddr::from(([0, 0, 0, 0], port));
-
-    info!("🚀 Server berjalan di http://0.0.0.0:{} | APM: /dashboard | OpenAPI: /api/v1/openapi.json", port);
-
-    let listener = tokio::net::TcpListener::bind(addr).await?;
+    let v6_addr = SocketAddr::from(([0u16; 8], port));
+    let listener = match tokio::net::TcpListener::bind(v6_addr).await {
+        Ok(l) => {
+            info!("🚀 Server berjalan di http://[::]:{} (IPv4 & IPv6) | APM: /dashboard | OpenAPI: /api/v1/openapi.json", port);
+            l
+        }
+        Err(_) => {
+            let v4_addr = SocketAddr::from(([0, 0, 0, 0], port));
+            info!("🚀 Server berjalan di http://0.0.0.0:{} | APM: /dashboard | OpenAPI: /api/v1/openapi.json", port);
+            tokio::net::TcpListener::bind(v4_addr).await?
+        }
+    };
     axum::serve(listener, router).await?;
 
     Ok(())
