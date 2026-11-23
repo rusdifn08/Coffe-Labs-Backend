@@ -2,9 +2,10 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::{
-    core::error::AppResult,
+    core::error::{AppError, AppResult},
     modules::{
         auth::models::UserSummary,
+        chat::services::moderation_normalizer::contains_multilingual_profanity,
         users::{
             dto::UpdateProfileRequest,
             error::UsersError,
@@ -76,6 +77,20 @@ pub async fn update_barista_profile(
         .as_deref()
         .map(str::trim)
         .filter(|s| !s.is_empty());
+    if let Some(name) = clean_name {
+        if contains_multilingual_profanity(name) {
+            return Err(AppError::Validation(
+                "Nama profil mengandung kata kasar atau tidak pantas.".to_string(),
+            ));
+        }
+    }
+    if let Some(bio) = req.bio.as_deref() {
+        if contains_multilingual_profanity(bio) {
+            return Err(AppError::Validation(
+                "Bio profil mengandung kata kasar atau tidak pantas.".to_string(),
+            ));
+        }
+    }
     let clean_avatar = req
         .avatar_url
         .as_deref()

@@ -27,6 +27,7 @@ pub async fn seed_version_config(pool: &PgPool) -> AppResult<()> {
     Ok(())
 }
 
+#[allow(dead_code)]
 pub async fn seed_social_posts(pool: &PgPool) -> AppResult<()> {
     let count_res: Result<i64, _> = sqlx::query_scalar("SELECT COUNT(*) FROM social_posts").fetch_one(pool).await;
     let count = match count_res {

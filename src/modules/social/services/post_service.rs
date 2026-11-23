@@ -3,29 +3,50 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::{
-    core::{error::AppResult, jwt::JwtClaims},
-    modules::social::{
-        dto::{
-            CopyRecipeResponse, CreateCommentRequest, CreateSocialPostRequest, FollowStatsResponse,
-            FollowToggleRequest, LikePostResponse, SocialPostResponse,
+    core::{
+        error::{AppError, AppResult},
+        jwt::JwtClaims,
+    },
+    modules::{
+        chat::services::moderation_guard::{ModerationGuard, ModerationMode},
+        social::{
+            dto::{
+                CopyRecipeResponse, CreateCommentRequest, CreateSocialPostRequest,
+                FollowStatsResponse, FollowToggleRequest, LikePostResponse, SocialPostResponse,
+            },
+            error::SocialError,
+            models::SocialComment,
+            repositories::post_repo,
+            services::feed_service::map_post_to_response,
         },
-        error::SocialError,
-        models::SocialComment,
-        repositories::post_repo,
-        services::feed_service::map_post_to_response,
     },
 };
 
+fn enforce_clean_content(guard: &ModerationGuard, raw: &str) -> AppResult<()> {
+    guard
+        .check_text(raw, ModerationMode::RejectMessage)
+        .map_err(|e| AppError::Validation(e.to_string()))?;
+    Ok(())
+}
+
 pub async fn create_post(
     pool: &PgPool,
+    moderation: &ModerationGuard,
     auth: Option<JwtClaims>,
     req: CreateSocialPostRequest,
 ) -> AppResult<SocialPostResponse> {
+    enforce_clean_content(moderation, &req.content)?;
+    if let Some(ref tags) = req.tags {
+        for tag in tags {
+            enforce_clean_content(moderation, tag)?;
+        }
+    }
     let user_id = auth.as_ref().map(|u| u.sub);
     let author_name = if let Some(ref u) = auth {
         u.username.clone()
     } else if let Some(ref name) = req.author_name {
         if !name.trim().is_empty() {
+            enforce_clean_content(moderation, name)?;
             name.trim().to_string()
         } else {
             "Barista Komunitas".to_string()
@@ -75,15 +96,18 @@ pub async fn get_comments(pool: &PgPool, post_id: Uuid) -> AppResult<Vec<SocialC
 
 pub async fn add_comment(
     pool: &PgPool,
+    moderation: &ModerationGuard,
     post_id: Uuid,
     auth: Option<JwtClaims>,
     req: CreateCommentRequest,
 ) -> AppResult<SocialComment> {
+    enforce_clean_content(moderation, &req.content)?;
     let user_id = auth.as_ref().map(|u| u.sub);
     let author_name = if let Some(ref u) = auth {
         u.username.clone()
     } else if let Some(ref name) = req.author_name {
         if !name.trim().is_empty() {
+            enforce_clean_content(moderation, name)?;
             name.trim().to_string()
         } else {
             "Barista".to_string()

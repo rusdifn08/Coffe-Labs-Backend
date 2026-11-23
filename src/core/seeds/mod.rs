@@ -12,7 +12,6 @@ pub async fn run_seeds(pool: &PgPool) -> AppResult<()> {
     accounts::seed_business_demo_account(pool).await?;
     pro_accounts::seed_registered_pro_accounts(pool).await?;
     curated_content::seed_version_config(pool).await?;
-    curated_content::seed_social_posts(pool).await?;
     curated_content::seed_curated_beans(pool).await?;
     toolkit_lms_seed::seed_lms_courses_and_lessons(pool).await?;
     toolkit_content_seed::seed_ebooks_and_game_chapters(pool).await?;

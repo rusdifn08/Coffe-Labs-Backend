@@ -117,7 +117,7 @@ impl MessageService {
 
         let sanitized_text = match input.body_text.as_deref() {
             Some(raw) => {
-                let clean = moderation.check_text(raw, ModerationMode::MaskWithAsterisks)?;
+                let clean = moderation.check_text(raw, ModerationMode::RejectMessage)?;
                 if clean.is_empty() { None } else { Some(clean) }
             }
             None => None,

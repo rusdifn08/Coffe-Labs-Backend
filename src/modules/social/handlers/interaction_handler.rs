@@ -9,6 +9,7 @@ use crate::{
     core::{
         error::{ApiResponse, AppResult},
         extractors::{OptionalAuthUser, ValidatedJson},
+        AppState,
     },
     modules::social::{
         dto::{CreateCommentRequest, FollowStatsResponse, FollowToggleRequest, LikePostRequest},
@@ -42,10 +43,11 @@ pub async fn get_social_post_comments(
 pub async fn add_social_post_comment(
     OptionalAuthUser(auth): OptionalAuthUser,
     Path(id): Path<Uuid>,
-    State(pool): State<PgPool>,
+    State(state): State<AppState>,
     ValidatedJson(payload): ValidatedJson<CreateCommentRequest>,
 ) -> AppResult<impl IntoResponse> {
-    let comment = post_service::add_comment(&pool, id, auth, payload).await?;
+    let comment =
+        post_service::add_comment(&state.pool, &state.chat_moderation, id, auth, payload).await?;
     Ok(ApiResponse::created("Komentar berhasil dikirim", comment))
 }
 
