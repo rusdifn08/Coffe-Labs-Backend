@@ -21,6 +21,7 @@ fn default_cfg(round_step: i32, basis: &str) -> AffiliateConfigRow {
         max_withdrawal_per_day_idr: 5_000_000,
         withdrawal_admin_fee_idr: 0,
         first_purchase_only: false,
+        allow_free_tier_affiliates: false,
     }
 }
 

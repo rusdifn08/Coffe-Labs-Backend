@@ -3,7 +3,10 @@ use axum::{
     Router,
 };
 
-use crate::{core::AppState, modules::users::handlers};
+use crate::{
+    core::AppState,
+    modules::users::{cloud_state_handler, handlers},
+};
 
 pub fn router() -> Router<AppState> {
     Router::new()
@@ -17,5 +20,10 @@ pub fn router() -> Router<AppState> {
         .route(
             "/api/v1/users/profile",
             get(handlers::get_my_profile).put(handlers::update_my_profile),
+        )
+        .route(
+            "/api/v1/users/me/cloud-state",
+            get(cloud_state_handler::get_my_cloud_state)
+                .put(cloud_state_handler::put_my_cloud_state),
         )
 }

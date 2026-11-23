@@ -17,6 +17,7 @@ pub mod qris_billing_schema;
 pub mod roasteries_schema;
 pub mod social_graph_schema;
 pub mod transfer_learning_schema;
+pub mod user_cloud_state_schema;
 
 use sqlx::PgPool;
 use tracing::warn;
@@ -51,5 +52,6 @@ pub async fn run_migrations(pool: &PgPool) -> AppResult<()> {
     exec_batch(pool, "qris_billing_schema", qris_billing_schema::statements()).await;
     exec_batch(pool, "affiliate_schema", affiliate_schema::statements()).await;
     exec_batch(pool, "admin_control_schema", admin_control_schema::statements()).await;
+    exec_batch(pool, "user_cloud_state_schema", user_cloud_state_schema::statements()).await;
     Ok(())
 }

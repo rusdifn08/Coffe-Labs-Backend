@@ -71,14 +71,44 @@ pub async fn update_barista_profile(
     user_id: Uuid,
     req: UpdateProfileRequest,
 ) -> AppResult<BaristaProfile> {
-    repository::update_profile(
+    let clean_name = req
+        .full_name
+        .as_deref()
+        .map(str::trim)
+        .filter(|s| !s.is_empty());
+    let clean_avatar = req
+        .avatar_url
+        .as_deref()
+        .map(crate::core::storage::auto_optimize_url)
+        .filter(|s| !s.is_empty());
+
+    let updated = repository::update_profile(
         pool,
         user_id,
-        req.full_name.as_deref(),
-        req.avatar_url.as_deref(),
+        clean_name,
+        clean_avatar.as_deref(),
         req.bio.as_deref(),
         req.equipment_json,
     )
     .await?
-    .ok_or_else(|| UsersError::UserNotFoundOrProtected.into())
+    .ok_or(UsersError::UserNotFoundOrProtected)?;
+
+    // Sinkronkan juga ke user_profile_projections agar Social Coffee & pencarian langsung terbarui.
+    let _ = sqlx::query(
+        r#"UPDATE user_profile_projections
+           SET display_name = $2,
+               avatar_url = COALESCE($3, avatar_url),
+               bio = COALESCE($4, bio),
+               updated_at = NOW()
+           WHERE user_id = $1"#,
+    )
+    .bind(user_id)
+    .bind(&updated.full_name)
+    .bind(&updated.avatar_url)
+    .bind(&updated.bio)
+    .execute(pool)
+    .await;
+
+    crate::modules::auth::repository::invalidate_user_cache_all();
+    Ok(updated)
 }
