@@ -1,0 +1,20 @@
+[phases.setup]
+nixPkgs = ["...", "rustup", "gcc", "pkg-config", "openssl.dev"]
+
+[phases.install]
+cmds = [
+  "rustup toolchain install stable --profile minimal",
+  "rustup default stable"
+]
+
+[phases.build]
+cmds = [
+  "export PATH=\"$HOME/.cargo/bin:$PATH\"",
+  "cargo --version",
+  "mkdir -p bin",
+  "cargo build --release --bin coffe-labs-backend",
+  "cp ./target/release/coffe-labs-backend ./bin/coffe-labs-backend"
+]
+
+[start]
+cmd = "./bin/coffe-labs-backend"

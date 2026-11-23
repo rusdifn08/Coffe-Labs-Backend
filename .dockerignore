@@ -1,0 +1,12 @@
+target/
+target_*/
+storage/
+admin-panel/node_modules/
+.git/
+.gitignore
+.env
+*.pdb
+*.log
+*.ps1
+docs/
+tests/
