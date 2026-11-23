@@ -8,8 +8,10 @@ WORKDIR /app
 # Pastikan toolchain stable terbaru aktif (mendukung Rust edition2024 / Cargo >= 1.85+)
 RUN rustup update stable && rustup default stable && cargo --version && rustc --version
 
-# Copy manifest terlebih dahulu
+# Copy manifest dan file compile-time (include_str! seeds & admin-panel)
 COPY Cargo.toml Cargo.lock ./
+COPY admin-panel ./admin-panel
+COPY storage/*.json ./storage/
 COPY src ./src
 
 # Build binary release utama (LTO & mimalloc aktif)
@@ -27,6 +29,8 @@ RUN apt-get update \
 WORKDIR /app
 
 COPY --from=builder /app/target/release/coffe-labs-backend /usr/local/bin/coffe-labs-backend
+COPY storage ./storage
+COPY admin-panel ./admin-panel
 
 ENV PORT=3000
 ENV ENVIRONMENT=production

@@ -1,6 +1,5 @@
 target/
 target_*/
-storage/
 admin-panel/node_modules/
 .git/
 .gitignore
