@@ -148,8 +148,9 @@ mod tests {
         let g = ModerationGuard::new();
         for bad in [
             "bangsat lu", "kontol", "fuck", "f.u.c.k", "f u c k", "k0nt0l", "b4ngs4t",
-            "f*ck", "putangina", "blyat", "씨발", "操你妈", "شرموطة", "madarchod",
-            "kurwa", "vaffanculo", "scheisse", "scheiiiiisse", "jancok tenan", "slot gacor maxwin88",
+            "f*ck", "b*ngs*t", "k*nt*l", "m*m*k", "putangina", "blyat", "씨발", "操你妈",
+            "شرموطة", "madarchod", "kurwa", "vaffanculo", "scheisse", "scheiiiiisse",
+            "jancok tenan", "slot gacor maxwin88",
         ] {
             assert!(g.check_text(bad, ModerationMode::RejectMessage).is_err(), "Harusnya diblokir: {bad}");
         }

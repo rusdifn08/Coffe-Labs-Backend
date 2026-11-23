@@ -85,19 +85,3 @@ pub const SAFE_COFFEE_WHITELIST: &[&str] = &[
     "puntang", "ciwidey", "garut", "temanggung", "wamena", "papua", "flores", "halu",
     "shining", "sunshine", "shine", "pic", "pics", "picture", "bite", "bobo", "tangga",
 ];
-
-/// Pola wildcard sensor manual seperti `f*ck`, `k*nt*l`, `b*ngs*t`, `sh*t`, `m*m*k`.
-pub const WILDCARD_PATTERNS: &[(&str, &str)] = &[
-    ("f", "ck"),
-    ("sh", "t"),
-    ("b", "tch"),
-    ("k", "ntol"),
-    ("knt", "l"),
-    ("b", "ngsat"),
-    ("m", "mek"),
-    ("ng", "ntot"),
-    ("j", "ncok"),
-    ("j", "ncuk"),
-    ("a", "jing"),
-    ("anj", "ng"),
-];

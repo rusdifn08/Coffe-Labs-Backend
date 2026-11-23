@@ -1,12 +1,9 @@
 use crate::modules::chat::services::profanity_lexicon::{
-    EXACT_TOKEN_TERMS, SAFE_COFFEE_WHITELIST, SEVERE_SUBSTRING_TERMS, WILDCARD_PATTERNS,
+    EXACT_TOKEN_TERMS, SAFE_COFFEE_WHITELIST, SEVERE_SUBSTRING_TERMS,
 };
 
 fn is_zero_width(c: char) -> bool {
-    matches!(
-        c,
-        '\u{200B}'..='\u{200F}' | '\u{202A}'..='\u{202E}' | '\u{2060}' | '\u{FEFF}' | '\u{00AD}'
-    )
+    matches!(c, '\u{200B}'..='\u{200F}' | '\u{202A}'..='\u{202E}' | '\u{2060}' | '\u{FEFF}' | '\u{00AD}')
 }
 
 fn fold_diacritic_or_leet(c: char) -> char {
@@ -36,20 +33,14 @@ pub fn strip_invisible_lower(input: &str) -> String {
         if c == 'ß' || c == 'ẞ' {
             out.push_str("ss");
         } else {
-            for lc in c.to_lowercase() {
-                out.push(lc);
-            }
+            out.extend(c.to_lowercase());
         }
     }
     out
 }
 
 pub fn decode_leet_only(token: &str) -> String {
-    token
-        .chars()
-        .map(fold_diacritic_or_leet)
-        .filter(|c| c.is_alphabetic())
-        .collect()
+    token.chars().map(fold_diacritic_or_leet).filter(|c| c.is_alphabetic()).collect()
 }
 
 pub fn collapse_repeats(s: &str) -> String {
@@ -64,49 +55,79 @@ pub fn collapse_repeats(s: &str) -> String {
     out
 }
 
+fn wildcard_fits_term(pattern: &str, term: &str) -> bool {
+    if term.len() < 4 || term.len() > pattern.len() + 3 {
+        return false;
+    }
+    let parts: Vec<&str> = pattern.split('*').collect();
+    if let Some(first) = parts.first().filter(|s| !s.is_empty()) {
+        if !term.starts_with(first) { return false; }
+    }
+    if let Some(last) = parts.last().filter(|s| !s.is_empty()) {
+        if !term.ends_with(last) { return false; }
+    }
+    let mut cursor = 0usize;
+    for (idx, seg) in parts.iter().enumerate() {
+        if seg.is_empty() {
+            cursor += 1;
+            continue;
+        }
+        let start = if idx == 0 { 0 } else { cursor + 1 };
+        let Some(pos) = term.get(start..).and_then(|slice| slice.find(seg)) else {
+            return false;
+        };
+        cursor = start + pos + seg.len();
+    }
+    true
+}
+
 fn matches_masked_wildcard(raw_token: &str) -> bool {
     if !raw_token.contains('*') && !raw_token.contains('#') && !raw_token.contains('_') {
         return false;
     }
-    let cleaned: String = raw_token
-        .chars()
-        .map(|c| match c {
-            '#' | '_' | '.' | '-' => '*',
-            other => fold_diacritic_or_leet(other),
-        })
-        .filter(|c| c.is_alphabetic() || *c == '*')
-        .collect();
-    if cleaned.len() < 4 || !cleaned.contains('*') {
+    let mut cleaned = String::with_capacity(raw_token.len());
+    let mut alpha_count = 0usize;
+    let mut prev_star = false;
+    for c in raw_token.chars() {
+        if matches!(c, '*' | '#' | '_' | '.' | '-') {
+            if !prev_star { cleaned.push('*'); prev_star = true; }
+        } else {
+            let mapped = fold_diacritic_or_leet(c);
+            if mapped.is_ascii_alphabetic() {
+                cleaned.push(mapped);
+                alpha_count += 1;
+                prev_star = false;
+            }
+        }
+    }
+    if cleaned.len() < 4 || alpha_count < 2 || !cleaned.contains('*') {
         return false;
     }
-    WILDCARD_PATTERNS
+    SEVERE_SUBSTRING_TERMS
         .iter()
-        .any(|(pre, suf)| cleaned.starts_with(pre) && cleaned.ends_with(suf))
+        .any(|&term| term.is_ascii() && !term.contains(' ') && wildcard_fits_term(&cleaned, term))
 }
 
 fn matches_severe_ascii(decoded: &str, collapsed: &str) -> bool {
-    for &term in SEVERE_SUBSTRING_TERMS {
-        if !term.is_ascii() || term.contains(' ') {
-            continue;
-        }
-        if decoded.contains(term) || collapsed.contains(&collapse_repeats(term)) {
-            return true;
-        }
-    }
-    false
+    SEVERE_SUBSTRING_TERMS.iter().any(|&term| {
+        term.is_ascii()
+            && !term.contains(' ')
+            && (decoded.contains(term) || collapsed.contains(&collapse_repeats(term)))
+    })
 }
 
-/// Mendeteksi kata kasar multibahasa (leetspeak, huruf berulang, wildcard, dan spasi patah).
+/// Mendeteksi kata kasar multibahasa (leetspeak, huruf berulang, multi-wildcard, dan spasi patah).
 pub fn contains_multilingual_profanity(raw_text: &str) -> bool {
     let clean = strip_invisible_lower(raw_text);
     if clean.trim().is_empty() {
         return false;
     }
 
-    for &term in SEVERE_SUBSTRING_TERMS {
-        if (!term.is_ascii() || term.contains(' ')) && clean.contains(term) {
-            return true;
-        }
+    if SEVERE_SUBSTRING_TERMS
+        .iter()
+        .any(|&t| (!t.is_ascii() || t.contains(' ')) && clean.contains(t))
+    {
+        return true;
     }
 
     let raw_tokens: Vec<&str> = clean
@@ -134,18 +155,13 @@ pub fn contains_multilingual_profanity(raw_text: &str) -> bool {
             continue;
         }
         if EXACT_TOKEN_TERMS.contains(&decoded.as_str())
-            || EXACT_TOKEN_TERMS
-                .iter()
-                .any(|t| collapse_repeats(t) == collapsed)
+            || EXACT_TOKEN_TERMS.iter().any(|t| collapse_repeats(t) == collapsed)
+            || matches_severe_ascii(&decoded, &collapsed)
         {
-            return true;
-        }
-        if matches_severe_ascii(&decoded, &collapsed) {
             return true;
         }
     }
 
-    // Anti-spacing bypass (`f u c k`, `k.o.n.t.o.l`, `b a n g s a t`)
     let mut short_run = String::new();
     let mut short_count = 0usize;
     for &tok in &raw_tokens {
@@ -155,14 +171,13 @@ pub fn contains_multilingual_profanity(raw_text: &str) -> bool {
             short_count += 1;
             if short_count >= 3 && short_run.len() >= 4 {
                 let col_run = collapse_repeats(&short_run);
-                for &term in SEVERE_SUBSTRING_TERMS {
-                    if term.is_ascii()
-                        && !term.contains(' ')
-                        && term.len() >= 4
-                        && (short_run.contains(term) || col_run.contains(&collapse_repeats(term)))
-                    {
-                        return true;
-                    }
+                if SEVERE_SUBSTRING_TERMS.iter().any(|&t| {
+                    t.is_ascii()
+                        && !t.contains(' ')
+                        && t.len() >= 4
+                        && (short_run.contains(t) || col_run.contains(&collapse_repeats(t)))
+                }) {
+                    return true;
                 }
             }
         } else {
@@ -170,6 +185,5 @@ pub fn contains_multilingual_profanity(raw_text: &str) -> bool {
             short_count = 0;
         }
     }
-
     false
 }
