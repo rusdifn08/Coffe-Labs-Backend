@@ -14,11 +14,15 @@ pub async fn seed_version_config(pool: &PgPool) -> AppResult<()> {
             r#"INSERT INTO app_version_configs (
                 id, platform, min_base_version, latest_base_version,
                 min_build_number, latest_build_number, latest_patch_number,
-                is_force_update, is_patch_required, release_notes, download_url
+                is_force_update, is_patch_required, release_notes,
+                download_url, ios_download_url, windows_download_url, content_manifest_version
             ) VALUES (
-                'default', 'all', '1.0.0', '1.0.0', 1, 1, 0, FALSE, FALSE,
-                'Pembaruan stabilitas sistem dan optimasi fitur Coffee Labs.',
-                'https://github.com/rusdi-labs/coffee-hub-mobile/releases/latest'
+                'default', 'all', '2.0.0', '2.5.1', 2, 9, 0, FALSE, FALSE,
+                'Pembaruan Coffee Labs v2.5.1: Cafe Radar fokus rute, Email & Lupa Password OTP, Cloud Sync per akun, & Jurnal Seduh sensori.',
+                'https://github.com/rusdifn08/coffe-labs-mobile/releases/download/v2.5.1/Coffe_Labs_25.apk',
+                'https://github.com/rusdifn08/coffe-labs-mobile/releases/download/v2.5.1/CoffeLabs25.ipa',
+                'https://github.com/rusdifn08/coffe-labs-mobile/releases/latest',
+                1
             )"#,
         )
         .execute(pool)

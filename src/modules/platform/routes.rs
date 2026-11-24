@@ -19,6 +19,10 @@ pub fn router() -> Router<AppState> {
             "/api/admin/app-version",
             get(handlers::admin_get_version_config).post(handlers::admin_update_version_config),
         )
+        .route(
+            "/api/admin/app-version/sync-github",
+            post(handlers::admin_sync_github_release),
+        )
         .route("/api/feedback", post(handlers::submit_feedback))
         .route("/api/admin/feedbacks", get(handlers::admin_get_feedbacks))
         .route("/api/admin/feedbacks/stats", get(handlers::admin_get_feedback_stats))

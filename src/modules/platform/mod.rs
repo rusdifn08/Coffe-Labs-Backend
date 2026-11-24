@@ -1,7 +1,11 @@
 pub mod dto;
 pub mod error;
+pub mod feedback_repo;
+pub mod github_release_sync;
 pub mod handlers;
 pub mod models;
 pub mod repository;
 pub mod routes;
 pub mod service;
+pub mod version_config_repo;
+pub mod version_evaluator;

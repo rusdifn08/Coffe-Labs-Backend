@@ -9,8 +9,8 @@ use crate::{
             VersionCheckResponse,
         },
         error::PlatformError,
-        models::{AppVersionConfig, Feedback, FeedbackStats, UpdateAction},
-        repository,
+        models::{AppVersionConfig, Feedback, FeedbackStats},
+        repository, version_evaluator,
     },
 };
 
@@ -18,53 +18,7 @@ pub fn evaluate_version_check(
     config: &AppVersionConfig,
     params: &VersionCheckQuery,
 ) -> VersionCheckResponse {
-    let client_build = params.build_number.unwrap_or(1);
-    let client_patch = params.patch_number.unwrap_or(0);
-
-    let action = if config.is_force_update || client_build < config.min_build_number {
-        UpdateAction::ForceStoreUpdate
-    } else if client_build < config.latest_build_number {
-        UpdateAction::FlexibleStoreUpdate
-    } else if client_build == config.latest_build_number {
-        if client_patch < config.latest_patch_number {
-            if config.is_patch_required {
-                UpdateAction::ForceOtaPatch
-            } else {
-                UpdateAction::SilentOtaPatch
-            }
-        } else {
-            UpdateAction::None
-        }
-    } else {
-        UpdateAction::None
-    };
-
-    let action_code = match action {
-        UpdateAction::None => "UP_TO_DATE",
-        UpdateAction::SilentOtaPatch => "SILENT_OTA_PATCH",
-        UpdateAction::ForceOtaPatch => "FORCE_OTA_PATCH",
-        UpdateAction::FlexibleStoreUpdate => "FLEXIBLE_STORE_UPDATE",
-        UpdateAction::ForceStoreUpdate => "FORCE_STORE_UPDATE",
-    }
-    .to_string();
-
-    let target_patch = if config.latest_patch_number > 0 {
-        Some(config.latest_patch_number)
-    } else {
-        None
-    };
-
-    VersionCheckResponse {
-        action,
-        action_code,
-        target_patch,
-        latest_base_version: config.latest_base_version.clone(),
-        latest_build_number: config.latest_build_number,
-        is_force_update: config.is_force_update,
-        release_notes: config.release_notes.clone(),
-        download_url: config.download_url.clone(),
-        checksum_sha256: config.checksum_sha256.clone(),
-    }
+    version_evaluator::evaluate_version_check(config, params)
 }
 
 pub async fn create_feedback(

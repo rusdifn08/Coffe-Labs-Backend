@@ -5,7 +5,6 @@ use validator::Validate;
 use crate::modules::platform::models::UpdateAction;
 
 #[derive(Debug, Deserialize, Default, ToSchema)]
-#[allow(dead_code)]
 pub struct VersionCheckQuery {
     pub platform: Option<String>,
     pub base_version: Option<String>,
@@ -17,13 +16,16 @@ pub struct VersionCheckQuery {
 pub struct VersionCheckResponse {
     pub action: UpdateAction,
     pub action_code: String,
+    pub update_channel: String,
     pub target_patch: Option<i32>,
     pub latest_base_version: String,
     pub latest_build_number: i32,
+    pub normalized_client_build: i32,
     pub is_force_update: bool,
     pub release_notes: String,
     pub download_url: Option<String>,
     pub checksum_sha256: Option<String>,
+    pub content_manifest_version: i32,
 }
 
 #[derive(Debug, Deserialize, Validate, ToSchema)]
@@ -37,7 +39,10 @@ pub struct UpdateAppVersionConfigRequest {
     pub is_patch_required: Option<bool>,
     pub release_notes: Option<String>,
     pub download_url: Option<String>,
+    pub ios_download_url: Option<String>,
+    pub windows_download_url: Option<String>,
     pub checksum_sha256: Option<String>,
+    pub content_manifest_version: Option<i32>,
 }
 
 #[derive(Debug, Deserialize, Validate, ToSchema)]

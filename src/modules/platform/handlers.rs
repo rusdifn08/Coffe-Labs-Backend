@@ -21,7 +21,7 @@ use crate::{
             UpdateFeedbackStatusRequest, UpdateTrialPolicyRequest, VersionCheckQuery,
         },
         models::AppVersionConfig,
-        repository, service,
+        github_release_sync, repository, service,
     },
 };
 
@@ -57,6 +57,24 @@ pub async fn admin_update_version_config(
     }
     Ok(ApiResponse::ok(
         "Konfigurasi Version Gatekeeper berhasil diperbarui dan diterapkan ke cache instan.",
+        updated,
+    ))
+}
+
+pub async fn admin_sync_github_release(
+    State(state): State<AppState>,
+    _admin: AdminUser,
+) -> AppResult<impl IntoResponse> {
+    let updated = github_release_sync::sync_latest_github_release(&state.pool).await?;
+    {
+        let mut w = state.version_cache.write().await;
+        *w = updated.clone();
+    }
+    Ok(ApiResponse::ok(
+        format!(
+            "Version Gatekeeper berhasil disinkronkan dari GitHub Release v{}.",
+            updated.latest_base_version
+        ),
         updated,
     ))
 }

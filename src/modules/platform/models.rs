@@ -17,7 +17,13 @@ pub struct AppVersionConfig {
     pub is_patch_required: bool,
     pub release_notes: String,
     pub download_url: Option<String>,
+    #[sqlx(default)]
+    pub ios_download_url: Option<String>,
+    #[sqlx(default)]
+    pub windows_download_url: Option<String>,
     pub checksum_sha256: Option<String>,
+    #[sqlx(default)]
+    pub content_manifest_version: i32,
     pub updated_at: DateTime<Utc>,
 }
 
@@ -27,15 +33,18 @@ impl AppVersionConfig {
             id: "default".to_string(),
             platform: "all".to_string(),
             min_base_version: "2.0.0".to_string(),
-            latest_base_version: "2.4.0".to_string(),
+            latest_base_version: "2.5.1".to_string(),
             min_build_number: 2,
-            latest_build_number: 7,
+            latest_build_number: 9,
             latest_patch_number: 0,
             is_force_update: false,
             is_patch_required: false,
-            release_notes: "Pembaruan stabilitas sistem dan optimasi performa Coffee Labs v2.4.0.".to_string(),
-            download_url: Some("https://github.com/rusdifn08/coffe-labs-mobile/releases/download/v2.4.0/CoffeeLabs-arm64-v8a.apk".to_string()),
+            release_notes: "Pembaruan stabilitas sistem dan optimasi performa Coffee Labs v2.5.1.".to_string(),
+            download_url: Some("https://github.com/rusdifn08/coffe-labs-mobile/releases/download/v2.5.1/Coffe_Labs_25.apk".to_string()),
+            ios_download_url: Some("https://github.com/rusdifn08/coffe-labs-mobile/releases/download/v2.5.1/CoffeLabs25.ipa".to_string()),
+            windows_download_url: Some("https://github.com/rusdifn08/coffe-labs-mobile/releases/latest".to_string()),
             checksum_sha256: None,
+            content_manifest_version: 1,
             updated_at: Utc::now(),
         }
     }
