@@ -15,13 +15,15 @@ pub async fn seed_version_config(pool: &PgPool) -> AppResult<()> {
                 id, platform, min_base_version, latest_base_version,
                 min_build_number, latest_build_number, latest_patch_number,
                 is_force_update, is_patch_required, release_notes,
-                download_url, ios_download_url, windows_download_url, content_manifest_version
+                download_url, ios_download_url, windows_download_url,
+                checksum_sha256, content_manifest_version
             ) VALUES (
-                'default', 'all', '2.0.0', '2.5.1', 2, 9, 0, FALSE, FALSE,
-                'Pembaruan Coffee Labs v2.5.1: Cafe Radar fokus rute, Email & Lupa Password OTP, Cloud Sync per akun, & Jurnal Seduh sensori.',
-                'https://github.com/rusdifn08/coffe-labs-mobile/releases/download/v2.5.1/Coffe_Labs_25.apk',
+                'default', 'all', '2.0.0', '2.5.2', 2, 10, 0, FALSE, FALSE,
+                'Coffee Labs v2.5.2 (Shorebird Delta-OTA Base): pasang sekali, seluruh update fitur & perbaikan berikutnya otomatis ringan ~1-5 MB di dalam aplikasi tanpa install ulang.',
+                'https://github.com/rusdifn08/coffe-labs-mobile/releases/download/v2.5.2/Coffe_Labs_25.apk',
                 'https://github.com/rusdifn08/coffe-labs-mobile/releases/download/v2.5.1/CoffeLabs25.ipa',
                 'https://github.com/rusdifn08/coffe-labs-mobile/releases/latest',
+                '6C29C51F39CD75B4F985C88733D62A9BC49FD6F0DD55E1D451A76A91FD6E954D',
                 1
             )"#,
         )
