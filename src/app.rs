@@ -14,7 +14,7 @@ use crate::{
     },
     modules::{
         admin_control, affiliate, auth, barista_toolkit, bean_scanner, beans, beans_radar, brew_logs, brew_methods_audit, business_pos,
-        chat, communities,
+        chat, cloud_assets, communities,
         gamification, live_brew, marketplace, media, monitoring, notifications, platform,
         qris_billing, radar, rbac,
         recipes, recommendation, roasteries, social, social_feed, social_graph, telemetry, users,
@@ -67,6 +67,7 @@ pub fn build_app(state: AppState) -> Router {
         .merge(qris_billing::routes::router())
         .merge(affiliate::routes::router())
         .merge(radar::routes::router())
+        .merge(cloud_assets::routes::router())
         .merge(admin_control::routes::router())
         .layer(axum_mw::from_fn_with_state(
             state.clone(),

@@ -8,6 +8,7 @@ pub mod brew_methods_audit_schema;
 pub mod business_schema;
 pub mod catalog_schema;
 pub mod chat_schema;
+pub mod cloud_assets_schema;
 pub mod communities_schema;
 pub mod core_schema;
 pub mod live_brew_schema;
@@ -57,5 +58,6 @@ pub async fn run_migrations(pool: &PgPool) -> AppResult<()> {
     exec_batch(pool, "user_cloud_state_schema", user_cloud_state_schema::statements()).await;
     exec_batch(pool, "auth_email_reset_schema", auth_email_reset_schema::statements()).await;
     exec_batch(pool, "app_version_gatekeeper_schema", app_version_gatekeeper_schema::statements()).await;
+    exec_batch(pool, "cloud_assets_schema", cloud_assets_schema::statements()).await;
     Ok(())
 }

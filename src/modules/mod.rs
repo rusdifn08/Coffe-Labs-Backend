@@ -9,6 +9,7 @@ pub mod brew_logs;
 pub mod brew_methods_audit;
 pub mod business_pos;
 pub mod chat;
+pub mod cloud_assets;
 pub mod communities;
 pub mod gamification;
 pub mod live_brew;
