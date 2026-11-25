@@ -114,10 +114,12 @@ pub async fn get_lesson_stream(
         .map_err(AppError::from)?;
     let manifest = lesson.hls_manifest_path.unwrap_or_else(|| format!("coffeelabs/lms/{lesson_id}"));
     let cloud_creds = state.config.cloudinary_config().ok().flatten();
-    let (signed_hls_url, expires_at) = if cloud_creds.is_some() {
-        (generate_hls_stream_url(cloud_creds.as_ref(), &manifest), chrono::Utc::now() + chrono::Duration::minutes(30))
-    } else if let Some(local_obj_url) = resolve_local_lms_stream_path(&manifest).await {
+    let (signed_hls_url, expires_at) = if let Some(local_obj_url) = resolve_local_lms_stream_path(&manifest).await {
+        // Prioritaskan Object Storage backend bila berkas HLS/MP4 tersedia langsung di server
+        // agar tidak mengembalikan URL Cloudinary 404 ketika CLOUDINARY_URL hanya dipakai avatar.
         (local_obj_url, chrono::Utc::now() + chrono::Duration::minutes(30))
+    } else if cloud_creds.is_some() {
+        (generate_hls_stream_url(cloud_creds.as_ref(), &manifest), chrono::Utc::now() + chrono::Duration::minutes(30))
     } else {
         sign_hls_manifest_url(&manifest, claims.sub, state.config.jwt_secret_str())
     };
