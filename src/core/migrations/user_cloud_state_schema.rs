@@ -13,9 +13,11 @@ pub fn statements() -> &'static [&'static str] {
             favorite_recipe_ids JSONB NOT NULL DEFAULT '[]'::jsonb,
             custom_recipes_json JSONB NOT NULL DEFAULT '[]'::jsonb,
             deleted_default_ids JSONB NOT NULL DEFAULT '[]'::jsonb,
+            game_brew_progress_json JSONB NOT NULL DEFAULT '{}'::jsonb,
             state_version BIGINT NOT NULL DEFAULT 1,
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )"#,
+        "ALTER TABLE user_cloud_state ADD COLUMN IF NOT EXISTS game_brew_progress_json JSONB NOT NULL DEFAULT '{}'::jsonb",
         "CREATE INDEX IF NOT EXISTS idx_user_cloud_state_updated ON user_cloud_state (updated_at DESC)",
     ]
 }

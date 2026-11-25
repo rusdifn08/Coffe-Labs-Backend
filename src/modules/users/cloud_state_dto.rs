@@ -24,6 +24,7 @@ pub struct UserCloudStateResponse {
     pub favorite_recipe_ids: Vec<i64>,
     pub custom_recipes: Value,
     pub deleted_default_ids: Vec<i64>,
+    pub game_brew_progress: Value,
     pub state_version: i64,
     pub updated_at: DateTime<Utc>,
     pub has_cloud_record: bool,
@@ -48,6 +49,8 @@ pub struct UpsertUserCloudStateRequest {
     pub favorite_recipe_ids: Option<Vec<i64>>,
     pub custom_recipes: Option<Value>,
     pub deleted_default_ids: Option<Vec<i64>>,
+    pub game_brew_progress: Option<Value>,
+    pub base_state_version: Option<i64>,
     #[validate(length(min = 1, max = 100, message = "Nama lengkap harus 1-100 karakter."))]
     pub full_name: Option<String>,
     #[validate(length(max = 1024, message = "URL avatar maksimal 1024 karakter."))]
