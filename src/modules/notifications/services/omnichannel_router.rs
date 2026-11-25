@@ -122,13 +122,25 @@ impl OmnichannelRouter {
 
         // 4. Multi-Device Fan-out dengan AOD Kiosk Lock Guard
         let tokens = device_token_repo::list_active_tokens(&self.pool, event.target_user_id).await?;
+        if tokens.is_empty() {
+            debug!(
+                user_id = %event.target_user_id,
+                event_type = %event.event_type,
+                "Tidak ada FCM device token aktif untuk user; terkirim via WS & Inbox saja"
+            );
+            return Ok(());
+        }
+
+        let mut fcm_event = event.clone();
+        fcm_event.event_id = inbox_row.id;
+
         let mut retry_candidate: Option<(Option<u64>, String)> = None;
 
         for device in tokens {
             if device.is_kiosk_aod_active {
                 continue;
             }
-            match self.fcm.send_to_token(&device.fcm_token, event).await {
+            match self.fcm.send_to_token(&device.fcm_token, &fcm_event).await {
                 FcmDeliveryOutcome::Sent | FcmDeliveryOutcome::UnconfiguredDryRun => {}
                 FcmDeliveryOutcome::PruneStaleToken => {
                     let _ = device_token_repo::deactivate_stale_token(&self.pool, &device.fcm_token)

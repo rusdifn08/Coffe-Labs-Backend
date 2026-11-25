@@ -10,7 +10,9 @@ use crate::{
         AppState,
     },
     modules::notifications::{
+        builders::build_chat_message_event,
         dto::{ActiveChatRoomReq, RegisterDeviceTokenReq, UnregisterDeviceReq, UpdateKioskModeReq},
+        events::ActorSummary,
         repositories::device_token_repo,
     },
 };
@@ -93,5 +95,55 @@ pub async fn post_set_active_chat_room(
     Ok(ApiResponse::ok(
         "Presensi ruang obrolan aktif diperbarui.",
         json!({ "conversation_id": req.conversation_id }),
+    ))
+}
+
+pub async fn get_push_device_status(
+    AuthUser(claims): AuthUser,
+    State(state): State<AppState>,
+) -> AppResult<impl IntoResponse> {
+    let tokens = device_token_repo::list_active_tokens(&state.pool, claims.sub)
+        .await
+        .map_err(AppError::from)?;
+    let platforms: Vec<String> = tokens.iter().map(|t| t.platform.clone()).collect();
+    Ok(ApiResponse::ok(
+        "Status perangkat push notification dimuat.",
+        json!({
+            "fcm_server_configured": state.fcm_oauth.is_configured(),
+            "active_device_tokens": tokens.len(),
+            "platforms": platforms,
+            "ws_connected": state.chat_hub.is_local_online(claims.sub),
+        }),
+    ))
+}
+
+pub async fn post_test_push_notification(
+    AuthUser(claims): AuthUser,
+    State(state): State<AppState>,
+) -> AppResult<impl IntoResponse> {
+    let tokens = device_token_repo::list_active_tokens(&state.pool, claims.sub)
+        .await
+        .map_err(AppError::from)?;
+    let sender = ActorSummary {
+        user_id: claims.sub,
+        username: "coffeelabs".to_string(),
+        display_name: "Coffee Labs Push Test".to_string(),
+        avatar_url: None,
+    };
+    let mut evt = build_chat_message_event(
+        claims.sub,
+        Uuid::now_v7(),
+        sender,
+        "Notifikasi chat pop-up ala WhatsApp aktif dan siap menerima pesan!",
+    );
+    evt.is_critical_transactional = true;
+    state.notifications.publish_immediate(evt).await;
+
+    Ok(ApiResponse::ok(
+        "Notifikasi uji coba telah dikirim ke perangkat Anda.",
+        json!({
+            "fcm_server_configured": state.fcm_oauth.is_configured(),
+            "active_device_tokens": tokens.len(),
+        }),
     ))
 }

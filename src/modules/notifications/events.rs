@@ -44,7 +44,7 @@ impl NotificationCategory {
 
     pub fn android_channel_id(self) -> &'static str {
         match self {
-            Self::Chat => "social_coffee_chat",
+            Self::Chat => "social_coffee_chat_v2",
             Self::SocialGraph => "social_coffee_graph",
             Self::ThreadActivity => "social_coffee_threads",
             Self::Gamification | Self::Billing => "social_coffee_billing",

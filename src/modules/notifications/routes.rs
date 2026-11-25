@@ -20,6 +20,14 @@ pub fn router() -> Router<AppState> {
             patch(device_handler::patch_kiosk_mode),
         )
         .route(
+            "/api/v1/notifications/devices/status",
+            get(device_handler::get_push_device_status),
+        )
+        .route(
+            "/api/v1/notifications/test-push",
+            post(device_handler::post_test_push_notification),
+        )
+        .route(
             "/api/v1/notifications/presence/active-room",
             post(device_handler::post_set_active_chat_room),
         )
