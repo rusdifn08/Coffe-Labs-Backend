@@ -12,7 +12,9 @@ use crate::{
         social::{
             dto::{
                 CopyRecipeResponse, CreateCommentRequest, CreateSocialPostRequest,
-                FollowStatsResponse, FollowToggleRequest, LikePostResponse, SocialPostResponse,
+                FollowStatsResponse, FollowToggleRequest, LikePostResponse, ReportPostRequest,
+                ReportPostResponse, RepostPostResponse, SavePostResponse, SocialPostResponse,
+                UpdateSocialPostRequest,
             },
             error::SocialError,
             models::SocialComment,
@@ -74,7 +76,127 @@ pub async fn create_post(
     )
     .await?;
 
-    Ok(map_post_to_response(post, false, None))
+    Ok(map_post_to_response(post, false, false, false, None))
+}
+
+fn is_post_owner(post_user_id: Option<Uuid>, post_author: &str, auth: &Option<JwtClaims>, req_author: Option<&str>) -> bool {
+    if let Some(u) = auth {
+        if let Some(uid) = post_user_id {
+            if uid == u.sub {
+                return true;
+            }
+        }
+        if post_author.eq_ignore_ascii_case(u.username.trim()) {
+            return true;
+        }
+        if u.role.eq_ignore_ascii_case("admin") {
+            return true;
+        }
+    }
+    if let Some(name) = req_author {
+        if !name.trim().is_empty() && post_author.eq_ignore_ascii_case(name.trim()) {
+            return true;
+        }
+    }
+    false
+}
+
+pub async fn update_post(
+    pool: &PgPool,
+    moderation: &ModerationGuard,
+    post_id: Uuid,
+    auth: Option<JwtClaims>,
+    req: UpdateSocialPostRequest,
+) -> AppResult<SocialPostResponse> {
+    enforce_clean_content(moderation, &req.content)?;
+    if let Some(ref tags) = req.tags {
+        for tag in tags {
+            enforce_clean_content(moderation, tag)?;
+        }
+    }
+
+    let existing = post_repo::find_post_by_id(pool, post_id)
+        .await?
+        .ok_or(SocialError::PostNotFound)?;
+
+    if !is_post_owner(existing.user_id, &existing.author_name, &auth, req.author_name.as_deref()) {
+        return Err(SocialError::ForbiddenOwner.into());
+    }
+
+    let tags_json = match req.tags {
+        Some(t) => serde_json::to_value(t).unwrap_or_else(|_| json!([])),
+        None => existing.tags.unwrap_or_else(|| json!([])),
+    };
+    let recipe_id = req.recipe_id.or(existing.recipe_id);
+    let recipe_snapshot = req.recipe_snapshot.or(existing.recipe_snapshot);
+
+    let updated = post_repo::update_post(
+        pool,
+        post_id,
+        req.content.trim(),
+        recipe_id,
+        recipe_snapshot,
+        tags_json,
+    )
+    .await?
+    .ok_or(SocialError::PostNotFound)?;
+
+    Ok(map_post_to_response(updated, false, false, false, None))
+}
+
+pub async fn delete_post(
+    pool: &PgPool,
+    post_id: Uuid,
+    auth: Option<JwtClaims>,
+    req_username: Option<&str>,
+) -> AppResult<()> {
+    let existing = post_repo::find_post_by_id(pool, post_id)
+        .await?
+        .ok_or(SocialError::PostNotFound)?;
+
+    if !is_post_owner(existing.user_id, &existing.author_name, &auth, req_username) {
+        return Err(SocialError::ForbiddenOwner.into());
+    }
+
+    post_repo::delete_post(pool, post_id).await?;
+    Ok(())
+}
+
+pub async fn toggle_repost(
+    pool: &PgPool,
+    post_id: Uuid,
+    username: &str,
+) -> AppResult<RepostPostResponse> {
+    let clean_user = username.trim().to_lowercase();
+    let (is_reposted, reposts_count) =
+        post_repo::toggle_post_repost(pool, post_id, &clean_user).await?;
+    Ok(RepostPostResponse {
+        is_reposted,
+        reposts_count,
+    })
+}
+
+pub async fn toggle_save(
+    pool: &PgPool,
+    post_id: Uuid,
+    username: &str,
+) -> AppResult<SavePostResponse> {
+    let clean_user = username.trim().to_lowercase();
+    let is_saved = post_repo::toggle_post_save(pool, post_id, &clean_user).await?;
+    Ok(SavePostResponse { is_saved })
+}
+
+pub async fn report_post(
+    pool: &PgPool,
+    post_id: Uuid,
+    req: ReportPostRequest,
+) -> AppResult<ReportPostResponse> {
+    let clean_user = req.username.trim().to_lowercase();
+    post_repo::insert_post_report(pool, post_id, &clean_user, req.reason.trim()).await?;
+    Ok(ReportPostResponse {
+        reported: true,
+        post_id,
+    })
 }
 
 pub async fn toggle_like(

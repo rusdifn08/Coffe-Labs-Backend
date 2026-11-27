@@ -37,6 +37,160 @@ pub async fn insert_post(
     Ok(post)
 }
 
+pub async fn find_post_by_id(pool: &PgPool, post_id: Uuid) -> AppResult<Option<SocialPost>> {
+    let post = sqlx::query_as::<_, SocialPost>("SELECT * FROM social_posts WHERE id = $1")
+        .bind(post_id)
+        .fetch_optional(pool)
+        .await?;
+    Ok(post)
+}
+
+pub async fn update_post(
+    pool: &PgPool,
+    post_id: Uuid,
+    content: &str,
+    recipe_id: Option<i32>,
+    recipe_snapshot: Option<serde_json::Value>,
+    tags_json: serde_json::Value,
+) -> AppResult<Option<SocialPost>> {
+    let post = sqlx::query_as::<_, SocialPost>(
+        r#"UPDATE social_posts
+           SET content = $2,
+               recipe_id = $3,
+               recipe_snapshot = $4,
+               tags = $5,
+               is_edited = TRUE,
+               updated_at = NOW()
+           WHERE id = $1
+           RETURNING *"#,
+    )
+    .bind(post_id)
+    .bind(content)
+    .bind(recipe_id)
+    .bind(recipe_snapshot)
+    .bind(tags_json)
+    .fetch_optional(pool)
+    .await?;
+    Ok(post)
+}
+
+pub async fn delete_post(pool: &PgPool, post_id: Uuid) -> AppResult<bool> {
+    let _ = sqlx::query("DELETE FROM social_post_likes WHERE post_id = $1")
+        .bind(post_id)
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("DELETE FROM social_post_reposts WHERE post_id = $1")
+        .bind(post_id)
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("DELETE FROM social_post_saves WHERE post_id = $1")
+        .bind(post_id)
+        .execute(pool)
+        .await;
+    let _ = sqlx::query("DELETE FROM social_comments WHERE post_id = $1")
+        .bind(post_id)
+        .execute(pool)
+        .await;
+    let res = sqlx::query("DELETE FROM social_posts WHERE id = $1")
+        .bind(post_id)
+        .execute(pool)
+        .await?;
+    Ok(res.rows_affected() > 0)
+}
+
+pub async fn toggle_post_repost(
+    pool: &PgPool,
+    post_id: Uuid,
+    username: &str,
+) -> AppResult<(bool, i32)> {
+    let already_reposted: bool = sqlx::query_scalar(
+        "SELECT EXISTS(SELECT 1 FROM social_post_reposts WHERE post_id = $1 AND username = $2)",
+    )
+    .bind(post_id)
+    .bind(username)
+    .fetch_one(pool)
+    .await?;
+
+    if already_reposted {
+        sqlx::query("DELETE FROM social_post_reposts WHERE post_id = $1 AND username = $2")
+            .bind(post_id)
+            .bind(username)
+            .execute(pool)
+            .await?;
+
+        let count: i32 = sqlx::query_scalar(
+            "UPDATE social_posts SET reposts_count = GREATEST(reposts_count - 1, 0) WHERE id = $1 RETURNING reposts_count",
+        )
+        .bind(post_id)
+        .fetch_optional(pool)
+        .await?
+        .unwrap_or(0);
+        Ok((false, count))
+    } else {
+        sqlx::query("INSERT INTO social_post_reposts (post_id, username) VALUES ($1, $2) ON CONFLICT DO NOTHING")
+            .bind(post_id)
+            .bind(username)
+            .execute(pool)
+            .await?;
+
+        let count: i32 = sqlx::query_scalar(
+            "UPDATE social_posts SET reposts_count = reposts_count + 1 WHERE id = $1 RETURNING reposts_count",
+        )
+        .bind(post_id)
+        .fetch_optional(pool)
+        .await?
+        .unwrap_or(1);
+        Ok((true, count))
+    }
+}
+
+pub async fn toggle_post_save(
+    pool: &PgPool,
+    post_id: Uuid,
+    username: &str,
+) -> AppResult<bool> {
+    let already_saved: bool = sqlx::query_scalar(
+        "SELECT EXISTS(SELECT 1 FROM social_post_saves WHERE post_id = $1 AND username = $2)",
+    )
+    .bind(post_id)
+    .bind(username)
+    .fetch_one(pool)
+    .await?;
+
+    if already_saved {
+        sqlx::query("DELETE FROM social_post_saves WHERE post_id = $1 AND username = $2")
+            .bind(post_id)
+            .bind(username)
+            .execute(pool)
+            .await?;
+        Ok(false)
+    } else {
+        sqlx::query("INSERT INTO social_post_saves (post_id, username) VALUES ($1, $2) ON CONFLICT DO NOTHING")
+            .bind(post_id)
+            .bind(username)
+            .execute(pool)
+            .await?;
+        Ok(true)
+    }
+}
+
+pub async fn insert_post_report(
+    pool: &PgPool,
+    post_id: Uuid,
+    reporter_username: &str,
+    reason: &str,
+) -> AppResult<()> {
+    sqlx::query(
+        "INSERT INTO social_post_reports (post_id, reporter_username, reason) VALUES ($1, $2, $3)",
+    )
+    .bind(post_id)
+    .bind(reporter_username)
+    .bind(reason)
+    .execute(pool)
+    .await?;
+    Ok(())
+}
+
 pub async fn toggle_post_like(pool: &PgPool, post_id: Uuid, username: &str) -> AppResult<(bool, i32)> {
     let already_liked: bool = sqlx::query_scalar(
         "SELECT EXISTS(SELECT 1 FROM social_post_likes WHERE post_id = $1 AND username = $2)",

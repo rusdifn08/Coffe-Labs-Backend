@@ -17,6 +17,10 @@ pub struct SocialPost {
     pub likes_count: i32,
     pub comments_count: i32,
     pub copies_count: i32,
+    #[sqlx(default)]
+    pub reposts_count: i32,
+    #[sqlx(default)]
+    pub is_edited: bool,
     pub tags: Option<serde_json::Value>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,

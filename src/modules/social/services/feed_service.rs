@@ -16,6 +16,8 @@ use crate::{
 pub fn map_post_to_response(
     p: SocialPost,
     is_liked: bool,
+    is_reposted: bool,
+    is_saved: bool,
     next_cursor: Option<String>,
 ) -> SocialPostResponse {
     let tags: Vec<String> = match p.tags {
@@ -38,8 +40,12 @@ pub fn map_post_to_response(
         likes_count: p.likes_count,
         comments_count: p.comments_count,
         copies_count: p.copies_count,
+        reposts_count: p.reposts_count,
         tags,
         is_liked_by_me: is_liked,
+        is_reposted_by_me: is_reposted,
+        is_saved_by_me: is_saved,
+        is_edited: p.is_edited,
         next_cursor,
         created_at: p.created_at,
         updated_at: p.updated_at,
@@ -70,6 +76,8 @@ pub async fn get_feed_list(
     let posts = feed_repo::fetch_feed_posts(pool, sort, clamped, offset, decoded_cursor).await?;
     let post_ids: Vec<Uuid> = posts.iter().map(|p| p.id).collect();
     let liked_set = feed_repo::fetch_user_liked_post_ids(pool, &username, &post_ids).await?;
+    let reposted_set = feed_repo::fetch_user_reposted_post_ids(pool, &username, &post_ids).await?;
+    let saved_set = feed_repo::fetch_user_saved_post_ids(pool, &username, &post_ids).await?;
 
     let next_cursor = posts.last().map(|last| encode_cursor(last.created_at, last.id));
 
@@ -77,9 +85,14 @@ pub async fn get_feed_list(
         .into_iter()
         .map(|p| {
             let is_liked = liked_set.contains(&p.id);
-            map_post_to_response(p, is_liked, next_cursor.clone())
+            let is_reposted = reposted_set.contains(&p.id);
+            let is_saved = saved_set.contains(&p.id);
+            map_post_to_response(p, is_liked, is_reposted, is_saved, next_cursor.clone())
         })
         .filter(|item| {
+            if sort == "saved" && !item.is_saved_by_me {
+                return false;
+            }
             if let Some(ref tf) = tag_filter {
                 if !tf.is_empty() {
                     return item.tags.iter().any(|t| t.to_lowercase().contains(tf));

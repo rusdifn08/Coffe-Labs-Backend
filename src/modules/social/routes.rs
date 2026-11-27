@@ -1,5 +1,5 @@
 use axum::{
-    routing::{get, post},
+    routing::{get, post, put},
     Router,
 };
 
@@ -14,10 +14,28 @@ pub fn router() -> Router<AppState> {
             "/api/v1/social/posts",
             get(feed_handler::get_social_posts).post(post_handler::create_social_post),
         )
+        .route(
+            "/api/v1/social/posts/{id}",
+            put(post_handler::update_social_post)
+                .patch(post_handler::update_social_post)
+                .delete(post_handler::delete_social_post),
+        )
         .route("/api/v1/social/feed/cursor", get(feed_handler::get_social_posts_cursor))
         .route(
             "/api/v1/social/posts/{id}/like",
             post(interaction_handler::toggle_like_social_post),
+        )
+        .route(
+            "/api/v1/social/posts/{id}/repost",
+            post(interaction_handler::toggle_repost_social_post),
+        )
+        .route(
+            "/api/v1/social/posts/{id}/save",
+            post(interaction_handler::toggle_save_social_post),
+        )
+        .route(
+            "/api/v1/social/posts/{id}/report",
+            post(interaction_handler::report_social_post),
         )
         .route(
             "/api/v1/social/posts/{id}/comments",

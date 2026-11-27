@@ -12,7 +12,10 @@ use crate::{
         AppState,
     },
     modules::social::{
-        dto::{CreateCommentRequest, FollowStatsResponse, FollowToggleRequest, LikePostRequest},
+        dto::{
+            CreateCommentRequest, FollowStatsResponse, FollowToggleRequest, LikePostRequest,
+            ReportPostRequest, ToggleUserPostActionRequest,
+        },
         repositories::post_repo,
         services::post_service,
     },
@@ -30,6 +33,46 @@ pub async fn toggle_like_social_post(
         "Batal menyukai postingan"
     };
     Ok(ApiResponse::ok(msg, res))
+}
+
+pub async fn toggle_repost_social_post(
+    Path(id): Path<Uuid>,
+    State(pool): State<PgPool>,
+    ValidatedJson(payload): ValidatedJson<ToggleUserPostActionRequest>,
+) -> AppResult<impl IntoResponse> {
+    let res = post_service::toggle_repost(&pool, id, &payload.username).await?;
+    let msg = if res.is_reposted {
+        "Postingan berhasil di-repost"
+    } else {
+        "Repost dibatalkan"
+    };
+    Ok(ApiResponse::ok(msg, res))
+}
+
+pub async fn toggle_save_social_post(
+    Path(id): Path<Uuid>,
+    State(pool): State<PgPool>,
+    ValidatedJson(payload): ValidatedJson<ToggleUserPostActionRequest>,
+) -> AppResult<impl IntoResponse> {
+    let res = post_service::toggle_save(&pool, id, &payload.username).await?;
+    let msg = if res.is_saved {
+        "Postingan disimpan ke Tersimpan"
+    } else {
+        "Postingan dihapus dari Tersimpan"
+    };
+    Ok(ApiResponse::ok(msg, res))
+}
+
+pub async fn report_social_post(
+    Path(id): Path<Uuid>,
+    State(pool): State<PgPool>,
+    ValidatedJson(payload): ValidatedJson<ReportPostRequest>,
+) -> AppResult<impl IntoResponse> {
+    let res = post_service::report_post(&pool, id, payload).await?;
+    Ok(ApiResponse::ok(
+        "Laporan diterima. Tim moderasi akan meninjau postingan ini.",
+        res,
+    ))
 }
 
 pub async fn get_social_post_comments(

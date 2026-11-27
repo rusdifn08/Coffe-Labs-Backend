@@ -83,3 +83,41 @@ pub async fn fetch_user_liked_post_ids(
     .await?;
     Ok(rows.into_iter().collect())
 }
+
+pub async fn fetch_user_reposted_post_ids(
+    pool: &PgPool,
+    username: &str,
+    post_ids: &[Uuid],
+) -> AppResult<HashSet<Uuid>> {
+    if username.is_empty() || post_ids.is_empty() {
+        return Ok(HashSet::new());
+    }
+    let rows = sqlx::query_scalar::<_, Uuid>(
+        "SELECT post_id FROM social_post_reposts WHERE username = $1 AND post_id = ANY($2)",
+    )
+    .bind(username)
+    .bind(post_ids)
+    .fetch_all(pool)
+    .await
+    .unwrap_or_default();
+    Ok(rows.into_iter().collect())
+}
+
+pub async fn fetch_user_saved_post_ids(
+    pool: &PgPool,
+    username: &str,
+    post_ids: &[Uuid],
+) -> AppResult<HashSet<Uuid>> {
+    if username.is_empty() || post_ids.is_empty() {
+        return Ok(HashSet::new());
+    }
+    let rows = sqlx::query_scalar::<_, Uuid>(
+        "SELECT post_id FROM social_post_saves WHERE username = $1 AND post_id = ANY($2)",
+    )
+    .bind(username)
+    .bind(post_ids)
+    .fetch_all(pool)
+    .await
+    .unwrap_or_default();
+    Ok(rows.into_iter().collect())
+}

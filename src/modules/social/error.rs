@@ -8,6 +8,9 @@ pub enum SocialError {
 
     #[error("Tidak dapat mengikuti akun sendiri.")]
     CannotFollowSelf,
+
+    #[error("Anda tidak memiliki izin untuk mengubah atau menghapus postingan ini.")]
+    ForbiddenOwner,
 }
 
 impl From<SocialError> for AppError {
@@ -15,6 +18,7 @@ impl From<SocialError> for AppError {
         match err {
             SocialError::PostNotFound => AppError::NotFound(err.to_string()),
             SocialError::CannotFollowSelf => AppError::BadRequest(err.to_string()),
+            SocialError::ForbiddenOwner => AppError::Forbidden(err.to_string()),
         }
     }
 }
