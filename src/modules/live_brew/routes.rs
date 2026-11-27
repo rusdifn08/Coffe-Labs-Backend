@@ -1,5 +1,5 @@
 use axum::{
-    routing::{get, patch, post},
+    routing::{delete, get, patch, post},
     Router,
 };
 
@@ -23,6 +23,10 @@ pub fn router() -> Router<AppState> {
         .route(
             "/api/v1/livebrew/v2/sessions/{session_id}/command",
             post(brewer_session_handler::dispatch_brewer_command_rest),
+        )
+        .route(
+            "/api/v1/livebrew/v2/sessions/{session_id}/end",
+            post(brewer_session_handler::end_real_mirror_session),
         )
         .route(
             "/api/v1/livebrew/v2/brewer/ws/{session_id}",
@@ -60,6 +64,10 @@ pub fn router() -> Router<AppState> {
         .route(
             "/api/v1/livebrew/business/seats/batch",
             post(business_seat_handler::create_seat_batch),
+        )
+        .route(
+            "/api/v1/livebrew/business/seats/{seat_id}",
+            delete(business_seat_handler::delete_seat),
         )
         .route(
             "/api/v1/livebrew/business/pos-bind",

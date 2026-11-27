@@ -34,7 +34,29 @@ pub async fn create_real_session(
     let id = Uuid::now_v7();
     let seq_seed: u64 = (chrono::Utc::now().timestamp_micros().unsigned_abs() % 90_000_000_000) + 1;
     let share_code = encode_dynamic_session_code(seq_seed, secret);
-    let initial_phase = if req.selected_recipe_title.is_some() && req.bean_snapshot_json.is_some() {
+    let is_running_init = req.initial_timer_running.unwrap_or(false);
+    let init_elapsed_ms = req.initial_elapsed_ms.unwrap_or(0).max(0);
+    let init_step_idx = req.initial_step_index.unwrap_or(0).max(0);
+    let init_temp_c = req.initial_temp_c.unwrap_or(92.0).clamp(0.0, 105.0);
+    let init_weight_g = req.initial_weight_g.unwrap_or(0.0).max(0.0);
+    let init_timer_status = if is_running_init {
+        "RUNNING"
+    } else if init_elapsed_ms > 0 {
+        "PAUSED"
+    } else {
+        "IDLE"
+    };
+    let init_anchor_ms: Option<i64> = if is_running_init {
+        Some(chrono::Utc::now().timestamp_millis())
+    } else {
+        None
+    };
+
+    let initial_phase = if is_running_init {
+        "BREWING_ACTIVE"
+    } else if init_elapsed_ms > 0 {
+        "BREWING_PAUSED"
+    } else if req.selected_recipe_title.is_some() && req.bean_snapshot_json.is_some() {
         "PRE_BREW_CALIBRATED"
     } else if req.selected_recipe_title.is_some() {
         "BREWER_SELECTING_BEAN"
@@ -49,10 +71,15 @@ pub async fn create_real_session(
                 brewer_user_id, brewer_display_name, customer_name,
                 phase, state_version, selected_method_id, selected_method_name,
                 selected_recipe_id, selected_recipe_title, recipe_snapshot_json,
-                selected_bean_id, bean_snapshot_json
+                selected_bean_id, bean_snapshot_json,
+                timer_status, timer_accumulated_ms, timer_anchor_server_ms,
+                current_step_index, current_weight_g, current_temp_c,
+                started_at
             ) VALUES (
                 $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,
-                $12::live_brew_mirror_phase, 1, $13,$14,$15,$16,$17,$18,$19
+                $12::live_brew_mirror_phase, 1, $13,$14,$15,$16,$17,$18,$19,
+                $20::live_timer_status, $21, $22, $23, $24, $25,
+                CASE WHEN $20 = 'RUNNING' THEN NOW() ELSE NULL END
             )
             RETURNING {}"#,
         REAL_SESSION_COLS
@@ -78,6 +105,12 @@ pub async fn create_real_session(
         .bind(req.recipe_snapshot_json.clone().unwrap_or_else(|| serde_json::json!({})))
         .bind(req.selected_bean_id)
         .bind(req.bean_snapshot_json.clone().unwrap_or_else(|| serde_json::json!({})))
+        .bind(init_timer_status)
+        .bind(init_elapsed_ms)
+        .bind(init_anchor_ms)
+        .bind(init_step_idx)
+        .bind(init_weight_g)
+        .bind(init_temp_c)
         .fetch_one(pool)
         .await?;
 
@@ -179,6 +212,30 @@ pub async fn increment_cheers(pool: &PgPool, session_id: Uuid) -> Result<i32, Li
     .fetch_one(pool)
     .await?;
     Ok(total)
+}
+
+pub async fn archive_session(pool: &PgPool, session_id: Uuid) -> Result<(), LiveBrewError> {
+    sqlx::query(
+        r#"UPDATE live_brew_real_sessions
+           SET phase = 'ARCHIVED'::live_brew_mirror_phase,
+               timer_status = 'FINISHED'::live_timer_status,
+               timer_anchor_server_ms = NULL,
+               completed_at = COALESCE(completed_at, NOW()),
+               updated_at = NOW()
+           WHERE id = $1"#,
+    )
+    .bind(session_id)
+    .execute(pool)
+    .await?;
+
+    let _ = sqlx::query(
+        "UPDATE business_cafe_seats SET active_live_session_id = NULL, updated_at = NOW() WHERE active_live_session_id = $1",
+    )
+    .bind(session_id)
+    .execute(pool)
+    .await;
+
+    Ok(())
 }
 
 pub use crate::modules::live_brew::repositories::seat_repo::{

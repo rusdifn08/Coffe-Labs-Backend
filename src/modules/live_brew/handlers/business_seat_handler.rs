@@ -1,4 +1,9 @@
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{
+    extract::{Path, State},
+    http::StatusCode,
+    Json,
+};
+use uuid::Uuid;
 
 use crate::{
     core::{
@@ -148,6 +153,23 @@ pub async fn bind_pos_order_to_seat(
         "Pesanan POS berhasil disinkronkan secara real-time ke barcode meja.",
         resolution,
     ))
+}
+
+pub async fn delete_seat(
+    State(state): State<AppState>,
+    RequireTier(claims, _): RequireTier<TierBusiness>,
+    Path(seat_id): Path<Uuid>,
+) -> AppResult<Json<ApiResponse<bool>>> {
+    let Some(branding) = branding_seat_repo::fetch_branding_by_owner(&state.pool, claims.sub).await?
+    else {
+        return Err(LiveBrewError::SeatNotFound(seat_id.to_string()).into());
+    };
+    let deleted =
+        branding_seat_repo::deactivate_seat(&state.pool, branding.store_id, seat_id).await?;
+    if !deleted {
+        return Err(LiveBrewError::SeatNotFound(seat_id.to_string()).into());
+    }
+    Ok(ApiResponse::ok("Barcode meja/kursi berhasil dihapus.", true))
 }
 
 async fn ensure_default_branding(

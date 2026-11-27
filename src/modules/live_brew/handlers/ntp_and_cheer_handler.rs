@@ -14,9 +14,9 @@ use crate::{
     modules::live_brew::{
         dto::SendCheerRequest,
         error::LiveBrewError,
+        handlers::viewer_resolve_handler::resolve_stream_target,
         mirror_dto::NtpCalibrationDto,
         repositories::real_mirror_session_repo,
-        services::seat_resolution_service,
     },
 };
 
@@ -49,19 +49,16 @@ pub async fn send_mirror_cheer(
     {
         return Err(LiveBrewError::CheerRateLimited.into());
     }
-    let resolved = seat_resolution_service::resolve_by_share_code(
-        &state.pool,
-        &state.live_brew_hub.mirror_hub,
-        &target,
-    )
-    .await?;
+    let resolved = resolve_stream_target(&state, &target).await?;
     let Some(snap) = resolved.active_brew_session else {
         return Err(LiveBrewError::SessionNotFound(target).into());
     };
     let total = real_mirror_session_repo::increment_cheers(&state.pool, snap.session_id).await?;
-    state
-        .live_brew_hub
-        .mirror_hub
-        .publish_cheer(snap.session_id, req.cheer_kind, total);
+    state.live_brew_hub.mirror_hub.publish_cheer(
+        snap.session_id,
+        snap.seat_id,
+        req.cheer_kind,
+        total,
+    );
     Ok(ApiResponse::ok("Apresiasi dikirim ke Barista!", total))
 }

@@ -8,7 +8,7 @@ use crate::modules::live_brew::{
 };
 
 pub use crate::modules::live_brew::repositories::seat_repo::{
-    create_or_upsert_seat, fetch_seat_by_fallback_code, fetch_seat_by_id,
+    create_or_upsert_seat, deactivate_seat, fetch_seat_by_fallback_code, fetch_seat_by_id,
     fetch_seat_by_store_and_slug, list_seats_for_store,
 };
 

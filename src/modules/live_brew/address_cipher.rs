@@ -133,6 +133,6 @@ pub fn landing_livebrew_url(code: &str) -> String {
         .ok()
         .map(|s| s.trim().trim_end_matches('/').to_string())
         .filter(|s| !s.is_empty())
-        .unwrap_or_else(|| "https://coffeelabs.app".to_string());
+        .unwrap_or_else(|| "https://brewingcoffee.vercel.app".to_string());
     format!("{base}/livebrew/{code}")
 }

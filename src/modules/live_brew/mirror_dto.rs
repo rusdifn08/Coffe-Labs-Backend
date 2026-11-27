@@ -118,6 +118,11 @@ pub struct CreateRealMirrorSessionRequest {
     pub recipe_snapshot_json: Option<Value>,
     pub selected_bean_id: Option<Uuid>,
     pub bean_snapshot_json: Option<Value>,
+    pub initial_timer_running: Option<bool>,
+    pub initial_elapsed_ms: Option<i64>,
+    pub initial_step_index: Option<i16>,
+    pub initial_temp_c: Option<f32>,
+    pub initial_weight_g: Option<f32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

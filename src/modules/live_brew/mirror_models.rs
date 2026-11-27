@@ -102,8 +102,16 @@ pub fn slugify_livebrew_segment(raw: &str, max_len: usize) -> String {
     }
 }
 
+pub fn livebrew_public_base_url() -> String {
+    std::env::var("LANDING_PAGE_BASE_URL")
+        .ok()
+        .map(|s| s.trim().trim_end_matches('/').to_string())
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(|| "https://brewingcoffee.vercel.app".to_string())
+}
+
 pub fn build_branded_seat_url(cafe_slug: &str, seat_slug: &str) -> String {
-    format!("https://coffeelabs.com/livebrew/{cafe_slug}/{seat_slug}")
+    format!("{}/livebrew/{cafe_slug}/{seat_slug}", livebrew_public_base_url())
 }
 
 pub fn build_branded_seat_deeplink(cafe_slug: &str, seat_slug: &str) -> String {
@@ -111,5 +119,5 @@ pub fn build_branded_seat_deeplink(cafe_slug: &str, seat_slug: &str) -> String {
 }
 
 pub fn build_personal_share_url(share_code: &str) -> String {
-    format!("https://coffeelabs.com/livebrew/{share_code}")
+    format!("{}/livebrew/{share_code}", livebrew_public_base_url())
 }

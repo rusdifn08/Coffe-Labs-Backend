@@ -23,7 +23,7 @@ use crate::{
         repositories::{branding_seat_repo, real_mirror_session_repo},
         services::{
             mirror_state_machine::{apply_mirror_command, row_to_mirror_snapshot},
-            pos_order_sync_bridge,
+            pos_order_sync_bridge, seat_resolution_service,
         },
     },
 };
@@ -78,6 +78,49 @@ pub async fn dispatch_brewer_command_rest(
     let updated = apply_and_broadcast_command(&state, claims.sub, &claims.role, session_id, cmd)
         .await?;
     Ok(ApiResponse::ok("State Live Brew 1:1 diperbarui.", updated))
+}
+
+pub async fn end_real_mirror_session(
+    State(state): State<AppState>,
+    AuthUser(claims): AuthUser,
+    Path(session_id): Path<Uuid>,
+) -> AppResult<Json<ApiResponse<bool>>> {
+    let row = real_mirror_session_repo::fetch_by_id(&state.pool, session_id)
+        .await?
+        .ok_or_else(|| LiveBrewError::SessionNotFound(session_id.to_string()))?;
+
+    if row.brewer_user_id != claims.sub && !claims.role.eq_ignore_ascii_case("admin") {
+        return Err(LiveBrewError::UnauthorizedBarista.into());
+    }
+
+    real_mirror_session_repo::archive_session(&state.pool, session_id).await?;
+    state.live_brew_hub.mirror_hub.remove_cached_session(session_id);
+
+    if let (Some(store_id), Some(seat_id)) = (row.store_id, row.seat_id) {
+        if let (Ok(Some(branding)), Ok(Some(seat))) = (
+            branding_seat_repo::fetch_branding_by_store(&state.pool, store_id).await,
+            branding_seat_repo::fetch_seat_by_id(&state.pool, seat_id).await,
+        ) {
+            if let Ok(res) = seat_resolution_service::build_seat_resolution(
+                &state.pool,
+                &state.live_brew_hub.mirror_hub,
+                &branding,
+                &seat,
+            )
+            .await
+            {
+                state
+                    .live_brew_hub
+                    .mirror_hub
+                    .publish_seat_update(seat_id, res);
+            }
+        }
+    }
+
+    Ok(ApiResponse::ok(
+        "Sesi siaran Live Brew berhasil diakhiri.",
+        true,
+    ))
 }
 
 pub async fn brewer_mirror_ws_upgrade(

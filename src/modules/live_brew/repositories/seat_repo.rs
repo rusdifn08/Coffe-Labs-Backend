@@ -147,3 +147,22 @@ pub async fn count_pos_queue_ahead(
     .await?;
     Ok(cnt)
 }
+
+pub async fn deactivate_seat(
+    pool: &PgPool,
+    store_id: Uuid,
+    seat_id: Uuid,
+) -> Result<bool, LiveBrewError> {
+    let res = sqlx::query(
+        r#"UPDATE business_cafe_seats
+           SET is_active = FALSE,
+               active_live_session_id = NULL,
+               updated_at = NOW()
+           WHERE id = $1 AND store_id = $2 AND is_active = TRUE"#,
+    )
+    .bind(seat_id)
+    .bind(store_id)
+    .execute(pool)
+    .await?;
+    Ok(res.rows_affected() > 0)
+}

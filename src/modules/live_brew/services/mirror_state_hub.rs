@@ -124,13 +124,32 @@ impl MirrorStateHub {
         }
     }
 
-    pub fn publish_cheer(&self, sid: Uuid, cheer_kind: String, total_cheers: i32) {
+    pub fn publish_cheer(
+        &self,
+        sid: Uuid,
+        seat_id: Option<Uuid>,
+        cheer_kind: String,
+        total_cheers: i32,
+    ) {
+        if let Some(mut entry) = self.session_snapshots.get_mut(&sid) {
+            entry.cheers_count = total_cheers;
+        }
         let frame = Arc::new(MirrorDownstreamFrame::CheerBurst {
             cheer_kind,
             total_cheers,
         });
         if let Some(tx) = self.session_channels.get(&sid) {
-            let _ = tx.send(frame);
+            let _ = tx.send(Arc::clone(&frame));
         }
+        if let Some(stid) = seat_id {
+            if let Some(tx) = self.seat_channels.get(&stid) {
+                let _ = tx.send(frame);
+            }
+        }
+    }
+
+    pub fn remove_cached_session(&self, sid: Uuid) {
+        self.session_snapshots.remove(&sid);
+        self.viewer_counts.remove(&sid);
     }
 }
