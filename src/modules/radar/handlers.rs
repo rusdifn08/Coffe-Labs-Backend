@@ -17,10 +17,11 @@ use crate::{
         },
         models::{
             BulkImportResultDto, NearbyRadarPlaceDto, RadarPlaceKind, RadarScopeMode,
-            RadarStatsDto, RoutePolylineDto,
+            RadarStatsDto, RoutePolylineDto, RouteStepDto,
         },
-        repository, routing_service,
+        repository,
     },
+    modules::routing::{dto::TravelMode, services::multimodal_router_service},
 };
 
 pub async fn get_nearby_places(
@@ -32,6 +33,7 @@ pub async fn get_nearby_places(
     let limit = q.limit.unwrap_or(40).clamp(1, 120);
     let kind = RadarPlaceKind::parse_opt(q.kind.as_deref());
     let mode = RadarScopeMode::parse(q.mode.as_deref());
+    let strict_cat = q.strict_category.as_deref().or(q.category.as_deref());
 
     let items = repository::query_nearby_places(
         &state.pool,
@@ -40,6 +42,8 @@ pub async fn get_nearby_places(
         radius_km,
         kind,
         mode,
+        strict_cat,
+        q.min_rating,
         q.search.as_deref(),
         limit,
     )
@@ -60,6 +64,7 @@ pub async fn get_viewport_places(
     let limit = q.limit.unwrap_or(80).clamp(1, 200);
     let kind = RadarPlaceKind::parse_opt(q.kind.as_deref());
     let mode = RadarScopeMode::parse(q.mode.as_deref());
+    let strict_cat = q.strict_category.as_deref().or(q.category.as_deref());
 
     let items = repository::query_viewport_places(
         &state.pool,
@@ -69,6 +74,8 @@ pub async fn get_viewport_places(
         q.west,
         kind,
         mode,
+        strict_cat,
+        q.min_rating,
         limit,
     )
     .await?;
@@ -81,10 +88,11 @@ pub async fn get_route_polyline(
     Query(q): Query<RouteQuery>,
 ) -> AppResult<Json<ApiResponse<RoutePolylineDto>>> {
     let (o_lat, o_lng) = parse_origin_coords(&q)?;
-    let mode = normalize_route_mode(q.mode.as_deref());
+    let mode_str = normalize_route_mode(q.mode.as_deref());
+    let travel_mode = TravelMode::parse_loose(mode_str);
 
     let dest_uuid = q.dest_place_id.or(q.dest_id);
-    let (d_lat, d_lng, dest_key) = if let Some(pid) = dest_uuid {
+    let (d_lat, d_lng, _dest_key) = if let Some(pid) = dest_uuid {
         let coords = repository::lookup_place_coords(&state.pool, pid)
             .await?
             .ok_or_else(|| AppError::NotFound("Lokasi tujuan tidak ditemukan di radar.".into()))?;
@@ -98,15 +106,36 @@ pub async fn get_route_polyline(
         ));
     };
 
-    let route = routing_service::resolve_route_with_cache(
-        &state.redis,
-        state.config.geoapify_api_key.as_deref(),
+    let bundle = multimodal_router_service::resolve_mode_bundle(
+        &state,
         [o_lat, o_lng],
         [d_lat, d_lng],
-        &dest_key,
-        mode,
+        travel_mode,
+        travel_mode != TravelMode::Car,
+        None,
+        0,
     )
-    .await?;
+    .await;
+    let p = bundle.primary;
+    let route = RoutePolylineDto {
+        provider: p.provider,
+        mode: mode_str.to_string(),
+        cache_hit: p.cache_hit,
+        distance_meters: p.distance_meters,
+        duration_seconds: p.duration_seconds,
+        origin: [o_lat, o_lng],
+        destination: [d_lat, d_lng],
+        coordinates: p.coordinates,
+        steps: p
+            .steps
+            .into_iter()
+            .map(|s| RouteStepDto {
+                instruction: s.instruction,
+                distance_meters: s.distance_meters,
+                duration_seconds: s.duration_seconds,
+            })
+            .collect(),
+    };
 
     Ok(ApiResponse::ok("Rute jalan berhasil dihitung.", route))
 }

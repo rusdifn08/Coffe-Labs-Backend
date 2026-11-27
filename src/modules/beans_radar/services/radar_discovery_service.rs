@@ -38,7 +38,13 @@ pub async fn query_nearby(
     let limit = params.limit.unwrap_or(60).clamp(1, 200);
     let candidate_cap = (limit * 3).min(450);
 
-    let filter = build_filter(params.category.as_deref(), params.min_rating, params.sells_beans);
+    let filter = build_filter(
+        params.radar_scope.as_deref(),
+        params.strict_category.as_deref(),
+        params.category.as_deref(),
+        params.min_rating,
+        params.sells_beans,
+    );
     let total_indexed = state.caches.beans_radar_rtree.loaded_nodes_count();
     let mut candidates = state
         .caches
@@ -77,9 +83,11 @@ pub async fn query_nearby(
         rows,
         lat,
         lng,
+        params.radar_scope.as_deref(),
+        params.strict_category.as_deref(),
+        params.category.as_deref(),
         params.open_now,
         params.search.as_deref(),
-        params.category.as_deref(),
         params.min_rating,
         params.sells_beans,
     );
@@ -124,9 +132,11 @@ pub async fn query_viewport(
         rows,
         center_lat,
         center_lng,
+        params.radar_scope.as_deref(),
+        params.strict_category.as_deref(),
+        params.category.as_deref(),
         params.open_now,
         None,
-        params.category.as_deref(),
         params.min_rating,
         params.sells_beans,
     );

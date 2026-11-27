@@ -20,7 +20,7 @@ const PLACE_SELECT_COLS: &str = r#"
 pub async fn load_all_compact_nodes(pool: &PgPool) -> AppResult<Vec<CompactNodeDbRow>> {
     let rows = sqlx::query_as::<_, CompactNodeDbRow>(
         r#"SELECT id, latitude, longitude, category::text AS category,
-                  rating, bayesian_score, sells_roast_beans, is_verified_partner
+                  rating, bayesian_score, sells_roast_beans, has_manual_brew_v60, is_verified_partner
            FROM coffee_radar_places
            WHERE is_active = TRUE"#,
     )

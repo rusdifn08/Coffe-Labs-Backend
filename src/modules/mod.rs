@@ -24,6 +24,7 @@ pub mod rbac;
 pub mod recipes;
 pub mod recommendation;
 pub mod roasteries;
+pub mod routing;
 pub mod social;
 pub mod social_feed;
 pub mod social_graph;

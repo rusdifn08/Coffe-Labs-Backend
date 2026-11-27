@@ -1,3 +1,4 @@
+pub mod category_bitmask;
 pub mod dto;
 pub mod error;
 pub mod handlers;

@@ -20,6 +20,8 @@ pub const FCM_TOKEN_CACHE_MAX_CAPACITY: u64 = 2;
 pub const FCM_TOKEN_CACHE_TTL_SECS: u64 = 55 * 60;
 pub const RADAR_PLACE_CACHE_MAX_CAPACITY: u64 = 8_000;
 pub const RADAR_PLACE_CACHE_TTL_SECS: u64 = 300;
+pub const ROUTE_CACHE_MAX_CAPACITY: u64 = 1_500;
+pub const ROUTE_CACHE_TTL_SECS: u64 = 180;
 
 /// Kumpulan L1 RAM Cache (`moka::future::Cache`) dengan kapasitas terbatas ketat
 /// agar pemakaian memori proses tetap aman di bawah kuota 512 MB Render Free Tier.
@@ -31,6 +33,7 @@ pub struct AppCaches {
     pub chat_member_l1: Cache<(Uuid, Uuid), bool>,
     pub fcm_token_l1: Cache<String, String>,
     pub radar_place_l1: Cache<Uuid, CoffeeRadarPlaceRow>,
+    pub route_l1: Cache<String, Arc<serde_json::Value>>,
     pub beans_radar_rtree: Arc<RTreeMemoryEngine>,
 }
 
@@ -49,8 +52,16 @@ impl AppCaches {
             chat_member_l1: Self::build_chat_member_l1(),
             fcm_token_l1: Self::build_fcm_token_l1(),
             radar_place_l1: Self::build_radar_place_l1(),
+            route_l1: Self::build_route_l1(),
             beans_radar_rtree: RTreeMemoryEngine::empty(),
         }
+    }
+
+    pub fn build_route_l1() -> Cache<String, Arc<serde_json::Value>> {
+        Cache::builder()
+            .max_capacity(ROUTE_CACHE_MAX_CAPACITY)
+            .time_to_live(Duration::from_secs(ROUTE_CACHE_TTL_SECS))
+            .build()
     }
 
     pub fn build_radar_place_l1() -> Cache<Uuid, CoffeeRadarPlaceRow> {

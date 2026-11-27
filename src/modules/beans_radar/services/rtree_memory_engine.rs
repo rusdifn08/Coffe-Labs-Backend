@@ -10,6 +10,7 @@ use tracing::{info, warn};
 use uuid::Uuid;
 
 use crate::modules::beans_radar::{
+    category_bitmask::{matches_strict_filter, StrictCategoryFilter, StrictRadarScope},
     models::CompactSpatialNode,
     repositories::{favorite_place_repo, radar_place_repo},
     spatial_math::{chord_dist_sq_for_meters, haversine_meters, to_unit_sphere},
@@ -23,7 +24,8 @@ pub struct RTreeCandidate {
 
 #[derive(Debug, Clone)]
 pub struct RTreeQueryFilter {
-    pub category_code: Option<u8>,
+    pub scope: StrictRadarScope,
+    pub strict_category: StrictCategoryFilter,
     pub min_rating_x10: u8,
     pub sells_beans_only: bool,
 }
@@ -138,11 +140,26 @@ impl RTreeMemoryEngine {
             .collect()
     }
 
+    /// Mengembalikan node terdekat dalam radius `max_meters` untuk reverse-geocoding presisi.
+    pub fn nearest_place_id_within_radius(
+        &self,
+        lat: f64,
+        lng: f64,
+        max_meters: f64,
+    ) -> Option<(Uuid, f64)> {
+        let guard = self.tree.load();
+        if guard.size() == 0 {
+            return None;
+        }
+        let query_pt = to_unit_sphere(lat, lng);
+        let node = guard.nearest_neighbor(query_pt)?;
+        let dist = haversine_meters(lat, lng, node.latitude, node.longitude);
+        (dist <= max_meters).then_some((node.place_id, dist))
+    }
+
     fn matches_filter(node: &CompactSpatialNode, filter: &RTreeQueryFilter) -> bool {
-        if let Some(cat_code) = filter.category_code {
-            if node.category_code != cat_code {
-                return false;
-            }
+        if !matches_strict_filter(node.category_flags, filter.scope, filter.strict_category) {
+            return false;
         }
         if node.rating_x10 < filter.min_rating_x10 {
             return false;

@@ -67,9 +67,13 @@ pub async fn resolve_route_with_cache(
     }
 
     if result.is_none() {
-        let osrm_profile = if mode == "walk" { "foot" } else { "driving" };
+        let osrm_base = match mode {
+            "walk" => "https://routing.openstreetmap.de/routed-foot/route/v1/foot",
+            "motorcycle" => "https://routing.openstreetmap.de/routed-bike/route/v1/driving",
+            _ => "https://routing.openstreetmap.de/routed-car/route/v1/driving",
+        };
         let url = format!(
-            "https://router.project-osrm.org/route/v1/{osrm_profile}/{:.6},{:.6};{:.6},{:.6}?overview=full&geometries=geojson&steps=true",
+            "{osrm_base}/{:.6},{:.6};{:.6},{:.6}?overview=full&geometries=geojson&steps=true",
             origin[1], origin[0], destination[1], destination[0]
         );
         if let Ok(resp) = client.get(&url).send().await {

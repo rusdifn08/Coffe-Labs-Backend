@@ -5,9 +5,12 @@ use serde_json::Value;
 use sqlx::FromRow;
 use uuid::Uuid;
 
-use crate::modules::beans_radar::spatial_math::to_unit_sphere;
+use crate::modules::beans_radar::{
+    category_bitmask::compute_category_flags,
+    spatial_math::to_unit_sphere,
+};
 
-/// Node ringan (~64 byte) pada L1 In-Memory R*-Tree untuk KNN < 0.08 ms.
+/// Node ringan (~66 byte) pada L1 In-Memory R*-Tree untuk KNN < 0.08 ms + 16-bit Category Bitmask.
 #[derive(Debug, Clone)]
 pub struct CompactSpatialNode {
     pub place_id: Uuid,
@@ -15,6 +18,7 @@ pub struct CompactSpatialNode {
     pub latitude: f64,
     pub longitude: f64,
     pub category_code: u8,
+    pub category_flags: u16,
     pub rating_x10: u8,
     #[allow(dead_code)]
     pub bayesian_x1000: u16,
@@ -37,12 +41,18 @@ impl CompactSpatialNode {
 
     pub fn from_compact_row(row: &CompactNodeDbRow) -> Self {
         let code = Self::category_to_code(&row.category);
+        let flags = compute_category_flags(
+            &row.category,
+            row.sells_roast_beans,
+            row.has_manual_brew_v60,
+        );
         Self {
             place_id: row.id,
             point_3d: to_unit_sphere(row.latitude, row.longitude),
             latitude: row.latitude,
             longitude: row.longitude,
             category_code: code,
+            category_flags: flags,
             rating_x10: ((row.rating * 10.0).round().clamp(0.0, 50.0)) as u8,
             bayesian_x1000: ((row.bayesian_score * 1000.0).round().clamp(0.0, 5000.0)) as u16,
             sells_roast_beans: row.sells_roast_beans,
@@ -77,6 +87,7 @@ pub struct CompactNodeDbRow {
     pub rating: f32,
     pub bayesian_score: f32,
     pub sells_roast_beans: bool,
+    pub has_manual_brew_v60: bool,
     pub is_verified_partner: bool,
 }
 

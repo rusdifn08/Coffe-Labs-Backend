@@ -10,8 +10,11 @@ pub struct NearbyRadarQuery {
     pub lng: f64,
     pub radius_km: Option<f64>,
     pub kind: Option<String>,
-    #[serde(alias = "type", alias = "radar_mode")]
+    #[serde(alias = "type", alias = "radar_mode", alias = "radar_scope")]
     pub mode: Option<String>,
+    pub category: Option<String>,
+    pub strict_category: Option<String>,
+    pub min_rating: Option<f32>,
     pub search: Option<String>,
     pub limit: Option<i64>,
 }
@@ -23,8 +26,11 @@ pub struct ViewportRadarQuery {
     pub east: f64,
     pub west: f64,
     pub kind: Option<String>,
-    #[serde(alias = "type", alias = "radar_mode")]
+    #[serde(alias = "type", alias = "radar_mode", alias = "radar_scope")]
     pub mode: Option<String>,
+    pub category: Option<String>,
+    pub strict_category: Option<String>,
+    pub min_rating: Option<f32>,
     pub limit: Option<i64>,
 }
 

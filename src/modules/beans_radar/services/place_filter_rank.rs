@@ -1,26 +1,25 @@
 use crate::modules::beans_radar::{
+    category_bitmask::{
+        compute_category_flags, matches_strict_filter, StrictCategoryFilter, StrictRadarScope,
+    },
     dto::RadarPlaceCardDto,
-    models::{CoffeeRadarPlaceRow, CompactSpatialNode},
+    models::CoffeeRadarPlaceRow,
     services::{place_mapper::to_place_card_dto, rtree_memory_engine::RTreeQueryFilter},
     spatial_math::compute_smart_discovery_score,
 };
 
-fn parse_category_filter(category: Option<&str>) -> Option<u8> {
-    let clean = category?.trim().to_uppercase();
-    if clean.is_empty() || clean == "ALL" || clean == "SEMUA" {
-        return None;
-    }
-    Some(CompactSpatialNode::category_to_code(&clean))
-}
-
 pub fn build_filter(
-    category: Option<&str>,
+    radar_scope: Option<&str>,
+    strict_category: Option<&str>,
+    legacy_category: Option<&str>,
     min_rating: Option<f32>,
     sells_beans: Option<bool>,
 ) -> RTreeQueryFilter {
     let rating_clamped = min_rating.unwrap_or(0.0).clamp(0.0, 5.0);
+    let cat_input = strict_category.or(legacy_category);
     RTreeQueryFilter {
-        category_code: parse_category_filter(category),
+        scope: StrictRadarScope::parse_opt(radar_scope, sells_beans),
+        strict_category: StrictCategoryFilter::parse_opt(cat_input),
         min_rating_x10: (rating_clamped * 10.0).round() as u8,
         sells_beans_only: sells_beans.unwrap_or(false),
     }
@@ -56,21 +55,26 @@ pub fn filter_post_hydrated(
     rows: Vec<CoffeeRadarPlaceRow>,
     lat: f64,
     lng: f64,
+    radar_scope: Option<&str>,
+    strict_category: Option<&str>,
+    legacy_category: Option<&str>,
     open_now: Option<bool>,
     search: Option<&str>,
-    cat_filter: Option<&str>,
     min_rating: Option<f32>,
     sells_beans: Option<bool>,
 ) -> Vec<RadarPlaceCardDto> {
     let needle = search.unwrap_or("").trim().to_lowercase();
-    let cat_upper = cat_filter.unwrap_or("").trim().to_uppercase();
-    let check_cat = !cat_upper.is_empty() && cat_upper != "ALL" && cat_upper != "SEMUA";
+    let scope = StrictRadarScope::parse_opt(radar_scope, sells_beans);
+    let strict_cat = StrictCategoryFilter::parse_opt(strict_category.or(legacy_category));
     let min_r = min_rating.unwrap_or(0.0);
     let only_beans = sells_beans.unwrap_or(false);
     let only_open = open_now.unwrap_or(false);
 
     rows.into_iter()
-        .filter(|r| !check_cat || r.category.to_uppercase() == cat_upper)
+        .filter(|r| {
+            let flags = compute_category_flags(&r.category, r.sells_roast_beans, r.has_manual_brew_v60);
+            matches_strict_filter(flags, scope, strict_cat)
+        })
         .filter(|r| r.rating >= min_r)
         .filter(|r| !only_beans || r.sells_roast_beans)
         .filter(|r| {

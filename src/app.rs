@@ -17,7 +17,7 @@ use crate::{
         chat, cloud_assets, communities,
         gamification, live_brew, marketplace, media, monitoring, notifications, platform,
         qris_billing, radar, rbac,
-        recipes, recommendation, roasteries, social, social_feed, social_graph, telemetry, users,
+        recipes, recommendation, roasteries, routing, social, social_feed, social_graph, telemetry, users,
         vision_dataset,
     },
 };
@@ -67,6 +67,7 @@ pub fn build_app(state: AppState) -> Router {
         .merge(qris_billing::routes::router())
         .merge(affiliate::routes::router())
         .merge(radar::routes::router())
+        .merge(routing::routes::router())
         .merge(cloud_assets::routes::router())
         .merge(admin_control::routes::router())
         .layer(axum_mw::from_fn_with_state(
