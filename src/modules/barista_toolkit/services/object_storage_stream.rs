@@ -50,6 +50,8 @@ pub fn mime_for_key(key: &str) -> &'static str {
         "application/pdf"
     } else if lower.ends_with(".epub") {
         "application/epub+zip"
+    } else if lower.ends_with(".json") {
+        "application/json; charset=utf-8"
     } else {
         "application/octet-stream"
     }

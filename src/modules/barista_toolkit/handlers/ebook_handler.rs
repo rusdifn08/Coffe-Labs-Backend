@@ -11,7 +11,8 @@ use uuid::Uuid;
 use crate::{
     core::{
         error::{ApiResponse, AppError, AppResult},
-        extractors::{AuthUser, ValidatedJson},
+        extractors::{AuthUser, OptionalAuthUser, ValidatedJson},
+        jwt::JwtClaims,
         AppState,
     },
     modules::barista_toolkit::{
@@ -30,21 +31,44 @@ use crate::{
     },
 };
 
+pub async fn ensure_optional_ebook_access(
+    pool: &sqlx::PgPool,
+    claims: Option<&JwtClaims>,
+    required_tier: &str,
+) -> AppResult<()> {
+    if required_tier.trim().eq_ignore_ascii_case("trial") || required_tier.trim().eq_ignore_ascii_case("free") {
+        return Ok(());
+    }
+    let Some(user_claims) = claims else {
+        return Err(AppError::Unauthorized(format!(
+            "Sesi login diperlukan untuk mengakses E-Book tier {required_tier}."
+        )));
+    };
+    if !user_has_tier_access(pool, user_claims, required_tier).await {
+        return Err(AppError::from(BaristaToolkitError::TierUpgradeRequired(
+            required_tier.to_string(),
+        )));
+    }
+    Ok(())
+}
+
 pub async fn list_ebooks(
     State(state): State<AppState>,
-    AuthUser(claims): AuthUser,
+    OptionalAuthUser(opt_claims): OptionalAuthUser,
 ) -> AppResult<impl IntoResponse> {
-    let (loaded, (live_tier, live_role)) = tokio::join!(
-        async {
-            tokio::try_join!(
-                ebook_repo::fetch_ebooks_catalog(&state.pool),
-                ebook_repo::fetch_user_ebook_progress_map(&state.pool, claims.sub),
-            )
-            .map_err(AppError::from)
-        },
-        resolve_live_effective_tier(&state.pool, &claims),
-    );
-    let (books, progress_list) = loaded?;
+    let books = ebook_repo::fetch_ebooks_catalog(&state.pool)
+        .await
+        .map_err(AppError::from)?;
+
+    let (progress_list, (live_tier, live_role)) = if let Some(claims) = opt_claims.as_ref() {
+        let (prog_res, tier_role) = tokio::join!(
+            ebook_repo::fetch_user_ebook_progress_map(&state.pool, claims.sub),
+            resolve_live_effective_tier(&state.pool, claims),
+        );
+        (prog_res.map_err(AppError::from)?, tier_role)
+    } else {
+        (Vec::new(), ("trial".to_string(), "user".to_string()))
+    };
 
     let cloud_creds = state.config.cloudinary_config().ok().flatten();
     let prog_map: HashMap<Uuid, _> = progress_list.into_iter().map(|p| (p.ebook_id, p)).collect();
@@ -98,7 +122,7 @@ pub async fn list_ebooks(
 
 pub async fn request_ebook_license(
     State(state): State<AppState>,
-    AuthUser(claims): AuthUser,
+    OptionalAuthUser(opt_claims): OptionalAuthUser,
     Path(ebook_id): Path<Uuid>,
     ValidatedJson(req): ValidatedJson<EbookLicenseRequest>,
 ) -> AppResult<impl IntoResponse> {
@@ -106,11 +130,7 @@ pub async fn request_ebook_license(
         .await
         .map_err(AppError::from)?;
 
-    if !user_has_tier_access(&state.pool, &claims, &ebook.required_tier).await {
-        return Err(AppError::from(BaristaToolkitError::TierUpgradeRequired(
-            ebook.required_tier,
-        )));
-    }
+    ensure_optional_ebook_access(&state.pool, opt_claims.as_ref(), &ebook.required_tier).await?;
 
     let cek = unwrap_master_cek(&ebook.wrapped_master_cek, &ebook.book_code, &resolved_drm_secret())
         .map_err(AppError::from)?;
@@ -120,8 +140,9 @@ pub async fn request_ebook_license(
             .map_err(|_| AppError::from(BaristaToolkitError::InvalidBookLicense("Secret perangkat tidak valid.".into())))?,
         _ => state.config.jwt_secret_str().as_bytes().to_vec(),
     };
+    let subject_id = opt_claims.as_ref().map(|c| c.sub).unwrap_or_else(Uuid::nil);
     let (wrapped_cek_b64, wrap_nonce_b64, aad_context) =
-        wrap_cek_for_device(&cek, &req.device_installation_id, claims.sub, ebook.id, &client_ikm)
+        wrap_cek_for_device(&cek, &req.device_installation_id, subject_id, ebook.id, &client_ikm)
             .map_err(AppError::from)?;
 
     let creds = state.config.cloudinary_config().ok().flatten();

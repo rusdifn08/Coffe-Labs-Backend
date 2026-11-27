@@ -2,16 +2,16 @@
   {
     "id": "b0010001-0000-4000-8000-000000000001",
     "book_code": "CL-BOOK-01",
-    "title": "The World Atlas of Coffee (Edisi Bahasa Indonesia)",
-    "original_title": "The World Atlas of Coffee (3rd Edition)",
-    "author": "James Hoffmann",
-    "isbn": "9781784727222",
-    "synopsis": "Membahas botani pohon kopi, pengaruh terroir, proses pascapanen (washed, natural, honey, anaerobic), kimia roasting, dekafeinasi, steep-and-release brewers (Clever & Switch), serta peta karakteristik 35+ negara produsen termasuk Aceh Gayo, Malabar, Kintamani, Toraja, Ethiopia & Kolombia.",
+    "title": "Origins, Climate & Physiology of Coffea Arabica",
+    "original_title": "Indigenous Arabica Coffee, Ethiopian Specialty Potential & Physiology (CC-BY Anthology)",
+    "author": "Aaron P. Davis, Abel Chemura & Fabio M. DaMatta",
+    "isbn": "OA-CCBY-ORIGINS-01",
+    "synopsis": "Antologi ilmiah peer-reviewed lengkap mengenai botani Coffea arabica asli Ethiopia, dampak iklim & ketinggian terroir terhadap potensi kopi spesialti, serta fisiologi tanaman kopi.",
     "category": "ORIGINS_AND_SCIENCE",
     "required_tier": "Trial",
-    "total_pages": 4,
+    "total_pages": 54,
     "total_chapters_count": 3,
-    "total_figures_count": 2,
+    "total_figures_count": 3,
     "supports_bilingual_toggle": true,
     "cover_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-01/cover.webp",
     "cover_image_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-01/cover.webp",
@@ -20,32 +20,32 @@
     "clbook_ast_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-01/CL-BOOK-01_ast.clbook",
     "encrypted_asset_url": "/api/v1/toolkit/ebooks/b0010001-0000-4000-8000-000000000001/asset",
     "bundled_asset_path": "",
-    "file_size_bytes": 653057,
-    "pdf_file_size_bytes": 653023,
-    "epub_file_size_bytes": 529528,
-    "sha256_ciphertext_hash": "8d7a109f50b6cb69702b6ba8aafa6d9afb2b3ff71660dca54746164b9e98a721",
-    "pdf_sha256_hash": "da8f226d58e3fe13200f414580845250d20a1247849b862526770d84fe5fc5b8",
-    "epub_sha256_hash": "45431993bd35201f424058a6b5340cd55cc2ba93133b9f69b3b443a6123c0c78",
+    "file_size_bytes": 8606688,
+    "pdf_file_size_bytes": 8606688,
+    "epub_file_size_bytes": 491763,
+    "sha256_ciphertext_hash": "9a6b3ef4e49994a92898d39ccb28ff05f2b28fb0e9f5050968cde8b29d8447af",
+    "pdf_sha256_hash": "b50759ccd9ecb3b8b9388254f544ee1b6de74dc9532885d723ec034ea58fe674",
+    "epub_sha256_hash": "6ffd40aa11eefcb2924a5318e74c8c92b6054faf87e550bbebe7b3a14c276319",
     "wrapped_master_cek_hex": "15c2cf1921a48afe7e3f1057563e0cdd069a5bd8ce7fd0d2899f935f3433a58f09f307a84ce62994a9554f595921e105bd7ac11d28a5b45921abebd5",
     "object_storage_provider": "OBJECT_STORAGE",
     "toc_chapters_json": [
       {
-        "title": "Botani Pohon Kopi, Genetika Varietas & Pengaruh Terroir",
-        "title_en": "Coffee Botany, Genetic Varieties & Terroir Influence",
+        "title": "The Impact of Climate Change on Indigenous Arabica Coffee (Davis et al., PLOS ONE)",
+        "title_en": "The Impact of Climate Change on Indigenous Arabica Coffee (Davis et al., PLOS ONE)",
         "chapter_number": 1,
         "start_page": 2
       },
       {
-        "title": "Sains Pascapanen: Washed, Natural, Honey & Fermentasi Anaerobik",
-        "title_en": "Post-Harvest Processing: Washed, Natural, Honey & Anaerobic Fermentation",
+        "title": "Climate Change and Specialty Coffee Potential in Ethiopia (Chemura et al., Nature)",
+        "title_en": "Climate Change and Specialty Coffee Potential in Ethiopia (Chemura et al., Nature)",
         "chapter_number": 2,
-        "start_page": 3
+        "start_page": 15
       },
       {
-        "title": "Atlas Origin Dunia & Nusantara: Ethiopia, Kolombia, Aceh Gayo & Malabar",
-        "title_en": "Global & Indonesian Origins Atlas: Ethiopia, Colombia, Gayo & Malabar",
+        "title": "Impacts of Drought & Temperature Stress on Coffee Physiology (DaMatta et al., SciELO)",
+        "title_en": "Impacts of Drought & Temperature Stress on Coffee Physiology (DaMatta et al., SciELO)",
         "chapter_number": 3,
-        "start_page": 4
+        "start_page": 28
       }
     ],
     "xp_reward_on_finish": 400
@@ -53,16 +53,16 @@
   {
     "id": "b0010001-0000-4000-8000-000000000002",
     "book_code": "CL-BOOK-02",
-    "title": "How to Make the Best Coffee at Home (Panduan Praktik Seduh)",
-    "original_title": "How to Make the Best Coffee at Home",
-    "author": "James Hoffmann",
-    "isbn": "9781784727246",
-    "synopsis": "Panduan praktis lengkap meracik kopi terbaik di rumah: memilih burr grinder, kalibrasi rasio, metode A Better 1-Cup V60 (5×50g), Ultimate French Press, AeroPress, Moka Pot tanpa gosong, dan Home Espresso.",
+    "title": "Brewing Methods, Grind Size & Extraction Science",
+    "original_title": "Coffee Brewing Methods, Grinding, Roasting & Acidity Science (Nature Scientific Reports)",
+    "author": "Natalia Stanek, Nancy Córdoba, Megan Fuller & Niny Z. Rao",
+    "isbn": "OA-CCBY-BREWING-02",
+    "synopsis": "Kompilasi 4 riset lengkap Nature Scientific Reports tentang pengaruh metode seduh, ukuran gilingan, suhu sangrai, durasi ekstraksi, keasaman, kafein, dan profil sensorik kopi.",
     "category": "BREWING_MANUAL",
     "required_tier": "Trial",
-    "total_pages": 3,
-    "total_chapters_count": 2,
-    "total_figures_count": 1,
+    "total_pages": 44,
+    "total_chapters_count": 4,
+    "total_figures_count": 4,
     "supports_bilingual_toggle": true,
     "cover_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-02/cover.webp",
     "cover_image_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-02/cover.webp",
@@ -71,41 +71,53 @@
     "clbook_ast_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-02/CL-BOOK-02_ast.clbook",
     "encrypted_asset_url": "/api/v1/toolkit/ebooks/b0010001-0000-4000-8000-000000000002/asset",
     "bundled_asset_path": "",
-    "file_size_bytes": 489533,
-    "pdf_file_size_bytes": 489499,
-    "epub_file_size_bytes": 377319,
-    "sha256_ciphertext_hash": "9955dfbe37bae2a341525d55c852abca959960632f2874054a2c955520272e87",
-    "pdf_sha256_hash": "9f8b97fff0959eccfb2c9dae3b4fd7eda9895ece543be3fae8dbae62b35c6de0",
-    "epub_sha256_hash": "1e5d17f4ccb75c46938e7d2764869658d1ab04ba105385a8b17a95c7734a601f",
+    "file_size_bytes": 5171088,
+    "pdf_file_size_bytes": 5171088,
+    "epub_file_size_bytes": 454770,
+    "sha256_ciphertext_hash": "2d157b89cf299141ef5335e1640df68c64d83f49095621329b7e09fd0cdedca8",
+    "pdf_sha256_hash": "0db60125e06475d7fd3bf754fe5aa7bdc86e39709a77fc5eee2b3abe8d2fc4ae",
+    "epub_sha256_hash": "d7182745a4b6bebfd5a36ff17d0b1371c0c67d0bedf226ebf48d466d95ea43ab",
     "wrapped_master_cek_hex": "7adc169a22a1d7d586d6deda83e9d3aa70bbbe6cf8a79f1afc50f0a8d27b8546cfb7a7cb0d8ff714380ef8e20e6f00b24da50c2ab3d2ef146e704fd6",
     "object_storage_provider": "OBJECT_STORAGE",
     "toc_chapters_json": [
       {
-        "title": "Anatomi Grinder, Distribusi Partikel & Rasio Emas Penyeduhan",
-        "title_en": "Burr Grinders, Particle Size Distribution & Golden Brewing Ratios",
+        "title": "Influence of Coffee Brewing Methods on Chromatographic & Sensory Properties (Stanek et al., 2021)",
+        "title_en": "Influence of Coffee Brewing Methods on Chromatographic & Sensory Properties (Stanek et al., 2021)",
         "chapter_number": 1,
         "start_page": 2
       },
       {
-        "title": "Protokol Master: 1-Cup V60, Ultimate French Press & AeroPress",
-        "title_en": "Master Protocols: 1-Cup V60, Ultimate French Press & AeroPress",
+        "title": "Effect of Grinding, Extraction Time & Coffee Type on Flavour (Córdoba et al., 2019)",
+        "title_en": "Effect of Grinding, Extraction Time & Coffee Type on Flavour (Córdoba et al., 2019)",
         "chapter_number": 2,
-        "start_page": 3
+        "start_page": 15
+      },
+      {
+        "title": "Time, Roasting Temperature & Grind Size on Caffeine & Chlorogenic Acid (Fuller & Rao, 2017)",
+        "title_en": "Time, Roasting Temperature & Grind Size on Caffeine & Chlorogenic Acid (Fuller & Rao, 2017)",
+        "chapter_number": 3,
+        "start_page": 27
+      },
+      {
+        "title": "Acidity and Antioxidant Activity of Cold Brew Coffee (Rao & Fuller, 2018)",
+        "title_en": "Acidity and Antioxidant Activity of Cold Brew Coffee (Rao & Fuller, 2018)",
+        "chapter_number": 4,
+        "start_page": 36
       }
     ],
-    "xp_reward_on_finish": 350
+    "xp_reward_on_finish": 400
   },
   {
     "id": "b0010001-0000-4000-8000-000000000003",
     "book_code": "CL-BOOK-03",
-    "title": "The Physics of Filter Coffee (Fisika & Fluida Kopi Saring)",
-    "original_title": "The Physics of Filter Coffee",
-    "author": "Jonathan Gagné",
-    "isbn": "9780578246086",
-    "synopsis": "Bedah paling mendalam oleh astrofisikawan Jonathan Gagné mengenai Hukum Darcy pada perkolasi, kinetika difusi Hukum Fick, migrasi fines & Efek Kacang Brasil terbalik, viskositas suhu, serta hidrodinamika aliran laminar gooseneck kettle.",
+    "title": "The Physics of Coffee Percolation & Extraction Kinetics",
+    "original_title": "Coffee Extraction Kinetics, Uneven Extraction & Percolation Fluid Dynamics",
+    "author": "Kevin M. Moroney, William T. Lee & Stephen B. G. O'Brien",
+    "isbn": "OA-CCBY-PHYSICS-03",
+    "synopsis": "Monograf fisika matematis asli mengenai kinetika ekstraksi kopi, aliran fluida berpori (Hukum Darcy), mekanisme uneven extraction / channeling, dan pemodelan digital twin perkolasi.",
     "category": "EXTRACTION_PHYSICS",
-    "required_tier": "Pro",
-    "total_pages": 4,
+    "required_tier": "Trial",
+    "total_pages": 21,
     "total_chapters_count": 3,
     "total_figures_count": 2,
     "supports_bilingual_toggle": true,
@@ -116,32 +128,26 @@
     "clbook_ast_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-03/CL-BOOK-03_ast.clbook",
     "encrypted_asset_url": "/api/v1/toolkit/ebooks/b0010001-0000-4000-8000-000000000003/asset",
     "bundled_asset_path": "",
-    "file_size_bytes": 681304,
-    "pdf_file_size_bytes": 681270,
-    "epub_file_size_bytes": 529469,
-    "sha256_ciphertext_hash": "58e2f1da1c826015a96d8f09f743e55c949a05832990f81b44a6ee3e28004d94",
-    "pdf_sha256_hash": "1e2ebcd36d53c1838547ff7e016e7df6dfa1e956535ba347e062a65d2d64d810",
-    "epub_sha256_hash": "be94d455427343f2f52097bb8d6f03fe121fac972ebdfb35ffc799fe88a78a64",
+    "file_size_bytes": 970443,
+    "pdf_file_size_bytes": 970443,
+    "epub_file_size_bytes": 276013,
+    "sha256_ciphertext_hash": "a76b18d7162f2238ffdbe7e1bee2d0c1f25c5b5656683a755d0d6f7b2f937166",
+    "pdf_sha256_hash": "1daa8f66847ff386b12779db4260e0b4936f3e533e9c055a62d2e9011864fec2",
+    "epub_sha256_hash": "7be4eb2bea3cce49c07feb5bfbe4c044bffc2f76af90fc6aa4798df832f8508b",
     "wrapped_master_cek_hex": "4df0734dcf30e1ed2beb388f2a14311311fd907c6046e9f8d06d027d37ebc1d1361ca83a749a0ecd15080749ea9fdbd79df9f9cdf2ddbe29dd777b06",
     "object_storage_provider": "OBJECT_STORAGE",
     "toc_chapters_json": [
       {
-        "title": "Dinamika Fluida Perkolasi & Hukum Darcy pada Coffee Bed",
-        "title_en": "Percolation Fluid Dynamics & Darcy's Law in Coffee Beds",
+        "title": "Uneven Extraction in Coffee Brewing (arXiv Physics of Fluids 2023)",
+        "title_en": "Uneven Extraction in Coffee Brewing (arXiv Physics of Fluids 2023)",
         "chapter_number": 1,
         "start_page": 2
       },
       {
-        "title": "Kinetika Difusi Hukum Fick, Migrasi Fines & Konveksi Kerucut",
-        "title_en": "Fickian Diffusion Kinetics, Fines Migration & Cone Convection",
+        "title": "RBF Collocation Digital Twin for Coffee Percolation (arXiv 2025)",
+        "title_en": "RBF Collocation Digital Twin for Coffee Percolation (arXiv 2025)",
         "chapter_number": 2,
-        "start_page": 3
-      },
-      {
-        "title": "Hidrodinamika Ketel Leher Angsa & Geometri Dripper",
-        "title_en": "Gooseneck Stream Hydrodynamics & Brewer Geometry",
-        "chapter_number": 3,
-        "start_page": 4
+        "start_page": 8
       }
     ],
     "xp_reward_on_finish": 500
@@ -149,16 +155,16 @@
   {
     "id": "b0010001-0000-4000-8000-000000000004",
     "book_code": "CL-BOOK-04",
-    "title": "Water for Coffee – Edisi Ke-2 (Kimia Air & Ekstraksi)",
-    "original_title": "Water for Coffee – 2nd Edition",
-    "author": "Maxwell Colonna-Dashwood & Dr. Christopher H. Hendon",
-    "isbn": "9780993296307",
-    "synopsis": "Bedah kimia ikatan kation Kalsium (Ca²⁺) & Magnesium (Mg²⁺), alkalinitas penyangga bikarbonat (KH), serta formulasi air seduh standar SCA, Scott Rao, dan konsentrat modern berbasis RO.",
+    "title": "Brew Temperature, Roast Color & Sensory Control Chart",
+    "original_title": "UC Davis Coffee Center Open-Access Sensory & Thermal Extraction Studies",
+    "author": "Mackenzie E. Batali, Sara E. Yeager & William D. Ristenpart (UC Davis)",
+    "isbn": "OA-CCBY-UCDAVIS-04",
+    "synopsis": "Riset langsung dari UC Davis Coffee Center (Nature Scientific Reports) mengenai dampak suhu seduh, kekuatan (TDS), extraction yield, dan tingkat sangrai terhadap profil sensorik & warna kopi saring.",
     "category": "WATER_CHEMISTRY",
-    "required_tier": "Pro",
-    "total_pages": 3,
+    "required_tier": "Trial",
+    "total_pages": 15,
     "total_chapters_count": 2,
-    "total_figures_count": 1,
+    "total_figures_count": 2,
     "supports_bilingual_toggle": true,
     "cover_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-04/cover.webp",
     "cover_image_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-04/cover.webp",
@@ -167,26 +173,20 @@
     "clbook_ast_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-04/CL-BOOK-04_ast.clbook",
     "encrypted_asset_url": "/api/v1/toolkit/ebooks/b0010001-0000-4000-8000-000000000004/asset",
     "bundled_asset_path": "",
-    "file_size_bytes": 506976,
-    "pdf_file_size_bytes": 506942,
-    "epub_file_size_bytes": 389045,
-    "sha256_ciphertext_hash": "b159aac0acd02cb812fd209e65059746a8989d9b01c50a90c68c82b024dd2d67",
-    "pdf_sha256_hash": "d28ac51c0e7ab58a675ee59ae3db248a9f231eea9cf8f2a52585081ff1ce678f",
-    "epub_sha256_hash": "f7728f17cfd9d467043a2d723a4be22759d0226534eb3b52d08a111a5873ff3a",
+    "file_size_bytes": 4947780,
+    "pdf_file_size_bytes": 4947780,
+    "epub_file_size_bytes": 284780,
+    "sha256_ciphertext_hash": "44f0b59238a0a5d5851570ff4632dcbae87edcf29e16b71014db51efb335d05d",
+    "pdf_sha256_hash": "4bcfb9a5ea39f5d12f7efa165d88db9bca3796d08d6af614096c2ff78206ed8e",
+    "epub_sha256_hash": "a677a49edad5e3bf042ba60e3ccbf2424a83e4fb5b4e38be631f3796ad22c3b4",
     "wrapped_master_cek_hex": "8c974ab52ac3b03db20da9c7877a47553f8af22a08c4dfc31592eeb5ae04a7d2b9ea7d0adde44486f9ee2c0d2ad434b4f88edf668140813e94db9951",
     "object_storage_provider": "OBJECT_STORAGE",
     "toc_chapters_json": [
       {
-        "title": "Energi Pengikatan Kation: Magnesium (Mg²⁺) vs Kalsium (Ca²⁺)",
-        "title_en": "Cation Binding Energetics: Mg2+ vs Ca2+",
+        "title": "Brew Temperature, Brew Strength & Extraction on Drip Coffee Sensory Profile (Batali & Ristenpart, 2020)",
+        "title_en": "Brew Temperature, Brew Strength & Extraction on Drip Coffee Sensory Profile (Batali & Ristenpart, 2020)",
         "chapter_number": 1,
         "start_page": 2
-      },
-      {
-        "title": "Alkalinitas Bikarbonat (HCO₃⁻) & Resep Racik Air Barista",
-        "title_en": "Bicarbonate Alkalinity Buffer & DIY Water Recipes",
-        "chapter_number": 2,
-        "start_page": 3
       }
     ],
     "xp_reward_on_finish": 450
@@ -194,16 +194,16 @@
   {
     "id": "b0010001-0000-4000-8000-000000000005",
     "book_code": "CL-BOOK-05",
-    "title": "How to Make Coffee: The Science Behind the Bean & WBrC Playbook",
-    "original_title": "How to Make Coffee: The Science Behind the Bean",
-    "author": "Lani Kingston & Coffee Labs Archive",
-    "isbn": "9781782405184",
-    "synopsis": "Infografis kimia molekuler kafein, asam klorogenat, reaksi Maillard & karamelisasi sangrai, serta evolusi teknik panggung juara dunia Tetsu Kasuya (2016–2026) & WBrC Champions.",
+    "title": "Coffee Aroma Volatiles, Spectroscopy & Bean Chemistry",
+    "original_title": "Analytical Methods for Coffee Aroma Characterization & Bean Spectral Analysis",
+    "author": "Chahan Yeretzian, Chu Zhang, Fei Liu & Frontiers Research",
+    "isbn": "OA-CCBY-AROMA-05",
+    "synopsis": "Bedah ilmiah senyawa volatil pembentuk aroma sangrai kopi oleh Prof. Chahan Yeretzian (ZHAW), identifikasi varietas biji berbasis hyperspectral imaging, dan inovasi nutrisi kopi modern.",
     "category": "POPULAR_SCIENCE",
     "required_tier": "Trial",
-    "total_pages": 3,
+    "total_pages": 14,
     "total_chapters_count": 2,
-    "total_figures_count": 1,
+    "total_figures_count": 2,
     "supports_bilingual_toggle": true,
     "cover_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-05/cover.webp",
     "cover_image_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-05/cover.webp",
@@ -212,43 +212,43 @@
     "clbook_ast_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-05/CL-BOOK-05_ast.clbook",
     "encrypted_asset_url": "/api/v1/toolkit/ebooks/b0010001-0000-4000-8000-000000000005/asset",
     "bundled_asset_path": "",
-    "file_size_bytes": 490858,
-    "pdf_file_size_bytes": 490824,
-    "epub_file_size_bytes": 381330,
-    "sha256_ciphertext_hash": "6397ff670198301217386700ae453155266fc65a73b156d11861cdc0b7b8989b",
-    "pdf_sha256_hash": "fbe413d6a2b4a40bb6c652a5697dba6da0c095f87e0201416c07cbd6d45d637f",
-    "epub_sha256_hash": "66ca11fca8d9089b3bf145ed72481221f068e35f203dd4b1cbd2314152431710",
+    "file_size_bytes": 2635480,
+    "pdf_file_size_bytes": 2635480,
+    "epub_file_size_bytes": 293190,
+    "sha256_ciphertext_hash": "fd1a7ada2502fb9f5395072b432e5992815c44167d2a4ec5a7d7a9895d722abf",
+    "pdf_sha256_hash": "84a2135d840155fe288a1e458e1881e5670c1fa1210d03f95713e51f1b16c648",
+    "epub_sha256_hash": "01ff31d3b9e5cf41f140317268c15043fd53da1937b44c0614cbbf9a49573514",
     "wrapped_master_cek_hex": "7cb984be0179378a612efe485df2e92c8b09912c005e93488d6a5b57093fb453a4c07912b753cc076a2a8e30c8f551f0673580e2bcf4608f4672dcb4",
     "object_storage_provider": "OBJECT_STORAGE",
     "toc_chapters_json": [
       {
-        "title": "Kimia Kafein, Asam Klorogenat, Maillard & Karamelisasi",
-        "title_en": "Molecular Chemistry of Caffeine, Chlorogenic Acids & Maillard",
+        "title": "Identification of Coffee Bean Varieties Using Hyperspectral Imaging (Zhang et al., Nature 2018)",
+        "title_en": "Identification of Coffee Bean Varieties Using Hyperspectral Imaging (Zhang et al., Nature 2018)",
         "chapter_number": 1,
         "start_page": 2
       },
       {
-        "title": "Arsitektur Dual-Temp (93°C -> 70°C) & Metode Switch Juara Dunia",
-        "title_en": "Dual-Temperature Thermal Drop & Hybrid Switch Champions",
+        "title": "Coffee & Innovative Approaches in Nutrition (Frontiers Open Access 2024)",
+        "title_en": "Coffee & Innovative Approaches in Nutrition (Frontiers Open Access 2024)",
         "chapter_number": 2,
-        "start_page": 3
+        "start_page": 13
       }
     ],
-    "xp_reward_on_finish": 350
+    "xp_reward_on_finish": 420
   },
   {
     "id": "b0010001-0000-4000-8000-000000000006",
     "book_code": "CL-BOOK-06",
-    "title": "Craft Coffee: A Manual (Protokol 10 Alat Manual Brew)",
-    "original_title": "Craft Coffee: A Manual",
-    "author": "Jessica Easto",
-    "isbn": "9781572842335",
-    "synopsis": "Bedah menyeluruh 5 variabel kontrol ekstraksi dan protokol langkah demi langkah untuk 10 alat manual brew utama: Hario V60, Kalita Wave, Chemex, April, Orea, AeroPress, Clever, Switch, French Press & Nel Drip.",
-    "category": "BREWING_MANUAL",
+    "title": "Coffee Fermentation, Soil Microbiome & Polyphenols",
+    "original_title": "Microbial Communities in Colombian Coffee Fermentation & Green Polyphenol Extraction",
+    "author": "Ana Caroline de O. Junqueira, Gilberto V. M. Pereira & Qingyun Zhao",
+    "isbn": "OA-CCBY-FERMENT-06",
+    "synopsis": "Studi mikrobiologi fermentasi pascapanen kopi Kolombia (bakteri & ragi pembentuk rasa buah), ekologi tanah kebun kopi, dan ekstraksi polifenol ramah lingkungan.",
+    "category": "FLAVOUR_AND_CRAFT",
     "required_tier": "Trial",
-    "total_pages": 2,
-    "total_chapters_count": 1,
-    "total_figures_count": 1,
+    "total_pages": 33,
+    "total_chapters_count": 3,
+    "total_figures_count": 3,
     "supports_bilingual_toggle": true,
     "cover_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-06/cover.webp",
     "cover_image_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-06/cover.webp",
@@ -257,37 +257,49 @@
     "clbook_ast_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-06/CL-BOOK-06_ast.clbook",
     "encrypted_asset_url": "/api/v1/toolkit/ebooks/b0010001-0000-4000-8000-000000000006/asset",
     "bundled_asset_path": "",
-    "file_size_bytes": 430493,
-    "pdf_file_size_bytes": 430459,
-    "epub_file_size_bytes": 342232,
-    "sha256_ciphertext_hash": "71ac12ea1c684bdf6ad620808e2017c3c47c14aa71af2fddbae029d3ec539ede",
-    "pdf_sha256_hash": "cc60bdd7d3d8e8c252effa1a781c32a175aedcbc9e3360587bcd6c4d3612903e",
-    "epub_sha256_hash": "2313b1c2fc477b57bfa60fe1eeeb1c1551d9ecd5d8759b053e4e669733800abd",
+    "file_size_bytes": 7464334,
+    "pdf_file_size_bytes": 7464334,
+    "epub_file_size_bytes": 386459,
+    "sha256_ciphertext_hash": "ba2273cee7db6945f7c539590f60c67322f48a3d0a96842ef4f081600fcfc2a3",
+    "pdf_sha256_hash": "9f25fcda16da88c28bddffa56a1ce2e0de6c5021b216a223ca4c7ac9e18e4c32",
+    "epub_sha256_hash": "f6877a0f9eb4d5065d83471b9a921bacdc05d0c9edd899c74c9966441db30ba7",
     "wrapped_master_cek_hex": "af5bea36f467abe2f87a15b2a06ce65d280978352c376cdd6b87f9a499634a2d93160039ff632a339983720a95d4204946c5f91db76bf536d8cc15a3",
     "object_storage_provider": "OBJECT_STORAGE",
     "toc_chapters_json": [
       {
-        "title": "5 Variabel Kunci & Protokol Lengkap 10 Alat Manual Brew",
-        "title_en": "5 Extraction Variables & Complete 10 Manual Brewers Protocols",
+        "title": "Bacterial & Fungal Communities in Colombian Coffee Fermentation (Junqueira et al., Nature 2019)",
+        "title_en": "Bacterial & Fungal Communities in Colombian Coffee Fermentation (Junqueira et al., Nature 2019)",
         "chapter_number": 1,
         "start_page": 2
+      },
+      {
+        "title": "Long-Term Coffee Cultivation, Soil Chemistry & Microbial Communities (Zhao et al., Nature 2018)",
+        "title_en": "Long-Term Coffee Cultivation, Soil Chemistry & Microbial Communities (Zhao et al., Nature 2018)",
+        "chapter_number": 2,
+        "start_page": 12
+      },
+      {
+        "title": "Green Extraction of Polyphenols & Coffee Phytochemistry (Frontiers 2022)",
+        "title_en": "Green Extraction of Polyphenols & Coffee Phytochemistry (Frontiers 2022)",
+        "chapter_number": 3,
+        "start_page": 23
       }
     ],
-    "xp_reward_on_finish": 350
+    "xp_reward_on_finish": 420
   },
   {
     "id": "b0010001-0000-4000-8000-000000000007",
     "book_code": "CL-BOOK-07",
-    "title": "The Curious Barista’s Guide to Coffee (Aroma Volatil & Craft)",
-    "original_title": "The Curious Barista's Guide to Coffee",
-    "author": "Tristan Stephenson",
-    "isbn": "9781849755634",
-    "synopsis": "Eksplorasi sejarah Tiga Gelombang Kopi dunia, 850+ senyawa volatil pembentuk aroma, kimia susu denaturasi protein 58–65°C untuk microfoam, serta 20+ resep signature craft.",
-    "category": "FLAVOUR_AND_CRAFT",
-    "required_tier": "Pro",
-    "total_pages": 2,
-    "total_chapters_count": 1,
-    "total_figures_count": 1,
+    "title": "Coffee: From Plantation to Cup (Complete 1881 Edition)",
+    "original_title": "Coffee: From Plantation to Cup — A Brief History of Coffee Production & Consumption",
+    "author": "Francis Beatty Thurber (1881 Public Domain)",
+    "isbn": "PUBLIC-DOMAIN-1881",
+    "synopsis": "E-Book klasik lengkap abad ke-19 (1881) mengenai perjalanan kopi dari perkebunan Timur (termasuk Jawa & Sumatra) hingga cangkir di Eropa, lengkap dengan surat perjalanan kebun asli.",
+    "category": "HISTORY_CLASSIC",
+    "required_tier": "Trial",
+    "total_pages": 55,
+    "total_chapters_count": 18,
+    "total_figures_count": 18,
     "supports_bilingual_toggle": true,
     "cover_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-07/cover.webp",
     "cover_image_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-07/cover.webp",
@@ -296,37 +308,139 @@
     "clbook_ast_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-07/CL-BOOK-07_ast.clbook",
     "encrypted_asset_url": "/api/v1/toolkit/ebooks/b0010001-0000-4000-8000-000000000007/asset",
     "bundled_asset_path": "",
-    "file_size_bytes": 274202,
-    "pdf_file_size_bytes": 274168,
-    "epub_file_size_bytes": 221685,
-    "sha256_ciphertext_hash": "009b4cc570362a51c201e1ebbb764889ce1d6754b3a2c9b7517c7757d7fb93fa",
-    "pdf_sha256_hash": "16ac00a93b0b951ae3605340ab1141a22583bca6758f9fe99ed105a85b9daa01",
-    "epub_sha256_hash": "ffa3aba9266e196037b8af942ac28f90b6143e6740cf1044c45a93f1c109f801",
+    "file_size_bytes": 433695,
+    "pdf_file_size_bytes": 433695,
+    "epub_file_size_bytes": 8078467,
+    "sha256_ciphertext_hash": "cd5126e72506685b387de168041ba8c47a456e78d98e4491ecd6d7ec20bdfb5a",
+    "pdf_sha256_hash": "3e76981d2f1e70ef34e526e3d004968b710d62ad637ef7f560d7ecf7828fe8b1",
+    "epub_sha256_hash": "b458dd8f5e8d61f4c7056d12ef83da06fdbb83e16620d42e15b20f692a87304f",
     "wrapped_master_cek_hex": "9c82329755b10889a586263cba324996806e82e73755dc46a0439d284115ed736f32dda97139dcf44d8ec4db2b5539097859f0719bb7699f2cddf42e",
     "object_storage_provider": "OBJECT_STORAGE",
     "toc_chapters_json": [
       {
-        "title": "Gelombang Kopi Dunia, 850+ Senyawa Volatil & Milk Science",
-        "title_en": "Coffee Waves History, 850+ Volatile Compounds & Milk Science",
+        "title": "Coffee: From Plantation to Cup — Chapter 1",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 1",
         "chapter_number": 1,
         "start_page": 2
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 2",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 2",
+        "chapter_number": 2,
+        "start_page": 5
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 3",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 3",
+        "chapter_number": 3,
+        "start_page": 8
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 4",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 4",
+        "chapter_number": 4,
+        "start_page": 11
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 5",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 5",
+        "chapter_number": 5,
+        "start_page": 14
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 6",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 6",
+        "chapter_number": 6,
+        "start_page": 17
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 7",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 7",
+        "chapter_number": 7,
+        "start_page": 20
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 8",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 8",
+        "chapter_number": 8,
+        "start_page": 23
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 9",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 9",
+        "chapter_number": 9,
+        "start_page": 26
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 10",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 10",
+        "chapter_number": 10,
+        "start_page": 29
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 11",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 11",
+        "chapter_number": 11,
+        "start_page": 32
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 12",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 12",
+        "chapter_number": 12,
+        "start_page": 35
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 13",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 13",
+        "chapter_number": 13,
+        "start_page": 38
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 14",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 14",
+        "chapter_number": 14,
+        "start_page": 41
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 15",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 15",
+        "chapter_number": 15,
+        "start_page": 44
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 16",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 16",
+        "chapter_number": 16,
+        "start_page": 47
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 17",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 17",
+        "chapter_number": 17,
+        "start_page": 50
+      },
+      {
+        "title": "Coffee: From Plantation to Cup — Chapter 18",
+        "title_en": "Coffee: From Plantation to Cup — Chapter 18",
+        "chapter_number": 18,
+        "start_page": 53
       }
     ],
-    "xp_reward_on_finish": 400
+    "xp_reward_on_finish": 450
   },
   {
     "id": "b0010001-0000-4000-8000-000000000008",
     "book_code": "CL-BOOK-08",
-    "title": "The Coffee Dictionary: Ensiklopedia Kopi A–Z",
-    "original_title": "The Coffee Dictionary: An A-Z of Coffee",
-    "author": "Maxwell Colonna-Dashwood",
-    "isbn": "9781784723026",
-    "synopsis": "Kamus & ensiklopedia alfabetis lengkap A–Z memuat 120+ definisi istilah kopi spesialti dari Acidity, Agitation, Bypass, Channeling, Degassing, Refractometer hingga Varietal Geisha.",
+    "title": "Ensiklopedia & Kamus Sains Kopi Spesialti A–Z",
+    "original_title": "Coffee Labs A–Z Specialty Coffee Science Lexicon (125+ Entries)",
+    "author": "Coffee Labs Research Editorial (Bahasa Indonesia)",
+    "isbn": "COFFEELABS-LEXICON-08",
+    "synopsis": "Buku ensiklopedia alfabetis lengkap Bahasa Indonesia memuat 125+ istilah teknis kopi spesialti dari Acidity, Agitation, Bypass, Channeling, Hukum Darcy, GH/KH, Refractometer hingga Varietas Geisha.",
     "category": "ENCYCLOPEDIA_A_Z",
     "required_tier": "Trial",
-    "total_pages": 2,
-    "total_chapters_count": 1,
-    "total_figures_count": 1,
+    "total_pages": 27,
+    "total_chapters_count": 23,
+    "total_figures_count": 23,
     "supports_bilingual_toggle": true,
     "cover_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-08/cover.webp",
     "cover_image_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-08/cover.webp",
@@ -335,37 +449,169 @@
     "clbook_ast_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-08/CL-BOOK-08_ast.clbook",
     "encrypted_asset_url": "/api/v1/toolkit/ebooks/b0010001-0000-4000-8000-000000000008/asset",
     "bundled_asset_path": "",
-    "file_size_bytes": 272993,
-    "pdf_file_size_bytes": 272959,
-    "epub_file_size_bytes": 219636,
-    "sha256_ciphertext_hash": "7a9cfdb710e9df8f26071fb210db728a4f731d973557c253eca0ebd4d9fce4eb",
-    "pdf_sha256_hash": "ab148cdfaf9e424999a91f7c7ec5f49cf6d8370e14b7b01c99fb26f3c2893b27",
-    "epub_sha256_hash": "07d38ce89090192b24f98389c69634e3e60b52ab235a25dd92c1eea9dd39d063",
+    "file_size_bytes": 314526,
+    "pdf_file_size_bytes": 314526,
+    "epub_file_size_bytes": 264485,
+    "sha256_ciphertext_hash": "af2c43b39d150abda6984c04b153bc821bbae33b870e4a030787773670be4efb",
+    "pdf_sha256_hash": "426a6f7feb65b132673ad7c55e768e67113cbbcd189a891cfc6fd6dadd73501b",
+    "epub_sha256_hash": "23eab947eac401a9437c71046f6ed03875f322465c56a01184d3f90c416642a6",
     "wrapped_master_cek_hex": "908baa4a70735c4e10f7931f39d076c6294863d64fc01d16cc38f6a05b0182e79cdb56738c03bf4946d94597c0954b7f17052041da75f34174587794",
     "object_storage_provider": "OBJECT_STORAGE",
     "toc_chapters_json": [
       {
-        "title": "Ensiklopedia Istilah Kopi Spesialti A sampai Z (120+ Entri)",
-        "title_en": "A-to-Z Specialty Coffee Lexicon (120+ Terms)",
+        "title": "Entri Huruf A (8 Istilah Kopi)",
+        "title_en": "Entri Huruf A (8 Istilah Kopi)",
         "chapter_number": 1,
         "start_page": 2
+      },
+      {
+        "title": "Entri Huruf B (11 Istilah Kopi)",
+        "title_en": "Entri Huruf B (11 Istilah Kopi)",
+        "chapter_number": 2,
+        "start_page": 3
+      },
+      {
+        "title": "Entri Huruf C (19 Istilah Kopi)",
+        "title_en": "Entri Huruf C (19 Istilah Kopi)",
+        "chapter_number": 3,
+        "start_page": 5
+      },
+      {
+        "title": "Entri Huruf D (11 Istilah Kopi)",
+        "title_en": "Entri Huruf D (11 Istilah Kopi)",
+        "chapter_number": 4,
+        "start_page": 7
+      },
+      {
+        "title": "Entri Huruf E (4 Istilah Kopi)",
+        "title_en": "Entri Huruf E (4 Istilah Kopi)",
+        "chapter_number": 5,
+        "start_page": 8
+      },
+      {
+        "title": "Entri Huruf F (12 Istilah Kopi)",
+        "title_en": "Entri Huruf F (12 Istilah Kopi)",
+        "chapter_number": 6,
+        "start_page": 9
+      },
+      {
+        "title": "Entri Huruf G (4 Istilah Kopi)",
+        "title_en": "Entri Huruf G (4 Istilah Kopi)",
+        "chapter_number": 7,
+        "start_page": 11
+      },
+      {
+        "title": "Entri Huruf H (5 Istilah Kopi)",
+        "title_en": "Entri Huruf H (5 Istilah Kopi)",
+        "chapter_number": 8,
+        "start_page": 12
+      },
+      {
+        "title": "Entri Huruf I (1 Istilah Kopi)",
+        "title_en": "Entri Huruf I (1 Istilah Kopi)",
+        "chapter_number": 9,
+        "start_page": 13
+      },
+      {
+        "title": "Entri Huruf K (1 Istilah Kopi)",
+        "title_en": "Entri Huruf K (1 Istilah Kopi)",
+        "chapter_number": 10,
+        "start_page": 14
+      },
+      {
+        "title": "Entri Huruf L (4 Istilah Kopi)",
+        "title_en": "Entri Huruf L (4 Istilah Kopi)",
+        "chapter_number": 11,
+        "start_page": 15
+      },
+      {
+        "title": "Entri Huruf M (7 Istilah Kopi)",
+        "title_en": "Entri Huruf M (7 Istilah Kopi)",
+        "chapter_number": 12,
+        "start_page": 16
+      },
+      {
+        "title": "Entri Huruf N (3 Istilah Kopi)",
+        "title_en": "Entri Huruf N (3 Istilah Kopi)",
+        "chapter_number": 13,
+        "start_page": 17
+      },
+      {
+        "title": "Entri Huruf O (5 Istilah Kopi)",
+        "title_en": "Entri Huruf O (5 Istilah Kopi)",
+        "chapter_number": 14,
+        "start_page": 18
+      },
+      {
+        "title": "Entri Huruf P (5 Istilah Kopi)",
+        "title_en": "Entri Huruf P (5 Istilah Kopi)",
+        "chapter_number": 15,
+        "start_page": 19
+      },
+      {
+        "title": "Entri Huruf Q (2 Istilah Kopi)",
+        "title_en": "Entri Huruf Q (2 Istilah Kopi)",
+        "chapter_number": 16,
+        "start_page": 20
+      },
+      {
+        "title": "Entri Huruf R (5 Istilah Kopi)",
+        "title_en": "Entri Huruf R (5 Istilah Kopi)",
+        "chapter_number": 17,
+        "start_page": 21
+      },
+      {
+        "title": "Entri Huruf S (11 Istilah Kopi)",
+        "title_en": "Entri Huruf S (11 Istilah Kopi)",
+        "chapter_number": 18,
+        "start_page": 22
+      },
+      {
+        "title": "Entri Huruf T (4 Istilah Kopi)",
+        "title_en": "Entri Huruf T (4 Istilah Kopi)",
+        "chapter_number": 19,
+        "start_page": 23
+      },
+      {
+        "title": "Entri Huruf U (2 Istilah Kopi)",
+        "title_en": "Entri Huruf U (2 Istilah Kopi)",
+        "chapter_number": 20,
+        "start_page": 24
+      },
+      {
+        "title": "Entri Huruf V (1 Istilah Kopi)",
+        "title_en": "Entri Huruf V (1 Istilah Kopi)",
+        "chapter_number": 21,
+        "start_page": 25
+      },
+      {
+        "title": "Entri Huruf W (2 Istilah Kopi)",
+        "title_en": "Entri Huruf W (2 Istilah Kopi)",
+        "chapter_number": 22,
+        "start_page": 26
+      },
+      {
+        "title": "Entri Huruf X (1 Istilah Kopi)",
+        "title_en": "Entri Huruf X (1 Istilah Kopi)",
+        "chapter_number": 23,
+        "start_page": 27
       }
     ],
-    "xp_reward_on_finish": 320
+    "xp_reward_on_finish": 380
   },
   {
     "id": "b0010001-0000-4000-8000-000000000009",
     "book_code": "CL-BOOK-09",
-    "title": "Coffee Obsession (Atlas Visual Kebun ke Cangkir & 100+ Resep)",
-    "original_title": "Coffee Obsession",
-    "author": "Anette Moldvaer",
-    "isbn": "9781465419552",
-    "synopsis": "Ditulis pendiri Square Mile Coffee Roasters: atlas visual lengkap perjalanan kopi dari kebun ke cangkir, potongan melintang alat seduh, serta panduan Japanese Iced Coffee & racikan kopi klasik dunia.",
-    "category": "VISUAL_ATLAS_RECIPES",
-    "required_tier": "Pro",
-    "total_pages": 2,
-    "total_chapters_count": 1,
-    "total_figures_count": 1,
+    "title": "A Hand-Book to Coffee Planting in Southern India (1864)",
+    "original_title": "A Hand-Book to Coffee Planting in Southern India (Original Full Edition)",
+    "author": "John Shortt, M.D. (1864 Public Domain)",
+    "isbn": "PUBLIC-DOMAIN-1864",
+    "synopsis": "Buku pegangan agronomi kopi asli tahun 1864 secara utuh: pemilihan lahan pegunungan, pembibitan, naungan, pemangkasan, panen ceri, pengolahan pulping & fermentasi klasik.",
+    "category": "ACADEMIC_INDUSTRY",
+    "required_tier": "Trial",
+    "total_pages": 209,
+    "total_chapters_count": 8,
+    "total_figures_count": 8,
     "supports_bilingual_toggle": true,
     "cover_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-09/cover.webp",
     "cover_image_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-09/cover.webp",
@@ -374,37 +620,79 @@
     "clbook_ast_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-09/CL-BOOK-09_ast.clbook",
     "encrypted_asset_url": "/api/v1/toolkit/ebooks/b0010001-0000-4000-8000-000000000009/asset",
     "bundled_asset_path": "",
-    "file_size_bytes": 413769,
-    "pdf_file_size_bytes": 413735,
-    "epub_file_size_bytes": 342782,
-    "sha256_ciphertext_hash": "15100d84fa8de7b5d068f2b18440578bb5777339eae020991d0e6a4fa0c39320",
-    "pdf_sha256_hash": "0a9a503838c54b5514d5ad8d3097dac4795f77d7b6e0941b2e0d09957ecccea8",
-    "epub_sha256_hash": "95bc292e41839f26ff77f07c58f2449568af62093937839750a44836a8caeede",
+    "file_size_bytes": 5787494,
+    "pdf_file_size_bytes": 5787494,
+    "epub_file_size_bytes": 425550,
+    "sha256_ciphertext_hash": "d6dbd8ef5c3d45dd5e1e8817853eb7f75e5c38c0e8a68517402241091cc9909d",
+    "pdf_sha256_hash": "272876ed4f1feb227cc0fb06149333b0f9d292de8d9c4a1669e91e7eaf8b7f1f",
+    "epub_sha256_hash": "c8858fad6f8a6b5c59e2cdb7d725a5382431c1359a6f0abed779d345fb9ee3a3",
     "wrapped_master_cek_hex": "b89b73693747f26ec8da8e908cd315c8758a1100fa5b79e2c508bb92c3db02ad382bd00e6f06dc09d0c50fcb28e8c928ddbbe1655f8f8bd4f548810c",
     "object_storage_provider": "OBJECT_STORAGE",
     "toc_chapters_json": [
       {
-        "title": "Anatomi Visual Alat Seduh, Flash Brew & Katalog Minuman Dunia",
-        "title_en": "Visual Brewer Cutaways, Flash Brew & Global Drink Recipes",
+        "title": "A Hand-Book to Coffee Planting in Southern — Bagian 1",
+        "title_en": "Part 1",
         "chapter_number": 1,
-        "start_page": 2
+        "start_page": 1
+      },
+      {
+        "title": "A Hand-Book to Coffee Planting in Southern — Bagian 2",
+        "title_en": "Part 2",
+        "chapter_number": 2,
+        "start_page": 27
+      },
+      {
+        "title": "A Hand-Book to Coffee Planting in Southern — Bagian 3",
+        "title_en": "Part 3",
+        "chapter_number": 3,
+        "start_page": 53
+      },
+      {
+        "title": "A Hand-Book to Coffee Planting in Southern — Bagian 4",
+        "title_en": "Part 4",
+        "chapter_number": 4,
+        "start_page": 79
+      },
+      {
+        "title": "A Hand-Book to Coffee Planting in Southern — Bagian 5",
+        "title_en": "Part 5",
+        "chapter_number": 5,
+        "start_page": 105
+      },
+      {
+        "title": "A Hand-Book to Coffee Planting in Southern — Bagian 6",
+        "title_en": "Part 6",
+        "chapter_number": 6,
+        "start_page": 131
+      },
+      {
+        "title": "A Hand-Book to Coffee Planting in Southern — Bagian 7",
+        "title_en": "Part 7",
+        "chapter_number": 7,
+        "start_page": 157
+      },
+      {
+        "title": "A Hand-Book to Coffee Planting in Southern — Bagian 8",
+        "title_en": "Part 8",
+        "chapter_number": 8,
+        "start_page": 183
       }
     ],
-    "xp_reward_on_finish": 400
+    "xp_reward_on_finish": 380
   },
   {
     "id": "b0010001-0000-4000-8000-000000000010",
     "book_code": "CL-BOOK-10",
-    "title": "Coffee: A Comprehensive Guide to the Bean, Beverage & Industry",
-    "original_title": "Coffee: A Comprehensive Guide to the Bean, the Beverage, and the Industry",
-    "author": "Robert W. Thurston, Jonathan Morris & Dr. Shawn Steiman",
-    "isbn": "9781442214408",
-    "synopsis": "Buku pegangan akademis & industri komprehensif: fisiologi tanaman Coffea, protokol cupping resmi SCA 10 atribut, evaluasi sensorik lintas suhu (Sensory Cooling Curve), dan manajemen rantai pasok roastery spesialti.",
-    "category": "ACADEMIC_INDUSTRY",
-    "required_tier": "Business",
-    "total_pages": 2,
-    "total_chapters_count": 1,
-    "total_figures_count": 1,
+    "title": "The Afternoon Tea & Coffee Book (1900 Original Edition)",
+    "original_title": "The Afternoon Tea Book: How to Make Tea, Coffee & Accompaniments (1900)",
+    "author": "Agnes C. Maitland (1900 Public Domain)",
+    "isbn": "PUBLIC-DOMAIN-1900",
+    "synopsis": "Buku resep dan tata cara penyeduhan kopi serta teh klasik edisi asli tahun 1900 lengkap (PDF scan asli + EPUB3 reflowable), membahas penyangraian, penggilingan & penyajian klasik.",
+    "category": "VISUAL_ATLAS_RECIPES",
+    "required_tier": "Trial",
+    "total_pages": 148,
+    "total_chapters_count": 8,
+    "total_figures_count": 8,
     "supports_bilingual_toggle": true,
     "cover_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-10/cover.webp",
     "cover_image_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-10/cover.webp",
@@ -413,37 +701,79 @@
     "clbook_ast_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-10/CL-BOOK-10_ast.clbook",
     "encrypted_asset_url": "/api/v1/toolkit/ebooks/b0010001-0000-4000-8000-000000000010/asset",
     "bundled_asset_path": "",
-    "file_size_bytes": 511337,
-    "pdf_file_size_bytes": 511303,
-    "epub_file_size_bytes": 404647,
-    "sha256_ciphertext_hash": "f99c53f78940122dfce1def9901c2eb9d95de3ddc0468c9117f9dc8982f203cc",
-    "pdf_sha256_hash": "5e286479c23f7f6730c1510c26b7618fe257667d17e0f8e43397325ead9d397c",
-    "epub_sha256_hash": "7283401078870baa76768cf0d79af1f38616ab44ea3dd74cdbc524b0f4ffa541",
+    "file_size_bytes": 5718290,
+    "pdf_file_size_bytes": 5718290,
+    "epub_file_size_bytes": 2569634,
+    "sha256_ciphertext_hash": "23c9b9d151586369a3de4b90477cd0543f59cfec471f117b27744b945687fac8",
+    "pdf_sha256_hash": "5f84e96c453b2f4cc4cdebc3f565ae0b7d804a609cd67df604dfa59bb06743fe",
+    "epub_sha256_hash": "0b8935cab1a613cae6a577d2d8c470822777645b72d16f12700710f67987c5be",
     "wrapped_master_cek_hex": "2b0c83599884b45718f287b7a85eff1246d96b79146364c6511c4ded455821e35b53b8566e2812507134ac4cae21c13be80017f54b9c6d54e3eb9af3",
     "object_storage_provider": "OBJECT_STORAGE",
     "toc_chapters_json": [
       {
-        "title": "Fisiologi Coffea, Protokol Cupping SCA & Evaluasi Cooling Curve",
-        "title_en": "Coffea Physiology, SCA Cupping Protocol & Cooling Evaluation",
+        "title": "The Afternoon Tea & Coffee Book (1900 Orig — Bagian 1",
+        "title_en": "Part 1",
         "chapter_number": 1,
-        "start_page": 2
+        "start_page": 1
+      },
+      {
+        "title": "The Afternoon Tea & Coffee Book (1900 Orig — Bagian 2",
+        "title_en": "Part 2",
+        "chapter_number": 2,
+        "start_page": 19
+      },
+      {
+        "title": "The Afternoon Tea & Coffee Book (1900 Orig — Bagian 3",
+        "title_en": "Part 3",
+        "chapter_number": 3,
+        "start_page": 37
+      },
+      {
+        "title": "The Afternoon Tea & Coffee Book (1900 Orig — Bagian 4",
+        "title_en": "Part 4",
+        "chapter_number": 4,
+        "start_page": 55
+      },
+      {
+        "title": "The Afternoon Tea & Coffee Book (1900 Orig — Bagian 5",
+        "title_en": "Part 5",
+        "chapter_number": 5,
+        "start_page": 73
+      },
+      {
+        "title": "The Afternoon Tea & Coffee Book (1900 Orig — Bagian 6",
+        "title_en": "Part 6",
+        "chapter_number": 6,
+        "start_page": 91
+      },
+      {
+        "title": "The Afternoon Tea & Coffee Book (1900 Orig — Bagian 7",
+        "title_en": "Part 7",
+        "chapter_number": 7,
+        "start_page": 109
+      },
+      {
+        "title": "The Afternoon Tea & Coffee Book (1900 Orig — Bagian 8",
+        "title_en": "Part 8",
+        "chapter_number": 8,
+        "start_page": 127
       }
     ],
-    "xp_reward_on_finish": 500
+    "xp_reward_on_finish": 350
   },
   {
     "id": "b0010001-0000-4000-8000-000000000011",
     "book_code": "CL-BOOK-11",
-    "title": "All About Coffee (Arsip Klasik Domain Publik PDF & EPUB)",
-    "original_title": "All About Coffee (1922 Public Domain Edition)",
-    "author": "William H. Ukers (Archive.org Public Domain)",
+    "title": "All About Coffee (Complete 1922 Classic Encyclopedia)",
+    "original_title": "All About Coffee — Full Multi-Chapter Edition (1922)",
+    "author": "William H. Ukers, M.A. (1922 Public Domain)",
     "isbn": "PUBLIC-DOMAIN-1922",
-    "synopsis": "Diunduh otomatis dari arsip domain publik Internet Archive + diproses ke format PDF, EPUB3, dan AST bilingual.",
+    "synopsis": "Karya ensiklopedia kopi paling legendaris sepanjang masa karya William H. Ukers (1922) dalam edisi multi-bab utuh: sejarah dunia, botani, kimia, roasting, teknik seduh & budaya kedai kopi.",
     "category": "HISTORY_CLASSIC",
     "required_tier": "Trial",
-    "total_pages": 2,
-    "total_chapters_count": 1,
-    "total_figures_count": 1,
+    "total_pages": 46,
+    "total_chapters_count": 20,
+    "total_figures_count": 20,
     "supports_bilingual_toggle": true,
     "cover_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-11/cover.webp",
     "cover_image_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-11/cover.webp",
@@ -452,37 +782,151 @@
     "clbook_ast_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-11/CL-BOOK-11_ast.clbook",
     "encrypted_asset_url": "/api/v1/toolkit/ebooks/b0010001-0000-4000-8000-000000000011/asset",
     "bundled_asset_path": "",
-    "file_size_bytes": 415283,
-    "pdf_file_size_bytes": 415249,
-    "epub_file_size_bytes": 325355,
-    "sha256_ciphertext_hash": "493b5bae11ac3f5f1779868f8eb86c379f85cdc975002df6db6f4e90c7c36e28",
-    "pdf_sha256_hash": "2e0790a9cd48cd9bb00dc329eca992b4bbd429e17b6fb018b0a810fc6437f487",
-    "epub_sha256_hash": "517b0294782e24d2d20aecf0268bbe4086e30a91188271d11f8a1b92d2cb0339",
+    "file_size_bytes": 434477,
+    "pdf_file_size_bytes": 434477,
+    "epub_file_size_bytes": 413167,
+    "sha256_ciphertext_hash": "dab372e99c400f35aba2ddc73f9b7035e32b6ff25c7621f1f459f046e95399c8",
+    "pdf_sha256_hash": "2d41f13e7eb98f824aa2d911451ba09831cd30ca38a55850ae4622874f632507",
+    "epub_sha256_hash": "3faeccd3bb70876679af71ba02bcbe65785889680bd098fda456ce53c1e4aa70",
     "wrapped_master_cek_hex": "0425bc79b3e62ce9196ddf79663baebf55992f9bcd51a006d94c3eed8000d42fd6f99b6fa0c785e91f43a4a4fdaa89963cb8e7684f7adde2c13a1669",
     "object_storage_provider": "OBJECT_STORAGE",
     "toc_chapters_json": [
       {
-        "title": "Warisan Klasik Perdagangan & Agronomi Kopi Dunia (Ukers 1922)",
-        "title_en": "Classic Heritage of World Coffee Agronomy (Excerpt)",
+        "title": "All About Coffee (1922) — Bagian 1",
+        "title_en": "All About Coffee (1922) — Bagian 1",
         "chapter_number": 1,
         "start_page": 2
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 2",
+        "title_en": "All About Coffee (1922) — Bagian 2",
+        "chapter_number": 2,
+        "start_page": 5
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 3",
+        "title_en": "All About Coffee (1922) — Bagian 3",
+        "chapter_number": 3,
+        "start_page": 8
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 4",
+        "title_en": "All About Coffee (1922) — Bagian 4",
+        "chapter_number": 4,
+        "start_page": 11
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 5",
+        "title_en": "All About Coffee (1922) — Bagian 5",
+        "chapter_number": 5,
+        "start_page": 13
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 6",
+        "title_en": "All About Coffee (1922) — Bagian 6",
+        "chapter_number": 6,
+        "start_page": 15
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 7",
+        "title_en": "All About Coffee (1922) — Bagian 7",
+        "chapter_number": 7,
+        "start_page": 17
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 8",
+        "title_en": "All About Coffee (1922) — Bagian 8",
+        "chapter_number": 8,
+        "start_page": 19
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 9",
+        "title_en": "All About Coffee (1922) — Bagian 9",
+        "chapter_number": 9,
+        "start_page": 21
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 10",
+        "title_en": "All About Coffee (1922) — Bagian 10",
+        "chapter_number": 10,
+        "start_page": 23
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 11",
+        "title_en": "All About Coffee (1922) — Bagian 11",
+        "chapter_number": 11,
+        "start_page": 25
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 12",
+        "title_en": "All About Coffee (1922) — Bagian 12",
+        "chapter_number": 12,
+        "start_page": 27
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 13",
+        "title_en": "All About Coffee (1922) — Bagian 13",
+        "chapter_number": 13,
+        "start_page": 29
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 14",
+        "title_en": "All About Coffee (1922) — Bagian 14",
+        "chapter_number": 14,
+        "start_page": 31
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 15",
+        "title_en": "All About Coffee (1922) — Bagian 15",
+        "chapter_number": 15,
+        "start_page": 33
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 16",
+        "title_en": "All About Coffee (1922) — Bagian 16",
+        "chapter_number": 16,
+        "start_page": 35
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 17",
+        "title_en": "All About Coffee (1922) — Bagian 17",
+        "chapter_number": 17,
+        "start_page": 37
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 18",
+        "title_en": "All About Coffee (1922) — Bagian 18",
+        "chapter_number": 18,
+        "start_page": 39
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 19",
+        "title_en": "All About Coffee (1922) — Bagian 19",
+        "chapter_number": 19,
+        "start_page": 41
+      },
+      {
+        "title": "All About Coffee (1922) — Bagian 20",
+        "title_en": "All About Coffee (1922) — Bagian 20",
+        "chapter_number": 20,
+        "start_page": 44
       }
     ],
-    "xp_reward_on_finish": 280
+    "xp_reward_on_finish": 500
   },
   {
     "id": "b0010001-0000-4000-8000-000000000012",
     "book_code": "CL-BOOK-12",
-    "title": "Kompendium Jurnal Open-Access & Botani Kopi (XY-Cut Parsed)",
-    "original_title": "Open-Access Coffee Science & Historical EPUB Compendium",
-    "author": "Frontiers Open Access & Public Domain Archives",
-    "isbn": "OPEN-ACCESS-OA-2024",
-    "synopsis": "Hasil unduhan langsung file PDF ilmiah open-access & EPUB domain publik yang diuraikan menggunakan Recursive XY-Cut PyMuPDF + ebooklib.",
+    "title": "Coffee: Its History, Cultivation, and Uses (1872 Original)",
+    "original_title": "Coffee: Its History, Cultivation, and Uses — Illustrated 1872 Edition",
+    "author": "Robert Hewitt, Jr. (1872 Public Domain)",
+    "isbn": "PUBLIC-DOMAIN-1872",
+    "synopsis": "Edisi asli tahun 1872 berilustrasi ukiran klasik mengenai sejarah penyebaran kopi global, teknik budidaya perkebunan, perdagangan internasional, serta kimia & kegunaan kopi.",
     "category": "ACADEMIC_OA",
     "required_tier": "Trial",
-    "total_pages": 2,
-    "total_chapters_count": 1,
-    "total_figures_count": 1,
+    "total_pages": 99,
+    "total_chapters_count": 8,
+    "total_figures_count": 8,
     "supports_bilingual_toggle": true,
     "cover_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-12/cover.webp",
     "cover_image_url": "/api/v1/toolkit/object-storage/coffeelabs/ebooks/CL-BOOK-12/cover.webp",
@@ -491,22 +935,64 @@
     "clbook_ast_cloudinary_public_id": "coffeelabs/ebooks/CL-BOOK-12/CL-BOOK-12_ast.clbook",
     "encrypted_asset_url": "/api/v1/toolkit/ebooks/b0010001-0000-4000-8000-000000000012/asset",
     "bundled_asset_path": "",
-    "file_size_bytes": 483831,
-    "pdf_file_size_bytes": 483797,
-    "epub_file_size_bytes": 371360,
-    "sha256_ciphertext_hash": "12edc8756959b5a04bf86c29d832bfd110ba0dd72dd8875886be364a84c89628",
-    "pdf_sha256_hash": "b99cfdbad34ce78b8752a5b7739a0e83ebd86033e7f5936f009ef62c204dce77",
-    "epub_sha256_hash": "03a99ebed7549d3988df6d3e0b66c058c7a16651a97d6a723630d8c5b55a8f04",
+    "file_size_bytes": 2919437,
+    "pdf_file_size_bytes": 2919437,
+    "epub_file_size_bytes": 230394,
+    "sha256_ciphertext_hash": "33646862039cad0f1f6aa6f464b6e3a63c9dfc2bcc896c5411987b5e66192b1d",
+    "pdf_sha256_hash": "d3eefc8ef2e6ef552d5b7bb95d9f73e7bd45ad493b781b419e02d5c6e196d8b8",
+    "epub_sha256_hash": "889000c066490e10e5d23d6b2b9033f342713451da74e43afbce57eed726e494",
     "wrapped_master_cek_hex": "729a8a345ceb96eed201e9368cee874b539c1b50c503cea01c52e8cde4f04c5197feada3be6e14780df5ae48e2c9c281adba7bc66191f9ab197a0261",
     "object_storage_provider": "OBJECT_STORAGE",
     "toc_chapters_json": [
       {
-        "title": "Ekstraksi Recursive XY-Cut Jurnal Ilmiah Open-Access (PDF)",
-        "title_en": "Recursive XY-Cut Multi-Column Extraction (Open-Access PDF)",
+        "title": "Coffee: Its History, Cultivation, and Uses — Bagian 1",
+        "title_en": "Part 1",
         "chapter_number": 1,
-        "start_page": 2
+        "start_page": 1
+      },
+      {
+        "title": "Coffee: Its History, Cultivation, and Uses — Bagian 2",
+        "title_en": "Part 2",
+        "chapter_number": 2,
+        "start_page": 13
+      },
+      {
+        "title": "Coffee: Its History, Cultivation, and Uses — Bagian 3",
+        "title_en": "Part 3",
+        "chapter_number": 3,
+        "start_page": 25
+      },
+      {
+        "title": "Coffee: Its History, Cultivation, and Uses — Bagian 4",
+        "title_en": "Part 4",
+        "chapter_number": 4,
+        "start_page": 37
+      },
+      {
+        "title": "Coffee: Its History, Cultivation, and Uses — Bagian 5",
+        "title_en": "Part 5",
+        "chapter_number": 5,
+        "start_page": 49
+      },
+      {
+        "title": "Coffee: Its History, Cultivation, and Uses — Bagian 6",
+        "title_en": "Part 6",
+        "chapter_number": 6,
+        "start_page": 61
+      },
+      {
+        "title": "Coffee: Its History, Cultivation, and Uses — Bagian 7",
+        "title_en": "Part 7",
+        "chapter_number": 7,
+        "start_page": 73
+      },
+      {
+        "title": "Coffee: Its History, Cultivation, and Uses — Bagian 8",
+        "title_en": "Part 8",
+        "chapter_number": 8,
+        "start_page": 85
       }
     ],
-    "xp_reward_on_finish": 300
+    "xp_reward_on_finish": 380
   }
 ]
