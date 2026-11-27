@@ -94,7 +94,7 @@ impl LiveTelemetryHub {
         self.cheer_guard
             .entry(key.to_string())
             .and_modify(|prev| {
-                if now.duration_since(*prev) < Duration::from_secs(2) {
+                if now.duration_since(*prev) < Duration::from_millis(400) {
                     ok = false;
                 } else {
                     *prev = now;
